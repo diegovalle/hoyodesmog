@@ -1,0 +1,8 @@
+dropbox autostart [y/n]
+
+options:
+  n  dropbox will not start automatically at login
+  y  dropbox will start automatically at login (default)
+
+Note: May only work on current Ubuntu distributions.
+

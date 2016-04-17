@@ -1,0 +1,432 @@
+<!DOCTYPE HTML>
+<!--
+Scalar by Pixelarity
+pixelarity.com @pixelarity
+License: pixelarity.com/license
+-->
+<html>
+    <head>
+        <title>Real-Time Wind Conditions Mexico City</title>
+        <meta name="description" content="Interactive map of wind conditions in the state of Mexico City" />
+
+        <!-- Twitter Card data -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@diegovalle">
+        <meta name="twitter:title" content="Interactive Wind Map">
+        <meta name="twitter:description" content="Map of wind conditions in the state of Mexico City">
+        <meta name="twitter:creator" content="@diegovalle">
+        <meta name="twitter:image" content="og_image.png">
+
+        <!-- Open Graph data -->
+        <meta property="og:title" content="Interactive Wind Map" />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="http://hoyodesmog.diegovalle.net/wind.html" />
+        <meta property="og:image" content="og_image.png" />
+        <meta property="og:description" content="Map of wind conditions in the state of Mexico City" />
+        <meta property="og:site_name" content="Hoyo de Smog" />
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+        <link rel="stylesheet" href="assets/css/leaflet.locate/L.Control.Locate.min.css" />
+        <link rel="stylesheet" href="assets/css/smog.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <style>
+         h2{
+             margin: 0;
+             padding: 0;
+             border: 0;
+             font-size: 120%;
+             font-weight: bold;
+             vertical-align: baseline;
+         }
+         body {
+             padding: 0;
+             margin: 0;
+         }
+         html, body, #map{
+             height: 100%;
+         }
+         #map {
+             position: absolute;
+             height: 100%;
+             width: 100%;
+             background-color: #333;
+         }
+         canvas {opacity:.5}
+         path{
+             stroke-opacity: 1;
+             stroke-width: 1px;
+             fill-opacity:.25;
+             shape-rendering: crispEdges;
+         }
+         .info {
+             padding: 6px 8px;
+             font: 14px/16px Arial, Helvetica, sans-serif;
+             background: white;
+             background: rgba(255,255,255,1);
+             box-shadow: 0 0 15px rgba(0,0,0,0.2);
+             border-radius: 5px;
+         }
+         .info h4 {
+             margin: 0 0 5px;
+             color: #777;
+         }
+
+         .legend {
+             text-align: left;
+             line-height: 18px;
+             color: #555;
+         }
+         .legend i {
+             width: 18px;
+             height: 18px;
+             float: left;
+             margin-right: 8px;
+             opacity: 0.7;
+         }
+         .leaflet-control-zoom {
+             margin-top: 6.5em;
+         }
+         .ui-control {
+             background:#fff;
+             position:absolute;
+             top:100px;
+             right:10px;
+             padding:10px;
+             z-index:100;
+             border-radius:3px;
+         }
+         span#mousemove{
+             font-weight:bold;
+         }
+         .custom-popup .leaflet-popup-content-wrapper {
+             background:#949494;
+             color:#ebebeb;
+             font-size:16px;
+             line-height:24px;
+         }
+         .leaflet-popup-tip {
+             background: rgba(235, 235, 235, 0);;
+             box-shadow: 0 3px 14px rgba(0,0,0,0);
+         }
+         .leaflet-popup-content {
+             width:auto !important;
+             color: black;
+         }
+         .leaflet-popup-content b{
+             font-family: Montserrat;
+             font-size: 2em;
+             color:black;
+         }
+         .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+             background: #949494;
+         }
+        </style>
+    </head>
+    <body class="landing">
+
+        <!-- Header -->
+        <header id="header">
+            <div class="container">
+                <h1><a href="index.html" class="icon fa-cube">Hoyo de Smog</a></h1>
+                <nav id="nav">
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <!--<li>
+                        <a href="#">Page Layouts</a>
+                        <ul>
+                        <li><a href="left-sidebar.html">Left Sidebar</a></li>
+                        <li><a href="right-sidebar.html">Right Sidebar</a></li>
+                        <li><a href="no-sidebar.html">No Sidebar</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li>
+                        <a href="#">Submenu</a>
+                        <ul>
+                        <li><a href="#">Option One</a></li>
+                        <li><a href="#">Option Two</a></li>
+                        <li><a href="#">Option Three</a></li>
+                        <li><a href="#">Option Four</a></li>
+                        </ul>
+                        </li>
+                        </ul>
+                        </li> -->
+                        <li><a href="ozone.html">Ozone</a></li>
+                        <li>
+                            <a href="#">Pollutants</a>
+                            <ul>
+                                <li><a href="pm10.html">PM10</a></li>
+                                <li><a href="so2.html">SO2</a></li>
+                                <li><a href="co.html">CO</a></li>
+                                <li><a href="no2.html">NO2</a></li>
+                                <li><a href="pm25.html">PM2.5</a></li>
+                            </ul>
+                        </li>
+                        <li class="current"><a href="wind.html">Wind</a></li>
+                        <li><a href="temperature.html">Temp</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="aire.zmvm.html">R Package</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+        </header>
+        <div id="map"></div>
+
+        <!-- Page Wrapper -->
+        <div id="page-wrapper">
+
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jquery.dropotron.min.js"></script>
+        <script src="assets/js/skel.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+        <script src="assets/js/main.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+        <script src="js/d3-color.js"></script>
+        <script src="js/L.CanvasOverlay.js"></script>
+        <script src="js/leaflet.locate/L.Control.Locate.min.js" ></script>
+        <script src="js/leaflet.hash/leaflet-hash.js" ></script>
+        <script>
+         var viridis = ["#440154", "#481567", "#482677", "#453781", "#404788",
+                        "#39568C", "#33638D", "#2D708E", "#287D8E", "#238A8D",
+                        "#1F968B", "#20A387", "#29AF7F", "#3CBB75", "#55C667",
+                        "#73D055", "#95D840", "#B8DE29", "#DCE319", "#FDE725"];
+         var magma = ["#000004", "#08061D", "#160F3A", "#29115B", "#400F73",
+                      "#56147D", "#6B1C81", "#802582", "#952C80", "#AB337C",
+                      "#C13A76", "#D6446D", "#E85362", "#F4685C", "#FA815F",
+                      "#FD9A6A", "#FEB37B", "#FECC8F", "#FDE4A6", "#FCFDBF"];
+         var inferno = ["#000004", "#08061E", "#190C3E", "#2F0A5B",
+                        "#460B69", "#5C126E", "#711A6E", "#87216B", "#9C2964",
+                        "#B1325B", "#C53C4E", "#D64A40", "#E55C30", "#F0701F",
+                        "#F8870E", "#FC9F07", "#FBB91E", "#F7D440", "#F1ED6F",
+                        "#FCA4"];
+         var plasma = ["#0D0887", "#2D0594", "#44039E",
+                       "#5A01A5", "#6F00A8", "#8305A7", "#9612A1", "#A72197",
+                       "#B7308B", "#C53F7E", "#D14E72", "#DD5E66", "#E76E5B",
+                       "#EF7E4F", "#F69044", "#FBA238", "#FEB62D", "#FDCB26",
+                       "#F8E225", "#F0F921"];
+         var color_scale = d3.scale.quantize()
+                             .domain([0,32])
+                             .range(viridis);
+         // number of pixels per side, set in heatmap.r
+         var pixels = 100;
+         var gridx, gridy;
+
+         //var points = data; // data loaded from data.js
+         var leafletMap = L.map('map').setView([19.48, -99.1], 10);
+         L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+             subdomains: 'abcd',
+             maxZoom: 19
+         }).addTo(leafletMap);
+
+         var hash = new L.Hash(leafletMap);
+
+         pip = function (point, vs) {
+             // ray-casting algorithm based on
+             // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+             var x = point[0], y = point[1];
+
+             var inside = false;
+             for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+                 var xi = vs[i][0], yi = vs[i][1];
+                 var xj = vs[j][0], yj = vs[j][1];
+
+                 var intersect = ((yi > y) != (yj > y))
+                     && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                 if (intersect) inside = !inside;
+             }
+
+             return inside;
+         };
+
+         d3.json("data/wdr_data.json", function(error, data) {
+             d3.json("data/wsp_data.json", function(error, wsp) {
+                 d3.json("data/wsp_stations.json", function(error, stations) {
+                     var legend = L.control({position: 'bottomright'});
+                     legend.onAdd = function (map) {
+
+                         var div = L.DomUtil.create('div', 'info legend');
+                         var categories = ["Calm", "Gentle Breeze",
+                                           "Strong Breeze", "Strong Gale",
+                                           "Hurricane Force"];
+                         var viridis_st_colors = ["#440154", "#3B528B",
+                                                  "#21908C", "#5DC963",
+                                                  "#FDE725"];
+                         var magma_st_colors = ["#000004", "#50127C",
+                                                "#B63779", "#FB8761", "#FCFDBF"];
+                         var inferno_st_colors = ["#000004", "#57106D",
+                                                  "#BB3755", "#F98D0A", "#FCFFA4"];
+                         var plasma_st_colors = ["#0D0887", "#7E03A8",
+                                                 "#CB4778", "#F89441", "#F0F921"];
+                         div.innerHTML = '' +
+                                         'Wind Speed: <span ' +
+                                         'id="mousemove"></span><br><em>' +
+                                         stations[1].datetime_mxc + '</em><br>'
+                         for (var i = 0; i < categories.length; i++) {
+                             div.innerHTML +=
+                             '<i style="background:' + viridis_st_colors[i] + '"></i> ' +
+                             categories[i]  + '<br>';
+                         }
+
+                         return div;
+                     }
+
+                     legend.addTo(leafletMap);
+                     L.canvasOverlay()
+                      .drawing(drawingOnCanvas)
+                      .addTo(leafletMap);
+
+                     L.control.locate({
+                         drawCircle: false,
+                         strings: {
+                             title: "Show me where I am",  // title of the locate control
+                             metersUnit: "meters", // string for metric units
+                             feetUnit: "feet", // string for imperial units
+                             popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
+                             outsideMapBoundsMsg: "You seem located outside the boundaries of the map" // default message for onLocationOutsideMapBounds
+                         },
+                     }).addTo(leafletMap);
+
+                     for (var i = 0; i < stations.length; i++) {
+                         var c = L.circle([stations[i]["lat"], stations[i]["lon"]],
+                                          550);
+                         var rectangle = new L.Rectangle(c.getBounds(), {
+                             color: "black",
+                             fillColor: color_scale(stations[i].value),
+                             fillOpacity: 0.25,
+                             lineCap: "square",
+                             lineJoin: "miter"
+                         });
+                         rectangle.bindPopup(String(stations[i].station_name + ': <b>' +
+                                                    stations[i].value + '</b> (' +
+                                                    stations[i].pollutant +')'), {
+                                                        offset: L.point(0, -2),
+                                                        autoPan: false
+                                                    })
+                                  .addTo(leafletMap);
+                         rectangle.on('mouseover', function (e) {
+                             this.openPopup();
+                         });
+                         rectangle.on('mouseout', function (e) {
+                             this.closePopup();
+                         });
+                     }
+                     // Wind direction: https://compuweather.com/files/2009/10/CompuWeather-Wind-Direction-Compass-Chart.pdf
+                     function components(direction, speed) {
+                         var theta = direction / 360 * Math.PI * 2;
+                         var u = -speed * Math.sin(theta);
+                         var v = -speed * Math.cos(theta);
+                         return [u, -v];
+                     }
+
+                     //http://stackoverflow.com/questions/808826/draw-arrow-on-canvas-tag
+                     function canvas_arrow(context, fromx, fromy, tox, toy, style){
+                         var headlen = 3;
+                         var angle = Math.atan2(toy-fromy,tox-fromx);
+                         context.strokeStyle = style;
+                         context.moveTo(fromx, fromy);
+                         context.lineTo(tox, toy);
+                         context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),
+                                        toy-headlen*Math.sin(angle-Math.PI/6));
+                         context.moveTo(tox, toy);
+                         context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),
+                                        toy-headlen*Math.sin(angle+Math.PI/6));
+                     }
+
+                     function drawingOnCanvas(canvasOverlay, params) {
+                         var ctx = params.canvas.getContext('2d');
+                         ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
+                         gridx = data[1][2]-data[pixels + 1][2];
+                         gridy = data[1][1]-data[2][1];
+                         for (var i = 0; i < data.length; i++) {
+                             var d = data[i];
+                             dot = canvasOverlay._map.latLngToContainerPoint([d[2],
+                                                                              d[1]]);
+                             end = components(d[0] , wsp[i][0]*.000259248*3);
+                             w = canvasOverlay.
+                                               _map.
+                                               latLngToContainerPoint([d[2] - end[1],
+                                                                       d[1] + end[0]]);
+                             ctx.beginPath();
+                             canvas_arrow(ctx, dot.x, dot.y, w.x, w.y, color_scale(wsp[i][0]))
+                                 ctx.stroke();
+
+                         }
+                     };
+
+                     leafletMap.on('mousemove click', function(e) {
+                         gridx = data[1][2]-data[pixels + 1][2];
+                         gridy = data[1][1]-data[2][1];
+                         for (var i = 0; i < data.length; i++) {
+                             var d = data[i];
+
+                             ulx = d[2] - gridx/2;
+                             uly = d[1] - gridy/2;
+                             wx = d[2] + gridx/2;
+                             wy = d[1] + gridy/2;
+                             isin = pip([e.latlng.lat,e.latlng.lng],[
+                                 [ulx, uly],
+                                 [wx, uly],
+                                 [wx, wy],
+                                 [ulx, wy]
+                             ]);
+                             if(isin) {
+                                 window["mousemove"].innerHTML = Math.round(wsp[i][0]) + 'm/s';
+                                 break;
+                             } else {
+                                 //window[e.type].innerHTML = '';
+                             }
+                         }
+
+                     });
+                 });
+             });
+         });
+        </script>
+        <script>
+         $( document ).ready(function() {
+             $(".leaflet-control-zoom").css("margin-top", "6.5em");
+             $('.leaflet-container').css('cursor','crosshair');
+         });
+        </script>
+        <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                                  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+         ga('create', 'UA-100264-10', 'auto');
+         ga('send', 'pageview');
+
+        </script>
+
+</html>

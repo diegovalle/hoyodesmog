@@ -1,0 +1,189 @@
+@import 'libs/vars';
+@import 'libs/functions';
+@import 'libs/mixins';
+@import 'libs/skel';
+
+/*
+	Scalar by Pixelarity
+	pixelarity.com @pixelarity
+	License: pixelarity.com/license
+*/
+
+$ie-palette-border:		#ddd;
+$ie-palette-border-bg:	#eee;
+$ie-palette-border2:		#444;
+$ie-palette-border2-bg:	#333;
+
+/* Basic */
+
+	hr {
+		border-bottom: solid 2px $ie-palette-border;
+	}
+
+	blockquote {
+		border-left: solid 4px $ie-palette-border;
+
+		&.testimonial {
+			p {
+				background: $ie-palette-border2-bg !important;
+
+				&:after {
+					border-top: solid 1em $ie-palette-border2-bg !important;
+				}
+			}
+		}
+	}
+
+	code {
+		background: $ie-palette-border-bg;
+		border: solid 1px $ie-palette-border;
+	}
+
+/* Section/Article */
+
+	header {
+		&.major {
+			&:after {
+				background: $ie-palette-border;
+			}
+		}
+	}
+
+/* Form */
+
+	input[type="text"],
+	input[type="password"],
+	input[type="email"],
+	select,
+	textarea {
+		border: solid 1px $ie-palette-border;
+	}
+
+	.select-wrapper {
+		&:before {
+			color: $ie-palette-border;
+		}
+	}
+
+	input[type="text"],
+	input[type="password"],
+	input[type="email"] {
+		line-height: _size(element-height);
+	}
+
+	input[type="checkbox"],
+	input[type="radio"] {
+		font-size: 3em;
+		& + label {
+			&:before {
+				display: none;
+			}
+		}
+	}
+
+/* Box */
+
+	.box {
+		border: solid 1px $ie-palette-border;
+	}
+
+/* List */
+
+	ul {
+		&.alt {
+			li {
+				border-top: solid 1px $ie-palette-border;
+			}
+		}
+	}
+
+/* Table */
+
+	.table-wrapper {
+		-webkit-overflow-scrolling: touch;
+		overflow-x: auto;
+	}
+
+	table {
+		tbody {
+			tr {
+				border: solid 1px $ie-palette-border;
+				border-left: 0;
+				border-right: 0;
+			}
+		}
+
+		thead {
+			border-bottom: solid 2px $ie-palette-border;
+		}
+
+		tfoot {
+			border-top: solid 2px $ie-palette-border;
+		}
+
+		&.alt {
+			tbody {
+				tr {
+					td {
+						border: solid 1px $ie-palette-border;
+						border-left-width: 0;
+						border-top-width: 0;
+					}
+				}
+			}
+		}
+	}
+
+/* Feature */
+
+	.feature {
+		&:before {
+			background: $ie-palette-border;
+		}
+	}
+
+/* Tree */
+
+	.tree {
+		margin: 0;
+		padding: 0;
+
+		&:before,
+		&:after {
+			display: none;
+		}
+	}
+
+/* Wrapper */
+
+	.wrapper {
+		&.split {
+			.secondary {
+				& > section {
+					&.even:before {
+						background: #ffffff;
+					}
+
+					&.odd:before {
+						background: _palette(bg);
+					}
+				}
+			}
+		}
+	}
+
+/* Banner */
+
+	#banner {
+		-ms-behavior: url('assets/js/ie/backgroundsize.min.htc');
+	}
+
+/* Footer */
+
+	#footer {
+		.icon {
+			&:after {
+				background-color: #ddd;
+			}
+		}
+	}

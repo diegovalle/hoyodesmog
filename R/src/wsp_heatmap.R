@@ -32,6 +32,8 @@ if(last_month != 0) {
                                             month = zpad(last_month)))
 }
 
+df <- arrange(df, station_code, pollutant, date, hour)
+
 df <- subset(df, date == max(df$date) & hour == tail(df, 1)$hour) 
 df <- left_join(df, stations, by = "station_code")
 df <- df[!is.na(df$value),]
@@ -90,4 +92,4 @@ write_json("../web/data/wsp_data.json",
 write_json("../web/data/wsp_stations.json",
            df)
 write_json("wsp_heatmap.json",
-           mxc$datetime[[1]])
+           mxc$datetime_mxc[[1]])

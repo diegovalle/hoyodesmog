@@ -15,13 +15,13 @@ License: pixelarity.com/license
         <meta name="twitter:title" content="Interactive Wind Map">
         <meta name="twitter:description" content="Map of wind conditions in the state of Mexico City">
         <meta name="twitter:creator" content="@diegovalle">
-        <meta name="twitter:image" content="og_image.png">
+        <meta name="twitter:image" content="https://hoyodesmog.diegovalle.net/og_image.png">
 
         <!-- Open Graph data -->
         <meta property="og:title" content="Interactive Wind Map" />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="http://hoyodesmog.diegovalle.net/wind.html" />
-        <meta property="og:image" content="og_image.png" />
+        <meta property="og:image" content="https://hoyodesmog.diegovalle.net/og_image.png" />
         <meta property="og:description" content="Map of wind conditions in the state of Mexico City" />
         <meta property="og:site_name" content="Hoyo de Smog" />
 
@@ -327,8 +327,7 @@ License: pixelarity.com/license
                              lineJoin: "miter"
                          });
                          rectangle.bindPopup(String(stations[i].station_name + ': <b>' +
-                                                    stations[i].value + '</b> (' +
-                                                    stations[i].pollutant +')'), {
+                                                    stations[i].value + '</b> m/s'), {
                                                         offset: L.point(0, -2),
                                                         autoPan: false
                                                     })
@@ -363,6 +362,8 @@ License: pixelarity.com/license
                      }
 
                      function drawingOnCanvas(canvasOverlay, params) {
+                         // Start drawing on canbas
+                         console.time("arrows");
                          var ctx = params.canvas.getContext('2d');
                          ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
                          gridx = data[1][2]-data[pixels + 1][2];
@@ -371,6 +372,7 @@ License: pixelarity.com/license
                              var d = data[i];
                              dot = canvasOverlay._map.latLngToContainerPoint([d[2],
                                                                               d[1]]);
+
                              end = components(d[0] , wsp[i][0]*.000259248*3);
                              w = canvasOverlay.
                                                _map.
@@ -381,11 +383,13 @@ License: pixelarity.com/license
                                  ctx.stroke();
 
                          }
+                         console.timeEnd("arrows");
                      };
 
                      leafletMap.on('mousemove click', function(e) {
                          gridx = data[1][2]-data[pixels + 1][2];
                          gridy = data[1][1]-data[2][1];
+                         console.time("findPolygon");
                          for (var i = 0; i < data.length; i++) {
                              var d = data[i];
 
@@ -406,6 +410,7 @@ License: pixelarity.com/license
                                  //window[e.type].innerHTML = '';
                              }
                          }
+                         console.timeEnd("findPolygon");
 
                      });
                  });

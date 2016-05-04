@@ -323,44 +323,44 @@ We can improve on the dot plot of the data by creating agrid of Mexico City and 
 distace weigthing to color each cell.
 
 ```{r}
-geog.o3 <- mxc[,c("lat", "lon", "value")]
-coordinates(geog.o3) <- ~lon+lat
-#spplot(geog.o3)
+geography.o3 <- mxc[,c("lat", "lon", "value")]
+coordinates(geography.o3) <- ~lon+lat
+#spplot(geography.o3)
 
 pixels = 50
-geog.grd <- expand.grid(x=seq((min(coordinates(geog.o3)[,1])-.15),
-                          (max(coordinates(geog.o3)[,1])+.15),
+geography.grd <- expand.grid(x=seq((min(coordinates(geography.o3)[,1])-.15),
+                          (max(coordinates(geography.o3)[,1])+.15),
                           length.out=pixels),
-                        y=seq((min(coordinates(geog.o3)[,2])-.15),
-                          (max(coordinates(geog.o3)[,2])+.15),
+                        y=seq((min(coordinates(geography.o3)[,2])-.15),
+                          (max(coordinates(geography.o3)[,2])+.15),
                           length.out=pixels))
 
-grd.pts <- SpatialPixels(SpatialPoints((geog.grd)))
-grd.pts <- as(grd.pts, "SpatialGrid")
+geography.pts <- SpatialPixels(SpatialPoints((geography.grd)))
+geography.pts <- as(geography.pts, "SpatialGrid")
 ```
 
 Here's what the grid looks like:
 
 ```{r}
-plot(grd.pts, cex = 1.5, col = "grey")
-points(geog.o3, pch = 1, col = "red", cex = 1)
+plot(geography.pts, cex = 1.5, col = "grey")
+points(geography.o3, pch = 1, col = "red", cex = 1)
 
-geog.idw <- idw(value ~ 1, geog.o3, grd.pts, idp=6)
+geography.idw <- idw(value ~ 1, geography.o3, geography.pts, idp=6)
 ```
 
 coloring the grid with the weigthed values:
 
 ```{r}
-spplot(geog.idw["var1.pred"])
+spplot(geography.idw["var1.pred"])
 
-idw = as.data.frame(geog.idw)
+idw = as.data.frame(geography.idw)
 names(idw) <- c("var1.pred", "var1.var", "lon", "lat") 
 ```
 
 and finally plotting the grid on top of a Google Map
 
 ```{r, warning=FALSE}
-qmplot(x, y, data = geog.grd, geom = "blank", 
+qmplot(x, y, data = geography.grd, geom = "blank", 
        maptype = "roadmap", source = "google")  +
   geom_tile(data = idw, aes(x = lon, y = lat, fill = var1.pred), alpha = .5) + 
   scale_fill_viridis("IMECAS", limits = c(0,200), option = "magma") +

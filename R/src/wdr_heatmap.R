@@ -34,6 +34,7 @@ if(last_month != 0) {
 }
 
 
+df <- arrange(df, station_code, pollutant, date, hour)
 df <- subset(df, date == max(df$date) & hour == tail(df, 1)$hour) 
 df <- left_join(df, stations, by = "station_code")
 df <- df[!is.na(df$value),]
@@ -92,4 +93,4 @@ write_json("../web/data/wdr_data.json",
 write_json("../web/data/wdr_stations.json",
            df)
 write_json("wdr_heatmap.json",
-           mxc$datetime[[1]])
+           mxc$datetime_mxc[[1]])

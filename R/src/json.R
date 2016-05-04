@@ -39,6 +39,7 @@ get_data_month <- function(pollutant) {
   
   df <- df %>%
     group_by(station_code) %>%
+    arrange(station_code, date, hour) %>%
     mutate(max = ifelse(all(is.na(tail(value, 6))),
                         NA_real_,
                         max(tail(value,6), na.rm = TRUE))) %>%

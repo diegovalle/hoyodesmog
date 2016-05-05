@@ -1,0 +1,457 @@
+---
+title: "Introduction to the aire.zmvm package"
+author: "Diego Valle-Jones"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    fig_height: 5
+    fig_width: 8
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+
+```{r, include=FALSE}
+# Don't delete this chunk if you are using the mosaic package
+# This loads the mosaic and dplyr packages
+require(mosaic)
+```
+
+```{r, include=FALSE}
+# Some customization.  You can alter or delete as desired (if you know what you are doing).
+
+# This changes the default colors in lattice plots.
+trellis.par.set(theme=theme.mosaic())  
+
+# knitr settings to control how R chunks work.
+require(knitr)
+opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small"    # slightly smaller font for code
+)
+```
+
+## What does it do?
+
+This package downloads pollution data for the Mexico City metro area. It can download real-time, daily maximum, minimum, or hourly average data for each of the pollution (and wind) measuring stations or geographical zones in the Zona Metropolitana del Valle de México.
+
+
+## Installation
+
+For the moment this package is only available from github. For the development version:
+
+```r
+if (!require(devtools)) {
+    install.packages("devtools")
+}
+devtools::install_github('diegovalle/aire.zmvm')
+```
+
+## Quick Example
+
+The package consists mainly of three functions: 
+
+* ```get_station_data``` to download data for each of the pollution (and wind and temperature) measuring stations in the original measuring units.
+* ```get_zone_data``` to download data for each of the 5 geographic zones of Mexico City as measured in [IMECAs](https://en.wikipedia.org/wiki/%C3%8Dndice_Metropolitano_de_la_Calidad_del_Aire) 
+* ```get_latest_data``` to download the latest values for each of the pollution measuring stations.
+
+```{r, fig.show='hold',  message=FALSE}
+library("aire.zmvm")
+library("dplyr")
+library("ggplot2")
+library("mgcv")
+library("lubridate")
+library("stringr")
+
+o3 <- get_station_data(criterion = "MAXIMOS", # Can be one of MAXIMOS (daily maximum), 
+                                                # MINIMOS (daily minimum), 
+                                                # or HORARIOS (hourly average)
+                       pollutant = "O3", # Can be one of "SO2", "CO", "NOX", "NO2", "NO", "O3", 
+                                         # "PM10", "PM25", "WSP", "WDR", "TMP", "RH"
+                       year = 2005:2016) # A numeric vector, the earliest year allowed is 1986
+
+# Daily max among all base stations
+o3_max <- o3 %>% 
+  group_by(date) %>% 
+  summarise(max = ifelse(all(is.na(value)),
+                         NA,
+                         base::max(value, na.rm = TRUE))) %>%
+  na.omit()
+
+# Plot the daily highest pm10 level with trendline
+ggplot(o3_max, 
+       aes(date, max, group = 1)) +
+  geom_point(color = "black", size = .2, alpha = .4) +
+  geom_smooth(method = "gam", formula = y ~ s(x, k = 25)) +
+  ggtitle("Daily maximum O3 levels") +
+  ylab("maximum daily O3 value in ppb") +
+  xlab("date") +
+  geom_vline(xintercept = as.numeric(as.Date("2015-07-01"))) +
+  annotate("text", label = "supreme court ruling", 
+           x = as.Date("2014-01-20"),
+           y = 350) +
+  theme_bw()
+```
+
+## Station data
+
+The function ```get_station_data``` can be used to download pollution and wind data going back to 1986, altough not all pollutants are available that far back, and requesting a pollutant that is
+not available will result in a warning.
+
+```{r get-data, cache=TRUE}
+download_data <- function(pollutant) {
+  print(paste0("Downloading data for: ", pollutant))
+  suppressWarnings({
+    o3 <- get_station_data(criterion = "MAXIMOS", # Can be MAXIMOS (daily maximum), 
+                           # MINIMOS (daily minimum), 
+                           # or HORARIOS (hourly average)
+                           pollutant = pollutant, # "SO2", "CO", "NOX", "NO2", "NO", "O3", 
+                           # "PM10", "PM25", "WSP", "WDR", "TMP", "RH"
+                           year = 1986:2016) # The earliest year allowed is 1986
+  })  
+  o3$pollutant <- pollutant
+  # Daily max among all base stations
+  o3 %>% 
+    group_by(date, pollutant) %>% 
+    summarise(max = ifelse(all(is.na(value)),
+                           NA,
+                           base::max(value, na.rm = TRUE))) %>%
+    na.omit()
+}
+
+ll <- mapply(download_data, 
+             pollutant = c("NO", "SO2", "CO", "NOX", "NO2", "O3", "PM10", "PM25"),
+             SIMPLIFY = FALSE)
+df_maximos <- bind_rows(ll)
+knitr::kable(head(df_maximos))
+```
+
+
+We can plot all pollutants going back to 1986 and add a trend line based on a GAM controlling for month of year, with lines for the start of the hoy no circula and the supreme court decision that the hoy no circula doesn't necesarlly apply to older cars. A more complex model is left as an execise to the reader.
+
+
+```{r smallmult, fig.width=9, fig.height=7}
+fitted <- function(max, month, date, year) {
+  df=data.frame(max = max,
+                month = month,
+                date = date,
+                year = year)
+  fit <- gam(max ~ s(month, bs = "cc", k = 12) + s(as.numeric(date), k = 20),
+         data = df, correlation = corARMA(form = ~ 1|year, p = 1))
+  predict(fit, newdata = df, type = "terms")[,2] + mean(max)
+}
+
+df_maximos <- df_maximos %>%
+  mutate(month = month(date),
+         year = year(date))%>%
+  group_by(pollutant) %>%
+  mutate(pred =fitted(max,month,date,year))
+
+
+
+
+# Plot the daily highest level with trendline
+ggplot(df_maximos, 
+       aes(date, max, group = 1)) +
+  geom_point(color = "black", size = .2, alpha = .05) +
+  geom_line(aes(date, pred), color ="blue", size = 1.2) +
+  ggtitle("Daily maximum pollutant levels") +
+  ylab("maximum daily value") +
+  xlab("date") +
+  geom_vline(xintercept = as.numeric(as.Date("1989-11-20"))) +
+  geom_vline(xintercept = as.numeric(as.Date("2015-07-01"))) +
+  theme_bw() +
+  facet_wrap(~pollutant, scales = "free_y")
+
+
+```
+
+## Zone data
+
+For measuring pollution Mexico City was divided into four zones. The function ```get_zone_data``` downloads the data for each zones as measured in IMECAs as oppesed to the original units that ```get_station_data``` uses. Note that the statndards for measuring PM10 and O3 in IMECAS changed in October 2014 and the function prints a warning.
+
+```{r, fig.show='hold',  message=FALSE}
+
+# Download pm10 data since 2008 for all available zones ("TZ")
+pm_10 <- get_zone_data(criterion = "MAXIMOS", # Can be MAXIMOS (daily maximum) or 
+                                              # HORARIOS (hourly average)
+                       pollutant = "PM10", # "SO2", "CO", "NO2", "O3", "PM10", 
+                                           # "TC" (All pollutants)
+                       zone = "TZ", # "NO", "NE", "CE", "SO", "SE", "TZ" (All zones)
+                       start_date = "2010-01-01", # Can't be earlier than 2008-01-01
+                       end_date = "2016-03-19") # Can be up to the current date
+knitr::kable(head(pm_10))
+```
+
+
+Plotting the data makes the change in October 2014 really obvious
+
+```{r}
+
+# Plot the overall highest maximum pm10 level with trendline
+ggplot(pm_10 %>% group_by(date) %>% summarise(max = max(value, na.rm = TRUE)), 
+       aes(date, max, group = 1)) +
+  geom_line(color = "darkgray", size = .2) +
+  geom_smooth(method = "gam", formula = y ~ s(x, k = 50), se = FALSE) +
+  ggtitle("Daily maximum PM10 levels in IMECAS") +
+  theme_bw()
+```
+
+## Pollutant levels, by hour
+
+Here's an example plotting the maximum pollution value for Ozone and PM10 by hour of day.
+
+```{r hours-horarios, cache=TRUE}
+
+download_horarios <- function(pollutant) {
+  print(paste0("Downloading data for: ", pollutant))
+  o3 <- get_station_data(criterion = "HORARIOS", # Can be MAXIMOS (daily maximum), 
+                         # MINIMOS (daily minimum), 
+                         # or HORARIOS (hourly average)
+                         pollutant = pollutant, # "SO2", "CO", "NOX", "NO2", "NO", "O3", 
+                         # "PM10", "PM25", "WSP", "WDR", "TMP", "RH"
+                         year = 2001:2016) # The earliest year allowed is 1986
+  o3$pollutant <- pollutant
+  # Daily max among all base stations
+  o3 %>% 
+    group_by(date, hour, pollutant) %>% 
+    summarise(max = ifelse(all(is.na(value)),
+                           NA,
+                           base::max(value, na.rm = TRUE))) %>%
+    na.omit()
+}
+
+ll_horarios <- mapply(download_horarios, 
+             pollutant = c("O3", "PM10"),
+             SIMPLIFY = FALSE)
+df_horarios <-bind_rows(ll_horarios)
+```
+
+### Dealing with daylight savings time
+
+The data returned by ```get_station_data``` when the "HORARIOS" criterion is used includes the date and hour of each measurement. The hour is specified as an offset from midnight and does not 
+include daylight savings time (basically GMT+6).
+
+```{r}
+knitr::kable(head(df_horarios))
+# The time is given in hours with no DST
+# GMT has no DST
+df_horarios$datetime <- strptime(str_c(df_horarios$date, " ", df_horarios$hour),
+         "%Y-%m-%d %H", tz = "GMT+6") %>% as.POSIXct()
+# Convert to MXC time
+df_horarios$datetime <- as.POSIXct(format(df_horarios$datetime, 
+                                          tz="America/Mexico_City",
+                                          usetz = TRUE))
+df_horarios$hour_dst <- hour(df_horarios$datetime)
+```
+
+Ozone peaks after midday and PM10 particles peak with communiting hours. But for PM10 a phase I 
+contingency is declared when the __24 hour__ average exceeds 150 IMECAS and for O3 when the
+hourly average exceeds 150 IMECAS (the data is shown in the original units of the data, not IMECAS)
+
+```{r}
+df_horarios$hour_dst <- factor(df_horarios$hour_dst, 
+                               levels = c(5:23, 0:4), 
+                               ordered = TRUE)
+
+ggplot(df_horarios, 
+       aes(hour_dst, max, group = date, color = pollutant)) +
+  geom_line(alpha = I(1/sqrt((2016-2001)*365))) +
+  facet_wrap(~pollutant) +
+  coord_cartesian(ylim = c(0, 380)) +
+  guides(color = guide_legend("pollutant",
+                               override.aes = list(alpha = 1))) +
+  theme_bw() +
+  xlab("hour of day") +
+  ylab("maximum pollution value among all stations") +
+  scale_x_discrete(breaks = seq(0, 23, 5)) +
+  ggtitle("Peak hours for O3 and PM10 pollutants")
+
+
+
+```
+
+
+## Real-time data
+
+We can use the function ```get_latest_data``` to download real-time data of the pollutant with the highest value.
+
+```{r  warning=FALSE }
+
+
+library("ggmap")
+library("viridis")
+library("gstat")
+library("sp")
+
+
+```
+
+```{r}
+mxc <- get_latest_data()
+
+```
+
+The package includes a data.frame with the locations of all stations
+
+```{r message=FALSE}
+data("stations")
+knitr::kable(head(stations))
+qmplot(lon, lat, data = stations, maptype = "toner-background")
+```
+
+
+### Map of stations
+
+but only a subset of stations report data
+
+```{r warning=FALSE }
+mxc <- na.omit(left_join(mxc, stations, by = "station_code"))
+qmplot(lon, lat, data = mxc, maptype = "toner-background", zoom = 11) +
+  geom_point(aes(color = value), size = 8) +
+  scale_color_viridis()
+
+```
+
+We can improve on the dot plot of the data by creating agrid of Mexico City and using inverse
+distace weigthing to color each cell.
+
+```{r}
+geography.o3 <- mxc[,c("lat", "lon", "value")]
+coordinates(geography.o3) <- ~lon+lat
+#spplot(geography.o3)
+
+pixels = 50
+geography.grd <- expand.grid(x=seq((min(coordinates(geography.o3)[,1])-.15),
+                          (max(coordinates(geography.o3)[,1])+.15),
+                          length.out=pixels),
+                        y=seq((min(coordinates(geography.o3)[,2])-.15),
+                          (max(coordinates(geography.o3)[,2])+.15),
+                          length.out=pixels))
+
+geography.pts <- SpatialPixels(SpatialPoints((geography.grd)))
+geography.pts <- as(geography.pts, "SpatialGrid")
+```
+
+Here's what the grid looks like:
+
+```{r}
+plot(geography.pts, cex = 1.5, col = "grey")
+points(geography.o3, pch = 1, col = "red", cex = 1)
+
+geography.idw <- idw(value ~ 1, geography.o3, geography.pts, idp=6)
+```
+
+coloring the grid with the weigthed values:
+
+```{r}
+spplot(geography.idw["var1.pred"])
+
+idw = as.data.frame(geography.idw)
+names(idw) <- c("var1.pred", "var1.var", "lon", "lat") 
+```
+
+and finally plotting the grid on top of a Google Map
+
+```{r, warning=FALSE}
+qmplot(x, y, data = geography.grd, geom = "blank", 
+       maptype = "roadmap", source = "google")  +
+  geom_tile(data = idw, aes(x = lon, y = lat, fill = var1.pred), alpha = .5) + 
+  scale_fill_viridis("IMECAS", limits = c(0,200), option = "magma") +
+  geom_point(data = mxc, aes(x = lon, y = lat, color = quality), size = 2, alpha = .5) +
+  #scale_color_viridis("IMECAS", discrite = TRUE, limits = c(0,200), option = "magma") +
+  scale_color_manual(breaks = c("BUENA", "REGULAR", "MALA", "MUY MALA",
+                                "EXTREMADAMENTE MALA"),
+                     values = viridis(5, option = "plasma")) +
+  ggtitle("Pollution in MXC")
+```
+
+```{r, echo=FALSE}
+# 
+# toJSON(idw, dataframe = "values")
+# 
+# 
+# 
+# 
+# 
+# library(caTools)
+# last_24 <- c(79, 39,41,39,44,63,112,122,107,61,69,68,37,89,79,72,92,84,46,37,23,22,27,36,43)
+# length(last_24)
+# convert_imeca("PM10", mean(last_24))
+# 
+# 
+# pm10_stations <- get_station_data("HORARIOS", "PM10", 2016)
+# pm10_stations$contaminant <- "PM10"
+# o3_stations <- get_station_data("HORARIOS", "O3", 2016)
+# o3_stations$contaminant <- "O3"
+# 
+# pm10_stations <- pm10_stations %>%
+#   group_by(station_code) %>%
+#   do(mutate(., imeca = convert_imeca("PM10", runmean(value, 24, align = "right")))) %>%
+#   as.data.frame()
+# 
+# o3_stations <- o3_stations %>%
+#   group_by(station_code) %>%
+#   do(mutate(., imeca = convert_imeca("O3",
+#                                value))) %>%
+#   as.data.frame()
+# 
+# pollution <- do.call(rbind, list(o3_stations,
+#                     pm10_stations))
+#                     #pm2_stations,
+#                     #so2_stations,
+#                     #no2_stations,
+#                     #co_stations))
+# 
+# max_date <- max(pollution$date)
+# max_hour <- max(pollution[pollution$date == max_date,]$hour)
+# phase_i <- dplyr::filter(pollution, date == max_date & hour == max_hour) %>%
+#   full_join(stations, by = "station_code") %>%
+#   na.omit() %>%
+#   group_by(station_code) %>%
+#   summarise(max_imeca = max(imeca, na.rm = TRUE),
+#             lat = lat[1],
+#             lon = lon[1],
+#             value = value[which(imeca == max(imeca, na.rm = TRUE))][1],
+#             contaminant = contaminant[which(imeca == max(imeca, na.rm = TRUE))][1]) %>%
+#   as.data.frame()
+# 
+# 
+# 
+# tail(filter(pm10_stations, station_code == "VIF"), 25)
+# pm10_to_imeca_2014(mean(tail(filter(pm10_stations, station_code == "VIF"), 24)$value, na.rm=T))
+# runmean(tail(filter(pm10_stations, station_code == "VIF"), 24)$value, 24, align = "right")
+# tail(runmean(filter(pm10_stations, station_code == "VIF")$value, 24, align = "right"))
+# pm10_to_imeca_2014(98.2)
+# 
+# v = tail(filter(pm10_stations, station_code == "CUT"), 90)$value
+# ma <- function(x,n=24){stats::filter(x,rep(1/n,n), sides=2)}
+# ma(v)
+# colMeans(matrix(v, nrow=24), na.rm = TRUE)
+# 
+# 
+# 
+# 
+# o3_to_imeca(15) == 11
+# o3_to_imeca(17) == 12
+# 
+# so2_to_imeca(195) == 150
+# no2_to_imeca(23) == 11
+# pm10_to_imeca_2014(26) == 29
+# pm10_to_imeca_2014(50)
+# last_24 <- c(67,58,49,49,31,138,81,89,93,83,73,83,85,97,105,101,125,107,74,40,28,15,24,35,49)
+# length(last_24)
+# 
+# m <- mean((o3_stations %>%
+#   filter(station_code == "ATI") %>%
+#   do(tail(., n=24)))$value,
+#   na.rm = TRUE)
+# 
+# convert_imeca("PM10", mean(last_24))
+```

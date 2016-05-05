@@ -28,7 +28,7 @@ License: pixelarity.com/license
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-        <link rel="stylesheet" href="/assets/css/main.css" />
+        <link rel="stylesheet" href="/assets/css/main.css?v=1" />
         <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
@@ -187,6 +187,7 @@ License: pixelarity.com/license
                         <li><a href="temperature.html">Temp</a></li>
                         <li><a href="about.html">Acerca</a></li>
                         <li><a href="/aire.zmvm.html">R Package</a></li>
+                        <li><a href="/wind.html"><img width="24" height="16" src="/images/us.png" style="">En</a><li>
                     </ul>
                 </nav>
             </div>
@@ -288,9 +289,9 @@ License: pixelarity.com/license
                          var plasma_st_colors = ["#0D0887", "#7E03A8",
                                                  "#CB4778", "#F89441", "#F0F921"];
                          div.innerHTML = '' +
-                                         'Wind Speed: <span ' +
+                                         'Velocidad: <span ' +
                                          'id="mousemove"></span><br><em>' +
-                                         stations[1].datetime_mxc + '</em><br>'
+                                         stations[1].datetime_mxc.slice(0, 13) + 'h </em><br>'
                          for (var i = 0; i < categories.length; i++) {
                              div.innerHTML +=
                              '<i style="background:' + viridis_st_colors[i] + '"></i> ' +

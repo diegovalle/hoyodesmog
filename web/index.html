@@ -6,6 +6,7 @@ License: pixelarity.com/license
 -->
 <html>
     <head>
+        <link rel="alternate" hreflang="es" href="https://hoyodesmog.diegovalle.net/es/" />
         <title>Real-Time Mexico City Air Quality Index</title>
         <meta name="description" content="Interactive map of the air quality in the state of Mexico City" />
 
@@ -20,7 +21,7 @@ License: pixelarity.com/license
         <!-- Open Graph data -->
         <meta property="og:title" content="Interactive Pollution Map" />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="http://hoyodesmog.diegovalle.net/" />
+        <meta property="og:url" content="https://hoyodesmog.diegovalle.net/" />
         <meta property="og:image" content="https://hoyodesmog.diegovalle.net/og_image.png" />
         <meta property="og:description" content="Map of pollutant concetrations in the state of Mexico City" />
         <meta property="og:site_name" content="Hoyo de Smog" />
@@ -28,7 +29,7 @@ License: pixelarity.com/license
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-        <link rel="stylesheet" href="assets/css/main.css" />
+        <link rel="stylesheet" href="/assets/css/main.css?v=1" />
         <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
@@ -189,6 +190,7 @@ License: pixelarity.com/license
                         <li><a href="temperature.html">Temp</a></li>
                         <li><a href="about.html">About</a></li>
                         <li><a href="aire.zmvm.html">R Package</a></li>
+                        <li><a href="/es/"><img width="24" height="14" src="/images/mx.png" style="">Es</a><li>
                     </ul>
                 </nav>
             </div>
@@ -277,9 +279,9 @@ License: pixelarity.com/license
                  legend.onAdd = function (map) {
 
                      var div = L.DomUtil.create('div', 'info legend');
-                     var categories = ["BUENA (0-50)", "REGULAR (51-100)",
-                                       "MALA (101-150)", "MUY MALA (151-200)",
-                                       "EXT. MALA (>200)"];
+                     var categories = ["Good (0-50)", "Regular (51-100)",
+                                       "Bad (101-150)", "Very Bad (151-200)",
+                                       "Ext. Bad (>200)"];
                      var viridis_st_colors = ["#440154", "#3B528B",
                                               "#21908C", "#5DC963",
                                               "#FDE725"];
@@ -290,8 +292,8 @@ License: pixelarity.com/license
                      var plasma_st_colors = ["#0D0887", "#7E03A8",
                                              "#CB4778", "#F89441", "#F0F921"];
                      div.innerHTML = '<h2>IMECA</h2>' +
-                                     'Value:<span ' +
-                                     'id="mousemove"></span><br><em>' +
+                                     'Value: <span ' +
+                                     'id="mousemove"></span><br>Date: <em>' +
                                      stations[1].datetime.slice(0, 13) + 'h </em><br>'
                      for (var i = 0; i < categories.length; i++) {
                          div.innerHTML +=

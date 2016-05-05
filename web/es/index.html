@@ -6,7 +6,9 @@ License: pixelarity.com/license
 -->
 <html>
     <head>
-        <title>Índice de Calidad del Aire en la Ciudad de México</title>
+
+        <link rel="alternate" hreflang="en" href="https://hoyodesmog.diegovalle.net/" />
+        <title>Mapa Interactivo de la Calidad del Aire en la Ciudad de México</title>
         <meta name="description" content="Índice de Calidad del Aire en la Ciudad de México" />
 
         <!-- Twitter Card data -->
@@ -20,7 +22,7 @@ License: pixelarity.com/license
         <!-- Open Graph data -->
         <meta property="og:title" content="Mapa Interactivo de Contaminación" />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="http://hoyodesmog.diegovalle.net/es/" />
+        <meta property="og:url" content="https://hoyodesmog.diegovalle.net/es/" />
         <meta property="og:image" content="https://hoyodesmog.diegovalle.net/og_image.png" />
         <meta property="og:description" content="Mapa de contaminantes en la Ciudad de México" />
         <meta property="og:site_name" content="Hoyo de Smog" />
@@ -29,7 +31,7 @@ License: pixelarity.com/license
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="canonical" href="https://hoyodesmog.diegovalle.net/es/" />
         <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-        <link rel="stylesheet" href="/assets/css/main.css" />
+        <link rel="stylesheet" href="/assets/css/main.css?v=1" />
         <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
@@ -170,6 +172,7 @@ License: pixelarity.com/license
                         <li><a href="temperature.html">Temp</a></li>
                         <li><a href="about.html">Acerca</a></li>
                         <li><a href="aire.zmvm.html">R Package</a></li>
+                        <li><a href="/"><img width="24" height="16" src="/images/us.png" style="">En</a><li>
                     </ul>
                 </nav>
             </div>
@@ -258,9 +261,9 @@ License: pixelarity.com/license
                  legend.onAdd = function (map) {
 
                      var div = L.DomUtil.create('div', 'info legend');
-                     var categories = ["BUENA (0-50)", "REGULAR (51-100)",
-                                       "MALA (101-150)", "MUY MALA (151-200)",
-                                       "EXT. MALA (>200)"];
+                     var categories = ["Buena (0-50)", "Regular (51-100)",
+                                       "Mala (101-150)", "Muy Mala (151-200)",
+                                       "Ext. Mala (>200)"];
                      var viridis_st_colors = ["#440154", "#3B528B",
                                               "#21908C", "#5DC963",
                                               "#FDE725"];

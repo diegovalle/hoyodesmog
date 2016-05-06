@@ -291,10 +291,22 @@ License: pixelarity.com/license
                                               "#BB3755", "#F98D0A", "#FCFFA4"];
                      var plasma_st_colors = ["#0D0887", "#7E03A8",
                                              "#CB4778", "#F89441", "#F0F921"];
+                     var monthNames = [
+                         "January", "February", "March",
+                         "April", "May", "June", "July",
+                         "August", "September", "October",
+                         "November", "December"
+                     ];
+                     d_str = stations[1].datetime
+                     var d = new Date(d_str.substr(0, 4), d_str.substr(5, 2), d_str.substr(8, 2), d_str.substr(11, 2), d_str.substr(14, 2), d_str.substr(17, 2));
+                     var day = d.getDate();
+                     var monthIndex = d.getMonth();
+                     var year = d.getFullYear();
+                     var hours = d.getHours();
                      div.innerHTML = '<h2>IMECA</h2>' +
                                      'Value: <span ' +
-                                     'id="mousemove"></span><br>Date: <em>' +
-                                     stations[1].datetime.slice(0, 13) + 'h </em><br>'
+                                     'id="mousemove"></span><br><span style="">' +
+                                   monthNames[monthIndex] + ' ' + day + ', ' + hours + 'h </span><br>'
                      for (var i = 0; i < categories.length; i++) {
                          div.innerHTML +=
                          '<i style="background:' + plasma_st_colors[i] + '"></i> ' +

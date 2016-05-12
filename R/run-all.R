@@ -55,7 +55,9 @@ try(
 try(
   source(file.path("src", "json-pm25.R"))
 )
-
+try(
+  source(file.path("src", "json-nox.R"))
+)
 try(
   source(file.path("src", "json-tmp.R"))
 )

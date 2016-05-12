@@ -202,11 +202,11 @@ License: pixelarity.com/license
                         <li>
                             <a href="#">Pollutants</a>
                             <ul>
-                                <li><a href="pm10.html">PM10</a></li>
-                                <li><a href="so2.html">SO2</a></li>
+                                <li><a href="pm10.html">PM<sub>10</sub></a></li>
+                                <li><a href="so2.html">SO<sub>2</sub></a></li>
                                 <li><a href="co.html">CO</a></li>
-                                <li><a href="no2.html">NO2</a></li>
-                                <li><a href="pm25.html">PM2.5</a></li>
+                                <li><a href="no2.html">NO<sub>2</sub></a></li><li><a href="nox.html">NO<sub>X</sub></a></li>
+                                <li><a href="pm25.html">PM<sub>2.5</sub></a></li>
                             </ul>
                         </li>
                         <li><a href="wind.html">Wind</a></li>
@@ -234,7 +234,7 @@ License: pixelarity.com/license
         <script src="assets/js/util.js"></script>
         <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
         <script src="assets/js/main.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+        <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
         <script src="js/d3-color.js"></script>
         <script src="js/L.CanvasOverlay.js"></script>
@@ -273,12 +273,10 @@ License: pixelarity.com/license
          var gridx, gridy;
 
          //var points = data; // data loaded from data.js
+         L.mapbox.accessToken = 'pk.eyJ1IjoiZGllZ292YWxsZSIsImEiOiJjaW8yeHp5OGgxYXMxdTZseTU4cXMyd3FvIn0.uOJ49T1_d6zDjKebAQDl2w';
          var leafletMap = L.map('map').setView([19.48, -99.1], 10);
-         L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-             subdomains: 'abcd',
-             maxZoom: 19
-         }).addTo(leafletMap);
+         L.mapbox.styleLayer('mapbox://styles/mapbox/light-v9').
+           addTo(leafletMap);
 
          var hash = new L.Hash(leafletMap);
 

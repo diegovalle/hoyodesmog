@@ -216,6 +216,39 @@ License: pixelarity.com/license
         <script src="/js/leaflet.hash/leaflet-hash.js" ></script>
         <script src="/assets/js/rbush.js"></script>
         <script>
+         // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+         // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+         // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+
+         // MIT license
+
+         (function() {
+             var lastTime = 0;
+             var vendors = ['ms', 'moz', 'webkit', 'o'];
+             for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+                 window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+                 window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                            || window[vendors[x]+'CancelRequestAnimationFrame'];
+             }
+
+             if (!window.requestAnimationFrame)
+                 window.requestAnimationFrame = function(callback, element) {
+                     var currTime = new Date().getTime();
+                     var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                     var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+                                                timeToCall);
+                     lastTime = currTime + timeToCall;
+                     return id;
+                 };
+
+             if (!window.cancelAnimationFrame)
+                 window.cancelAnimationFrame = function(id) {
+                     clearTimeout(id);
+                 };
+         }());
+        </script>
+        <script>
          var viridis = ["#440154", "#481567", "#482677", "#453781", "#404788",
                         "#39568C", "#33638D", "#2D708E", "#287D8E", "#238A8D",
                         "#1F968B", "#20A387", "#29AF7F", "#3CBB75", "#55C667",
@@ -402,21 +435,21 @@ License: pixelarity.com/license
                                                   "#BB3755", "#F98D0A", "#FCFFA4"];
                          var plasma_st_colors = ["#0D0887", "#7E03A8",
                                                  "#CB4778", "#F89441", "#F0F921"];
-                          var monthNames = [
-                         "Enero", "Febrero", "Marzo",
-                         "Abril", "Mayo", "Junio", "Julio",
-                         "Agosto", "Septiembre", "Octubre",
-                         "Noviembre", "Diciembre"
-                     ];
-                     d_str = stations[1].datetime
-                     var d = new Date(d_str.substr(0, 4), d_str.substr(5, 2), d_str.substr(8, 2), d_str.substr(11, 2), d_str.substr(14, 2), d_str.substr(17, 2));
-                     var day = d.getDate();
-                     var monthIndex = d.getMonth();
-                     var year = d.getFullYear();
-                     var hours = d.getHours();
+                         var monthNames = [
+                             "Enero", "Febrero", "Marzo",
+                             "Abril", "Mayo", "Junio", "Julio",
+                             "Agosto", "Septiembre", "Octubre",
+                             "Noviembre", "Diciembre"
+                         ];
+                         d_str = stations[1].datetime
+                         var d = new Date(d_str.substr(0, 4), d_str.substr(5, 2), d_str.substr(8, 2), d_str.substr(11, 2), d_str.substr(14, 2), d_str.substr(17, 2));
+                         var day = d.getDate();
+                         var monthIndex = d.getMonth();
+                         var year = d.getFullYear();
+                         var hours = d.getHours();
                          div.innerHTML = 'Velocidad: <span ' +
                                          'id="mousemove"></span><br><span style="">' +
-                                   hours + 'h, ' + day + ' de ' + monthNames[monthIndex-1] + ' ' +'</span><br>'
+                                         hours + 'h, ' + day + ' de ' + monthNames[monthIndex-1] + ' ' +'</span><br>'
                          for (var i = 0; i < categories.length; i++) {
                              div.innerHTML +=
                              '<i style="background:' + plasma_st_colors[i] + '"></i> ' +

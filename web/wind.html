@@ -214,6 +214,7 @@ License: pixelarity.com/license
         <script src="js/L.CanvasOverlay.js"></script>
         <script src="js/leaflet.locate/L.Control.Locate.min.js" ></script>
         <script src="js/leaflet.hash/leaflet-hash.js" ></script>
+        <script src="assets/js/rbush.js"></script>
         <script>
          var viridis = ["#440154", "#481567", "#482677", "#453781", "#404788",
                         "#39568C", "#33638D", "#2D708E", "#287D8E", "#238A8D",
@@ -234,11 +235,12 @@ License: pixelarity.com/license
                        "#EF7E4F", "#F69044", "#FBA238", "#FEB62D", "#FDCB26",
                        "#F8E225", "#F0F921"];
          var color_scale = d3.scale.quantize()
-                             .domain([0,32])
-                             .range(viridis);
+                             .domain([0,200])
+                             .range(plasma);
          // number of pixels per side, set in heatmap.r
          var pixels = 100;
          var gridx, gridy;
+         var canvasOverlay, tree;
 
          //var points = data; // data loaded from data.js
          L.mapbox.accessToken = 'pk.eyJ1IjoiZGllZ292YWxsZSIsImEiOiJjaW8yeHp5OGgxYXMxdTZseTU4cXMyd3FvIn0.uOJ49T1_d6zDjKebAQDl2w';
@@ -267,6 +269,120 @@ License: pixelarity.com/license
              return inside;
          };
 
+         function Particle(canvasOverlay, cell_data,
+                           canvas_width, canvas_height) {
+                               this.canvasOverlay = canvasOverlay;
+                               this.left_x = cell_data[0][1];
+                               this.right_x = cell_data[Math.sqrt(cell_data.length)-1][1];
+                               this.top_y = cell_data[0][2];
+                               this.bottom_y = cell_data[cell_data.length-1][2];
+
+                               var coords = get_random_coords(this.canvasOverlay, this.left_x, this.right_x, this.top_y, this.bottom_y);
+                               this.start_x = coords[0];
+                               this.start_y = coords[1];
+                               this.start_x_lat = coords[4];
+                               this.start_y_lng = coords[5];
+                               this.end_x = coords[2];
+                               this.end_y = coords[3];
+                               this.end_x_lat = coords[6];
+                               this.end_y_lng = coords[7];
+                               this.wsp = coords[8]
+                               this.canvas_width = canvas_width;
+                               this.canvas_height = canvas_height;
+                               this.count = 0
+         };
+
+         Particle.prototype.move = function() {
+             this.start_x = this.end_x;
+             this.start_y = this.end_y;
+             this.start_x_lat = this.end_x_lat;
+             this.start_y_lng = this.end_y_lng;
+             end = get_end_coords(this.canvasOverlay, this.start_x_lat, this.start_y_lng);
+             if(end[0] === -1 | this.count > 300 ) {
+                 var coords = get_random_coords(this.canvasOverlay, this.left_x, this.right_x, this.top_y, this.bottom_y);
+                 this.start_x = coords[0];
+                 this.start_y = coords[1];
+                 this.start_x_lat = coords[4];
+                 this.start_y_lng = coords[5];
+                 this.end_x = coords[2];
+                 this.end_y = coords[3];
+                 this.end_x_lat = coords[6];
+                 this.end_y_lng = coords[7];
+                 this.wsp = coords[8];
+                 //this.canvas_width = canvas_width;
+                 //this.canvas_height = canvas_height;
+                 this.count = 0;
+             } else {
+                 this.end_x = end[0];
+                 this.end_y = end[1];
+                 this.end_x_lat = end[2]
+                 this.end_y_lng = end[3];
+                 this.wsp = end[4];
+                 this.count += 1;
+             }
+         };
+
+         Particle.prototype.draw = function(ctx) {
+             ctx.beginPath();
+             canvas_arrow(ctx, this.start_x, this.start_y, this.end_x, this.end_y, color_scale(this.wsp)) ;
+             ctx.stroke();
+         };
+
+         function get_random_coords(canvasOverlay, left_x, right_x, top_y, bottom_y) {
+             var d = [0,
+                      random_range(left_x, right_x),
+                      random_range(top_y, bottom_y)];
+             var  wind_vec = tree.search([d[1], d[2], d[1], d[2]]);
+             if(wind_vec.length == 0)
+                 return([-1, -1, -1, -1, -1, -1,-1,-1]);
+
+             var start = canvasOverlay._map.latLngToContainerPoint([d[2],
+                                                                    d[1]]);
+
+             var comp = components(wind_vec[0][4].wdr,
+                                   wind_vec[0][4].wsp * 0.000259248 * 2);
+             var end = canvasOverlay.
+                                     _map.
+                                     latLngToContainerPoint([d[2] - comp[1],
+                                                             d[1] + comp[0]]);
+             return([start.x, start.y, end.x, end.y, d[2], d[1], d[2] - comp[1], d[1] - comp[0], wind_vec[0][4].wsp]);
+         };
+
+         function get_end_coords(canvasOverlay, start_x_lat, start_y_lng) {
+             var wind_vec = tree.search([start_y_lng, start_x_lat, start_y_lng, start_x_lat]);
+             if(wind_vec.length == 0)
+                 return([-1,-1,-1,-1,-1,-1,-1,-1]);
+             var comp = components(wind_vec[0][4].wdr,
+                                   wind_vec[0][4].wsp * 0.000259248 * 2);
+             var end = canvasOverlay.
+                                     _map.
+                                     latLngToContainerPoint([start_x_lat - comp[1],
+                                                             start_y_lng + comp[0]]);
+             return([end.x, end.y, start_x_lat + comp[1], start_y_lng + comp[0], wind_vec[0][4].wsp]);
+         };
+
+         function random_range(min, max) {
+             return Math.random() * (max - min) + min;
+         }
+
+         // Wind direction: https://compuweather.com/files/2009/10/CompuWeather-Wind-Direction-Compass-Chart.pdf
+         function components(direction, speed) {
+             var theta = direction / 360 * Math.PI * 2;
+             var u = -speed * Math.sin(theta);
+             var v = -speed * Math.cos(theta);
+             return [u, v];
+         }
+
+         function canvas_arrow(context, fromx, fromy, tox, toy){
+             //var headlen = 3;   // length of head in pixels
+             //var angle = Math.atan2(toy-fromy,tox-fromx);
+             context.moveTo(fromx, fromy);
+             context.lineTo(tox, toy);
+             //context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+             //context.moveTo(tox, toy);
+             //context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+         }
+
          d3.json("data/wdr_data.json", function(error, data) {
              d3.json("data/wsp_data.json", function(error, wsp) {
                  d3.json("data/wsp_stations.json", function(error, stations) {
@@ -286,18 +402,52 @@ License: pixelarity.com/license
                                                   "#BB3755", "#F98D0A", "#FCFFA4"];
                          var plasma_st_colors = ["#0D0887", "#7E03A8",
                                                  "#CB4778", "#F89441", "#F0F921"];
-                         div.innerHTML = '' +
-                                         'Wind Speed: <span ' +
-                                         'id="mousemove"></span><br><em>' +
-                                         stations[1].datetime_mxc.slice(0, 13) + 'h </em><br>'
+                         var monthNames = [
+                         "January", "February", "March",
+                         "April", "May", "June", "July",
+                         "August", "September", "October",
+                         "November", "December"
+                     ];
+                     d_str = stations[1].datetime
+                     var d = new Date(d_str.substr(0, 4), d_str.substr(5, 2), d_str.substr(8, 2), d_str.substr(11, 2), d_str.substr(14, 2), d_str.substr(17, 2));
+                     var day = d.getDate();
+                     var monthIndex = d.getMonth();
+                     var year = d.getFullYear();
+                     var hours = d.getHours();
+                         div.innerHTML = 'Wind Speed: <span ' +
+                                         'id="mousemove"></span><br><span style="">' +
+                                   monthNames[monthIndex-1] + ' ' + day + ', ' + hours + 'h </span><br>'
                          for (var i = 0; i < categories.length; i++) {
                              div.innerHTML +=
-                             '<i style="background:' + viridis_st_colors[i] + '"></i> ' +
+                             '<i style="background:' + plasma_st_colors[i] + '"></i> ' +
                              categories[i]  + '<br>';
                          }
 
                          return div;
                      }
+
+                     // width and height of each cell
+                     height = data[1][2]-data[pixels + 1][2];
+                     width = data[1][1]-data[2][1];
+                     // fill the R-tree with all the pollution cells
+                     var squares = []
+                     for(var i = 0; i < data.length; i++) {
+                         var d = data[i];
+                         squares.push([
+                             // latitudes are negative so we have to add to get the
+                             // lower left corner
+                             d[1] +  width/2,
+                             d[2] - height/2,
+                             // upper right corner
+                             d[1] - width/2,
+                             d[2] + height/2,
+                             {
+                                 wdr : d[0],
+                                 wsp: wsp[i][0]
+                             }])
+                     }
+                     tree = rbush(9);
+                     tree.load(squares);
 
                      legend.addTo(leafletMap);
                      L.canvasOverlay()
@@ -315,6 +465,7 @@ License: pixelarity.com/license
                          },
                      }).addTo(leafletMap);
 
+                     // build an r tree for fast searching the wind speed and direction
                      for (var i = 0; i < stations.length; i++) {
                          var c = L.circle([stations[i]["lat"], stations[i]["lon"]],
                                           550);
@@ -338,57 +489,80 @@ License: pixelarity.com/license
                              this.closePopup();
                          });
                      }
-                     // Wind direction: https://compuweather.com/files/2009/10/CompuWeather-Wind-Direction-Compass-Chart.pdf
-                     function components(direction, speed) {
-                         var theta = direction / 360 * Math.PI * 2;
-                         var u = -speed * Math.sin(theta);
-                         var v = -speed * Math.cos(theta);
-                         return [u, -v];
+
+
+
+
+
+
+
+                     var requestId;
+
+
+
+
+
+                     function loop() {
+                         var prev = ctx.globalCompositeOperation;
+                         ctx.fillStyle = "rgba(0, 0, 0, 0.80)"
+                         ctx.globalCompositeOperation = "destination-in";
+                         ctx.fillRect(0, 0, canvas_width, canvas_height);
+                         ctx.globalCompositeOperation = prev;
+                         //ctx.clearRect(0, 0, canvas_width, canvas_height);
+                         particles.forEach(function(particle, i) {
+                             //ctx.beginPath();
+                             //canvas_arrow(ctx, particle[0], particle[1], particle[2], particle[3], particle[4]);
+                             //ctx.stroke();
+                             particle.draw(ctx);
+                             particle.move();
+                         });
+                         requestId = window.requestAnimationFrame(loop, ctx);
                      }
 
-                     //http://stackoverflow.com/questions/808826/draw-arrow-on-canvas-tag
-                     function canvas_arrow(context, fromx, fromy, tox, toy, style){
-                         var headlen = 3;
-                         var angle = Math.atan2(toy-fromy,tox-fromx);
-                         context.strokeStyle = style;
-                         context.moveTo(fromx, fromy);
-                         context.lineTo(tox, toy);
-                         context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),
-                                        toy-headlen*Math.sin(angle-Math.PI/6));
-                         context.moveTo(tox, toy);
-                         context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),
-                                        toy-headlen*Math.sin(angle+Math.PI/6));
+                     function start() {
+                         if (!requestId) {
+                             loop();
+                         }
+                     }
+
+                     function stop() {
+                         if (requestId) {
+                             window.cancelAnimationFrame(requestId);
+                             requestId = undefined;
+                         }
                      }
 
                      function drawingOnCanvas(canvasOverlay, params) {
-                         // Start drawing on canbas
-                         console.time("arrows");
-                         var ctx = params.canvas.getContext('2d');
+                         ctx = params.canvas.getContext('2d');
                          ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
-                         gridx = data[1][2]-data[pixels + 1][2];
-                         gridy = data[1][1]-data[2][1];
-                         for (var i = 0; i < data.length; i++) {
-                             var d = data[i];
-                             dot = canvasOverlay._map.latLngToContainerPoint([d[2],
-                                                                              d[1]]);
+                         canvas_width = params.canvas.width;
+                         canvas_height = params.canvas.height;
 
-                             end = components(d[0] , wsp[i][0]*.000259248*3);
-                             w = canvasOverlay.
-                                               _map.
-                                               latLngToContainerPoint([d[2] - end[1],
-                                                                       d[1] + end[0]]);
-                             ctx.beginPath();
-                             canvas_arrow(ctx, dot.x, dot.y, w.x, w.y, color_scale(wsp[i][0]))
-                                 ctx.stroke();
 
+
+                         // particle = [data[1], data[2]];
+
+                         //wind_vec = tree.search([data[1][1], data[1][2], data[1][1], data[1][2]]);
+                         //wind_vec[0][4].wdr
+
+                         console.time("particles");
+
+                         num_particles = 3000;
+                         particles = new Array(num_particles);
+
+                         for (var i = 0; i < num_particles; i++) {
+                             particles[i] = new Particle(canvasOverlay, data, canvas_width, canvas_height);
                          }
-                         console.timeEnd("arrows");
+
+                         stop();
+                         start();
+                         console.timeEnd("particles");
+
                      };
 
                      leafletMap.on('mousemove click', function(e) {
                          gridx = data[1][2]-data[pixels + 1][2];
                          gridy = data[1][1]-data[2][1];
-                         console.time("findPolygon");
                          for (var i = 0; i < data.length; i++) {
                              var d = data[i];
 
@@ -403,13 +577,12 @@ License: pixelarity.com/license
                                  [ulx, wy]
                              ]);
                              if(isin) {
-                                 window["mousemove"].innerHTML = Math.round(wsp[i][0]) + 'm/s';
+                                 window["mousemove"].innerHTML = Math.round(wsp[i][0]) + ' m/s';
                                  break;
                              } else {
                                  //window[e.type].innerHTML = '';
                              }
                          }
-                         console.timeEnd("findPolygon");
 
                      });
                  });

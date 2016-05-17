@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.json
+*aire.zmvm_cache/*
+*aire.zmvm_files/*
+aire_new.html
+aire_old.html
+log.txt
+time.txt

@@ -10,7 +10,6 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/"
       />
-  <lastmod>2016-05-11T15:50:18+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -20,7 +19,7 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/ozone.html"
       />
-  <lastmod>2016-05-11T15:50:18+00:00</lastmod>
+
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -30,7 +29,7 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/pm10.html"
       />
-  <lastmod>2016-05-11T15:50:18+00:00</lastmod>
+
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -40,7 +39,6 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/so2.html"
       />
-  <lastmod>2016-05-05T15:47:26+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -50,7 +48,6 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/co.html"
       />
-  <lastmod>2016-05-11T15:50:17+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -60,7 +57,7 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/no2.html"
       />
-  <lastmod>2016-05-11T15:50:18+00:00</lastmod>
+
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -70,7 +67,6 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/nox.html"
       />
-  <lastmod>2016-05-11T15:50:17+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -80,7 +76,7 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/pm25.html"
       />
-  <lastmod>2016-05-11T15:50:18+00:00</lastmod>
+
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -90,7 +86,6 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/wind.html"
       />
-  <lastmod>2016-05-11T15:50:19+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -100,7 +95,7 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/temperature.html"
       />
-  <lastmod>2016-05-11T15:50:18+00:00</lastmod>
+
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -110,12 +105,10 @@
       hreflang="es"
       href="https://hoyodesmog.diegovalle.net/es/about.html"
       />
-  <lastmod>2016-05-11T15:53:34+00:00</lastmod>
   <changefreq>weekly</changefreq>
 </url>
 <url>
   <loc>https://hoyodesmog.diegovalle.net/aire.zmvm.html</loc>
-  <lastmod>2016-05-02T02:14:41+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -125,7 +118,6 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/"
       />
-  <lastmod>2016-05-11T15:50:19+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -135,7 +127,6 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/ozone.html"
       />
-  <lastmod>2016-05-11T15:50:19+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -145,7 +136,6 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/pm10.html"
       />
-  <lastmod>2016-05-11T15:50:20+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -155,7 +145,7 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/so2.html"
       />
-  <lastmod>2016-05-11T15:50:20+00:00</lastmod>
+
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -165,7 +155,6 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/co.html"
       />
-  <lastmod>2016-05-11T15:50:19+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -175,7 +164,6 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/no2.html"
       />
-  <lastmod>2016-05-11T15:50:19+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -185,7 +173,7 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/pm25.html"
       />
-  <lastmod>2016-05-11T15:50:20+00:00</lastmod>
+
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -205,7 +193,7 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/temperature.html"
       />
-  <lastmod>2016-05-11T15:50:20+00:00</lastmod>
+
   <changefreq>hourly</changefreq>
 </url>
 <url>
@@ -215,7 +203,6 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/about.html"
       />
-  <lastmod>2016-05-11T15:54:21+00:00</lastmod>
   <changefreq>weekly</changefreq>
 </url>
 <url>
@@ -225,7 +212,6 @@
       hreflang="en"
       href="https://hoyodesmog.diegovalle.net/nox.html"
       />
-  <lastmod>2016-05-11T15:57:46+00:00</lastmod>
   <changefreq>hourly</changefreq>
 </url>
 </urlset>

@@ -99,7 +99,7 @@ d3.json("/data/heatmap_data.json", function(error, data) {
                 monthNames_en[monthIndex-1] + ' ' + day + ', ' + hours + 'h </span><br>';
             else
                 div.innerHTML = '<h2>IMECA</h2>' +
-                'Valor: <span ' +
+                'Índice: <span ' +
                 'id="mousemove"></span><br><em>' +
                 hours + 'h, ' + day + ' de ' + monthNames_es[monthIndex-1] + ' ' +'</em><br>';
             var categories = lang === "en" ? categories_en : categories_es;
@@ -158,47 +158,70 @@ d3.json("/data/heatmap_data.json", function(error, data) {
         function drawingOnCanvas(canvasOverlay, params) {
             var ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
-            gridx = data[1][2]-data[pixels + 1][2];
-            gridy = data[1][1]-data[2][1];
+            /*
+             The latitude of Mexico City, Federal District, Mexico is
+             19.432608 (x), and the longitude (y )is -99.133209
+             The variable data holds an array with Mexico City divided into
+             10,000 cells like this:
+
+             [[pollution_value, longitude, latitude],...]
+
+            The lng and lat refer to the center of the cell
+             */
+            var cell_width = data[0][2] - data[pixels][2];
+            var cell_height = data[0][1] - data[1][1];
+            var upper_left, lower_right, width, height;
             for (var i = 0; i < data.length; i++) {
                 var d = data[i];
-                dot = canvasOverlay._map.latLngToContainerPoint([d[2] - gridx/2,
-                                                                 d[1] -  gridy/2]);
-                wh = canvasOverlay._map
-                    .latLngToContainerPoint([d[2] + gridx/2,
-                                             d[1] + gridy/2]);
+                upper_left = canvasOverlay.
+                    _map.
+                    latLngToContainerPoint([d[2] - cell_width / 2,
+                                            d[1] - cell_height / 2]);
+                lower_right = canvasOverlay._map
+                    .latLngToContainerPoint([d[2] + cell_width / 2,
+                                             d[1] + cell_height / 2]);
                 ctx.beginPath();
-                ctx.rect(dot.x, dot.y, wh.x - dot.x,  wh.y - dot.y);
+                /*
+                 Unlike the data, the canvas rect method uses the x
+                 upper-left corner, the y upper-left corner, and the
+                 width and height
+                 */
+                width = upper_left.x - lower_right.x;
+                height = upper_left.y - lower_right.y;
+                ctx.rect(upper_left.x,
+                         upper_left.y,
+                         width,
+                         height);
                 ctx.fillStyle = color_scale(d[0]);
                 ctx.fill();
-                //add a stroke to avoid blank lines between cells
+                // add a stroke style and width to avoid blank lines between
+                // cells
                 ctx.strokeStyle = color_scale(d[0]);
-                ctx.lineWidth=2;
+                ctx.lineWidth = 4;
                 ctx.stroke();
             }
         };
 
         leafletMap.on('mousemove click', function(e) {
-            gridx = data[1][2]-data[pixels + 1][2];
-            gridy = data[1][1]-data[2][1];
+            var cell_width = data[1][2] - data[pixels + 1][2];
+            var cell_height = data[1][1] - data[2][1];
+            var ulx, uly, lrx, lry;
             for (var i = 0; i < data.length; i++) {
                 var d = data[i];
 
-                ulx = d[2] - gridx/2;
-                uly = d[1] - gridy/2;
-                wx = d[2] + gridx/2;
-                wy = d[1] + gridy/2;
-                isin = pip([e.latlng.lat,e.latlng.lng],[
+                ulx = d[2] - cell_width / 2;
+                uly = d[1] - cell_height / 2;
+                lrx = d[2] + cell_width / 2;
+                lry = d[1] + cell_height / 2;
+                isin = pip([e.latlng.lat, e.latlng.lng], [
                     [ulx, uly],
-                    [wx, uly],
-                    [wx, wy],
-                    [ulx, wy]
+                    [lrx, uly],
+                    [lrx, lry],
+                    [ulx, lry]
                 ]);
-                if(isin) {
-                    window["mousemove"].innerHTML = Math.round(d[0]);
+                if (isin) {
+                    window['mousemove'].innerHTML = Math.round(d[0]);
                     break;
-                } else {
-                    //window[e.type].innerHTML = '';
                 }
             }
 

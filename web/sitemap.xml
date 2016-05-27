@@ -5,6 +5,7 @@
 
 <url>
   <loc>https://hoyodesmog.diegovalle.net/</loc>
+  <priority>1</priority>
   <xhtml:link
       rel="alternate"
       hreflang="es"
@@ -81,6 +82,7 @@
 </url>
 <url>
   <loc>https://hoyodesmog.diegovalle.net/wind.html</loc>
+  <priority>1</priority>
   <xhtml:link
       rel="alternate"
       hreflang="es"
@@ -113,6 +115,7 @@
 </url>
 <url>
   <loc>https://hoyodesmog.diegovalle.net/es/</loc>
+  <priority>1</priority>
   <xhtml:link
       rel="alternate"
       hreflang="en"
@@ -178,6 +181,7 @@
 </url>
 <url>
   <loc>https://hoyodesmog.diegovalle.net/es/wind.html</loc>
+  <priority>1</priority>
   <xhtml:link
       rel="alternate"
       hreflang="en"

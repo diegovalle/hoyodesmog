@@ -38,10 +38,13 @@ var pixels = 100;
 var gridx, gridy;
 
 //var points = data; // data loaded from data.js
-L.mapbox.accessToken = 'pk.eyJ1IjoiZGllZ292YWxsZSIsImEiOiJjaW8yeHp5OGgxYXMxdTZseTU4cXMyd3FvIn0.uOJ49T1_d6zDjKebAQDl2w';
 var leafletMap = L.map('map').setView([19.48, -99.1], 10);
-L.mapbox.styleLayer('mapbox://styles/mapbox/light-v9').
-    addTo(leafletMap);
+L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+}).addTo(leafletMap);
+
 
 var hash = new L.Hash(leafletMap);
 
@@ -183,77 +186,112 @@ d3.json(temp_data, function(error, data) {
 
 
 
+            // build an r tree for fast searching the wind speed and direction
+        /*
+         The latitude of Mexico City, Federal District, Mexico is
+         19.432608 (x), and the longitude (y) is -99.133209
+         The variable data holds an array with Mexico City divided into
+         10,000 cells like this:
+
+         [[pollution_value, longitude, latitude],...]
+
+         The lng and lat refer to the center of the cell
+         */
+        create_rtree = function(data) {
+            // width and height of each cell
+            var cell_height = data[0][2] - data[pixels][2];
+            var cell_width = Math.abs(data[0][1]) - Math.abs(data[1][1]);
+            // fill the R-tree with all the wind cells
+            var squares = [];
+            for (var i = 0; i < data.length; i++) {
+                var d = data[i];
+                // RBush assumes the format of data points to be
+                // [minX, minY, maxX, maxY]
+                squares.push([
+                    // latitudes are negative so we have to add to get the
+                    // lower left corner
+                    d[1] - cell_width / 2,
+                    d[2] - cell_height / 2,
+                    // upper right corner
+                    d[1] + cell_width / 2,
+                    d[2] + cell_height / 2,
+                    // add wind direction and speed as objects
+                    {
+                        value: Math.round(d[0])
+                    }]);
+            }
+            var rtree = rbush(2);
+            rtree.load(squares);
+            return (rtree);
+        };
+        var tree = create_rtree(data);
+
+        leafletMap.on('mousemove click', function(e) {
+             // console.time('search for value');
+
+            temp_value = tree.search([e.latlng.lng, e.latlng.lat,
+                                      e.latlng.lng, e.latlng.lat]);
+            if (temp_value.length) {
+                window['mousemove'].innerHTML = temp_value[0][4].value+ '&#8451;';
+            }
+
+             // console.timeEnd('search for value');
+        });
+
+
             function drawingOnCanvas(canvasOverlay, params) {
+            console.time('canvas');
             var ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
             /*
              The latitude of Mexico City, Federal District, Mexico is
-             19.432608 (x), and the longitude (y )is -99.133209
+             19.432608 (y), and the longitude (x) is -99.133209
              The variable data holds an array with Mexico City divided into
              10,000 cells like this:
 
              [[pollution_value, longitude, latitude],...]
 
-            The lng and lat refer to the center of the cell
+             The lng and lat refer to the center of the cell
              */
-            var cell_width = data[0][2] - data[pixels][2];
-            var cell_height = data[0][1] - data[1][1];
+            var cell_height = data[0][2] - data[pixels][2];
+            var cell_width = Math.abs(data[0][1]) - Math.abs(data[1][1]);
             var upper_left, lower_right, width, height;
+            var fill_color;
             for (var i = 0; i < data.length; i++) {
                 var d = data[i];
+                // add latitude because its negative in Mexico
                 upper_left = canvasOverlay.
                     _map.
-                    latLngToContainerPoint([d[2] - cell_width / 2,
-                                            d[1] - cell_height / 2]);
+                    latLngToContainerPoint([d[2] + cell_height / 2,
+                                            d[1] - cell_width / 2]);
                 lower_right = canvasOverlay._map
-                    .latLngToContainerPoint([d[2] + cell_width / 2,
-                                             d[1] + cell_height / 2]);
+                    .latLngToContainerPoint([d[2] - cell_height / 2,
+                                             d[1] + cell_width / 2]);
                 ctx.beginPath();
                 /*
                  Unlike the data, the canvas rect method uses the x
                  upper-left corner, the y upper-left corner, and the
                  width and height
                  */
-                width = upper_left.x - lower_right.x;
-                height = upper_left.y - lower_right.y;
+                width = Math.abs(lower_right.x - upper_left.x);
+                height = Math.abs(lower_right.y - upper_left.y);
                 ctx.rect(upper_left.x,
                          upper_left.y,
                          width,
                          height);
-                ctx.fillStyle = color_scale(d[0]);
+                fill_color = color_scale(d[0]);
+                ctx.fillStyle = fill_color;
                 ctx.fill();
                 // add a stroke style and width to avoid blank lines between
                 // cells
-                ctx.strokeStyle = color_scale(d[0]);
+                ctx.strokeStyle = fill_color;
                 ctx.lineWidth = 4;
                 ctx.stroke();
             }
+            console.timeEnd('canvas');
         };
 
-        leafletMap.on('mousemove click', function(e) {
-            var cell_width = data[1][2] - data[pixels + 1][2];
-            var cell_height = data[1][1] - data[2][1];
-            var ulx, uly, lrx, lry;
-            for (var i = 0; i < data.length; i++) {
-                var d = data[i];
 
-                ulx = d[2] - cell_width / 2;
-                uly = d[1] - cell_height / 2;
-                lrx = d[2] + cell_width / 2;
-                lry = d[1] + cell_height / 2;
-                isin = pip([e.latlng.lat, e.latlng.lng], [
-                    [ulx, uly],
-                    [lrx, uly],
-                    [lrx, lry],
-                    [ulx, lry]
-                ]);
-                if (isin) {
-                    window['mousemove'].innerHTML = Math.round(d[0]) + '&#8451;';
-                    break;
-                }
-            }
-
-        });
 
 
         });

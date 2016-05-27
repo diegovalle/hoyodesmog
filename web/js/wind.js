@@ -3,7 +3,7 @@ var categories_en = ['Calm', 'Gentle Breeze',
                      'Hurricane Force'];
 var categories_es = ['Calma', 'Brisa Ligera',
                      'Brisa Fuerte', 'Temporal fuerte',
-                     'Huracán'];
+                     'HuracÃ¡n'];
 var viridis_st_colors = ['#440154', '#3B528B',
                          '#21908C', '#5DC963',
                          '#FDE725'];
@@ -57,12 +57,17 @@ var particles;
 var tree;
 // length of particle movement in degrees
 var particle_len = 0.000259248 * 1;
+// line width of each particle
+var lineWidth = 2;
+// Maximum age of the particle before generating a new one
+var MaxAge = 40;
+var ctx;
 
 
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
-// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+// requestAnimationFrame polyfill by Erik MÃ¶ller. fixes from Paul Irish and Tino Zijdel
 
 // MIT license
 
@@ -94,10 +99,13 @@ var particle_len = 0.000259248 * 1;
 
 
 //var points = data; // data loaded from data.js
-L.mapbox.accessToken = 'pk.eyJ1IjoiZGllZ292YWxsZSIsImEiOiJjaW8yeHp5OGgxYXMxdTZseTU4cXMyd3FvIn0.uOJ49T1_d6zDjKebAQDl2w';
 var leafletMap = L.map('map').setView([19.48, -99.1], 10);
-L.mapbox.styleLayer('mapbox://styles/mapbox/light-v9').
-    addTo(leafletMap);
+L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+}).addTo(leafletMap);
+
 
 var hash = new L.Hash(leafletMap);
 
@@ -157,7 +165,7 @@ Particle.prototype.move = function() {
                    [this.right_x, this.top_y]];
     //if(end[0] === -1 | this.count > 30 |
     //   !pip([this.start_y_lng, this.start_x_lat], canvas_rect)) {
-    if (end[0] === -1 | (Math.random() < .04 & this.count > 40) |
+    if (end[0] === -1 | (Math.random() < .04 & this.count > MaxAge) |
        !pip([this.start_y_lng, this.start_x_lat], canvas_rect)) {
         var coords = get_random_coords(this.canvasOverlay, this.left_x,
                                        this.right_x, this.top_y, this.bottom_y);
@@ -192,7 +200,7 @@ Particle.prototype.draw = function(ctx) {
 
 function canvas_line(context, fromx, fromy, tox, toy, color) {
     context.strokeStyle = color;
-    context.lineWidth = 2;
+    context.lineWidth = lineWidth;
     context.moveTo(fromx, fromy);
     context.lineTo(tox, toy);
 }
@@ -209,7 +217,7 @@ function get_random_coords(canvasOverlay, left_x, right_x, top_y, bottom_y) {
                                                            d[1]]);
 
     var comp = components(wind_vec[0][4].wdr,
-                          wind_vec[0][4].wsp * particle_len);
+                          (wind_vec[0][4].wsp) * particle_len);
     var end = canvasOverlay.
             _map.
             latLngToContainerPoint([d[2] - comp[1],
@@ -226,7 +234,7 @@ function get_end_coords(canvasOverlay, start_x_lat, start_y_lng) {
     if (wind_vec.length == 0)
         return ([-1, -1, -1, -1, -1, -1, -1, -1]);
     var comp = components(wind_vec[0][4].wdr,
-                          wind_vec[0][4].wsp * particle_len);
+                          (wind_vec[0][4].wsp) * particle_len);
     var end = canvasOverlay.
             _map.
             latLngToContainerPoint([start_x_lat - comp[1],
@@ -306,8 +314,18 @@ d3.json('/data/wdr_data.json', function(error, data) {
                         wsp: wsp[i][0]
                     }]);
             }
-            tree = rbush(9);
+            tree = rbush(2);
             tree.load(squares);
+
+            // for (var j = 0; j < 150; j++) {
+            //     console.log(j)
+            //     tree = rbush(j)
+            //     tree.load(squares);
+            //     console.time('tree');
+            //     for (var i = 0; i < 10000; i++)
+            //         tree.search([-99.34973279877691, 19.374493310358307, -99.34973279877691, 19.374493310358307]);
+            //     console.timeEnd('tree');
+            // }
 
             legend.addTo(leafletMap);
             L.canvasOverlay()
@@ -357,10 +375,13 @@ d3.json('/data/wdr_data.json', function(error, data) {
                 ctx.globalCompositeOperation = 'destination-in';
                 ctx.fillRect(0, 0, canvas_width, canvas_height);
                 ctx.globalCompositeOperation = prev;
+                // console.time('draw particles');
                 particles.forEach(function(particle, i) {
                     particle.draw(ctx);
                     particle.move();
                 });
+                // console.timeEnd('draw particles');
+
                 requestId = window.requestAnimationFrame(loop, ctx);
             }
 
@@ -383,7 +404,6 @@ d3.json('/data/wdr_data.json', function(error, data) {
                 canvas_width = params.canvas.width;
                 canvas_height = params.canvas.height;
 
-                console.time('particles');
 
                 particles = new Array(num_particles);
 
@@ -394,9 +414,9 @@ d3.json('/data/wdr_data.json', function(error, data) {
 
                 stop();
                 start();
-                console.timeEnd('particles');
 
             };
+
             leafletMap.on('zoomstart', function(e) { stop(); });
             leafletMap.on('zoomend', function(e) { start(); });
             leafletMap.on('mousedown', function(e) { stop(); });

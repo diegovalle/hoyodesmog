@@ -3,7 +3,7 @@ var categories_en = ['Calm', 'Gentle Breeze',
                      'Hurricane Force'];
 var categories_es = ['Calma', 'Brisa Ligera',
                      'Brisa Fuerte', 'Temporal fuerte',
-                     'HuracÃ¡n'];
+                     'Huracán'];
 var viridis_st_colors = ['#440154', '#3B528B',
                          '#21908C', '#5DC963',
                          '#FDE725'];

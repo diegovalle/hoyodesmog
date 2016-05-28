@@ -1,4 +1,4 @@
-var viridis = ["#440154", "#481567", "#482677", "#453781", "#404788",
+var viridis = ['#440154', '#481567', '#482677', "#453781", "#404788",
                "#39568C", "#33638D", "#2D708E", "#287D8E", "#238A8D",
                "#1F968B", "#20A387", "#29AF7F", "#3CBB75", "#55C667",
                "#73D055", "#95D840", "#B8DE29", "#DCE319", "#FDE725"];
@@ -62,7 +62,7 @@ L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x
 
 var hash = new L.Hash(leafletMap);
 
-pip = function (point, vs) {
+pip = function(point, vs) {
     // ray-casting algorithm based on
     // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 
@@ -81,39 +81,43 @@ pip = function (point, vs) {
     return inside;
 };
 
-d3.json("/data/heatmap_data.json", function(error, data) {
-    d3.json("/data/heatmap_stations.json", function(error, stations) {
+d3.json('/data/heatmap_data.json', function(error, data) {
+    d3.json('/data/heatmap_stations.json', function(error, stations) {
 
         var legend = L.control({position: 'bottomright'});
-        legend.onAdd = function (map) {
+        legend.onAdd = function(map) {
 
             var div = L.DomUtil.create('div', 'info legend');
 
-            d_str = stations[1].datetime
-            var d = new Date(d_str.substr(0, 4), d_str.substr(5, 2), d_str.substr(8, 2), d_str.substr(11, 2), d_str.substr(14, 2), d_str.substr(17, 2));
+            d_str = stations[1].datetime;
+            var d = new Date(d_str.substr(0, 4), d_str.substr(5, 2),
+                             d_str.substr(8, 2), d_str.substr(11, 2),
+                             d_str.substr(14, 2), d_str.substr(17, 2));
             var day = d.getDate();
             var monthIndex = d.getMonth();
             var year = d.getFullYear();
             var hours = d.getHours();
-            if(lang === 'en')
+            if (lang === 'en')
                 div.innerHTML = '<h2>IMECA</h2>' +
                 'Value: <span ' +
                 'id="mousemove"></span><br><span style="">' +
-                monthNames_en[monthIndex-1] + ' ' + day + ', ' + hours + 'h </span><br>';
+                monthNames_en[monthIndex - 1] + ' ' + day + ', ' + hours +
+                'h </span><br>';
             else
-                div.innerHTML = '<h2>IMECA</h2>' +
-                'Índice: <span ' +
+                div.innerHTML = '' +
+                'Índice IMECA: <span ' +
                 'id="mousemove"></span><br><em>' +
-                hours + 'h, ' + day + ' de ' + monthNames_es[monthIndex-1] + ' ' +'</em><br>';
-            var categories = lang === "en" ? categories_en : categories_es;
+                hours + 'h, ' + day + ' de ' + monthNames_es[monthIndex - 1] +
+                '</em><br>';
+            var categories = lang === 'en' ? categories_en : categories_es;
             for (var i = 0; i < categories.length; i++) {
-                div.innerHTML +=
-                    '<i style="background:' + plasma_st_colors[i] + '"></i> ' +
-                    categories[i]  + '<br>';
+                div.innerHTML += '<i style="background:' +
+                    plasma_st_colors[i] + '"></i> ' +
+                    categories[i] + '<br>';
             }
 
             return div;
-        }
+        };
 
         legend.addTo(leafletMap);
         L.canvasOverlay()
@@ -148,10 +152,10 @@ d3.json("/data/heatmap_data.json", function(error, data) {
                                            autoPan: false
                                        })
                 .addTo(leafletMap);
-            rectangle.on('mouseover', function (e) {
+            rectangle.on('mouseover', function(e) {
                 this.openPopup();
             });
-            rectangle.on('mouseout', function (e) {
+            rectangle.on('mouseout', function(e) {
                 this.closePopup();
             });
         }

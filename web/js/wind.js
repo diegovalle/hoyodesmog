@@ -265,24 +265,22 @@ d3.json('/data/wdr_data.json', function(error, data) {
                 var div = L.DomUtil.create('div', 'info legend');
 
                 d_str = stations[1].datetime_mxc;
-                var d = new Date(d_str.substr(0, 4), d_str.substr(5, 2),
-                                 d_str.substr(8, 2), d_str.substr(11, 2),
-                                 d_str.substr(14, 2), d_str.substr(17, 2));
-                var day = d.getDate();
-                var monthIndex = d.getMonth();
-                var year = d.getFullYear();
-                var hours = d.getHours();
-                if (lang === 'en')
+                d = moment(d_str, 'YYYY-MM-DD %H:%m:%s');
+                if (lang === 'en') {
+                    d.locale(lang);
                     div.innerHTML = 'Wind Speed: <span ' +
-                    'id="mousemove"></span><br><span style="">' +
-                    monthNames_en[monthIndex - 1] + ' ' + day + ', ' + hours +
-                    'h </span><br>';
-                else
+                        'id="mousemove"></span><br><span style="">' +
+                        d.format('MMM DD, H:mm') +
+                        //monthNames_en[monthIndex - 1] + ' ' + day + ', ' + hours +
+                        'h </span><br>';
+                }
+                else {
+                    d.locale(lang);
                     div.innerHTML = 'Velocidad: <span ' +
-                    'id="mousemove"></span><br><span style="">' +
-                    hours + 'h, ' + day + ' de ' +
-                    monthNames_es[monthIndex - 1] +
-                    ' ' + '</span><br>';
+                        'id="mousemove"></span><br><em>' +
+                        d.format('H:mm[h], DD[ de ]MMM') +
+                        '</em><br>';
+                }
                 categories = lang === 'en' ? categories_en : categories_es;
                 for (var i = 0; i < categories.length; i++) {
                     div.innerHTML +=

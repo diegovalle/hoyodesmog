@@ -54,9 +54,8 @@ var canvasOverlay, tree;
 var requestId;
 var num_particles = 3000;
 var particles;
-var tree;
 // length of particle movement in degrees
-var particle_len = 0.000259248 * 1;
+var particle_len = .1;//0.000259248 * 1;
 // line width of each particle
 var lineWidth = 2;
 // Maximum age of the particle before generating a new one
@@ -67,7 +66,7 @@ var ctx;
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
-// requestAnimationFrame polyfill by Erik MÃ¶ller. fixes from Paul Irish and Tino Zijdel
+// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 
 // MIT license
 
@@ -128,73 +127,76 @@ pip = function(point, vs) {
     return inside;
 };
 
-function Particle(canvasOverlay, cell_data,
+/*
+ The latitude of Mexico City, Federal District, Mexico is
+ 19.432608 (y), and the longitude (x) is -99.133209
+ The variable cell_data holds an array with Mexico City divided into
+ 10,000 cells like this:
+
+ [[pollution_value, longitude, latitude],...]
+
+ The lng and lat refer to the center of the cell
+ */
+
+function Particle(canvasOverlay, canvas_coords,
                   canvas_width, canvas_height) {
     this.canvasOverlay = canvasOverlay;
-    this.left_x = cell_data[0][1];
-    this.right_x = cell_data[Math.sqrt(cell_data.length) - 1][1];
-    this.top_y = cell_data[0][2];
-    this.bottom_y = cell_data[cell_data.length - 1][2];
 
-    var coords = get_random_coords(this.canvasOverlay, this.left_x,
-                                   this.right_x, this.top_y, this.bottom_y);
-    this.start_x = coords[0];
-    this.start_y = coords[1];
-    this.start_x_lat = coords[4];
-    this.start_y_lng = coords[5];
-    this.end_x = coords[2];
-    this.end_y = coords[3];
-    this.end_x_lat = coords[6];
-    this.end_y_lng = coords[7];
-    this.wsp = coords[8];
+    // The size of the canvas to draw on
+    // left_x, right_x, top_y, bottom_y
+    this.canvas_coords = canvas_coords;
+    // The size of the canvas in pixel
+    // coordinates
+    var left_top = canvasOverlay._map
+            .latLngToContainerPoint([canvas_coords[2],
+                                     canvas_coords[0]]);
+    var right_bottom = canvasOverlay._map
+            .latLngToContainerPoint([canvas_coords[3],
+                                     canvas_coords[1]]);
+    this.canvas_coords_latLng = {'left_x': left_top.x,
+                               'right_x': right_bottom.x,
+                               'top_y': left_top.y,
+                               'bottom_y': right_bottom.y};
+
+    var coords_start = get_random_coords(this.canvasOverlay,
+                                         this.canvas_coords_latLng);
+
+    this.start = coords_start.start;
+    this.end = coords_start.end;
+    this.wsp = coords_start.wsp;
     this.canvas_width = canvas_width;
     this.canvas_height = canvas_height;
     this.count = 0;
-};
+}
 
 Particle.prototype.move = function() {
-    this.start_x = this.end_x;
-    this.start_y = this.end_y;
-    this.start_x_lat = this.end_x_lat;
-    this.start_y_lng = this.end_y_lng;
-    end = get_end_coords(this.canvasOverlay,
-                         this.start_x_lat, this.start_y_lng);
-    canvas_rect = [[this.left_x, this.top_y],
-                   [this.left_x, this.bottom_y],
-                   [this.right_x, this.bottom_y],
-                   [this.right_x, this.top_y]];
+    this.start= this.end;
+    var coords_end = get_end_coords(this.canvasOverlay,
+                         this.start);
+    // canvas_rect = [[this.left_x, this.top_y],
+    //                [this.left_x, this.bottom_y],
+    //                [this.right_x, this.bottom_y],
+    //                [this.right_x, this.top_y]];
     //if(end[0] === -1 | this.count > 30 |
     //   !pip([this.start_y_lng, this.start_x_lat], canvas_rect)) {
-    if (end[0] === -1 | (Math.random() < .04 & this.count > MaxAge) |
-       !pip([this.start_y_lng, this.start_x_lat], canvas_rect)) {
-        var coords = get_random_coords(this.canvasOverlay, this.left_x,
-                                       this.right_x, this.top_y, this.bottom_y);
-        this.start_x = coords[0];
-        this.start_y = coords[1];
-        this.start_x_lat = coords[4];
-        this.start_y_lng = coords[5];
-        this.end_x = coords[2];
-        this.end_y = coords[3];
-        this.end_x_lat = coords[6];
-        this.end_y_lng = coords[7];
-        this.wsp = coords[8];
-        //this.canvas_width = canvas_width;
-        //this.canvas_height = canvas_height;
+    if (coords_end[0] === -9999 | Math.random() < .1 | this.count > MaxAge) {
+        var coords_start = get_random_coords(this.canvasOverlay,
+                                             this.canvas_coords_latLng);
+        this.start = coords_start.start;
+        this.end = coords_start.end;
+        this.wsp = coords_start.wsp;
         this.count = 0;
     } else {
-        this.end_x = end[0];
-        this.end_y = end[1];
-        this.end_x_lat = end[2];
-        this.end_y_lng = end[3];
-        this.wsp = end[4];
+        this.end = coords_end.end;
+        this.wsp = coords_end.wsp;
         this.count += 1;
     }
 };
 
 Particle.prototype.draw = function(ctx) {
     ctx.beginPath();
-    canvas_line(ctx, this.start_x, this.start_y,
-                this.end_x, this.end_y, 'black');
+    canvas_line(ctx, this.start.x, this.start.y,
+                this.end.x, this.end.y, 'black');
     ctx.stroke();
 };
 
@@ -205,42 +207,40 @@ function canvas_line(context, fromx, fromy, tox, toy, color) {
     context.lineTo(tox, toy);
 }
 
-function get_random_coords(canvasOverlay, left_x, right_x, top_y, bottom_y) {
-    var d = [0,
-             random_range(left_x, right_x),
-             random_range(top_y, bottom_y)];
-    var wind_vec = tree.search([d[1], d[2], d[1], d[2]]);
+function get_random_coords(canvasOverlay, canvas_coords) {
+    var particle_len = .2;
+    var d = {'value': 0,
+             'x': random_range(canvas_coords.left_x, canvas_coords.right_x),
+             'y': random_range(canvas_coords.top_y, canvas_coords.bottom_y)
+            };
+    var wind_vec = tree.search([d.x, -d.y, d.x, -d.y]);
     if (wind_vec.length == 0)
-        return ([-1, -1, -1, -1, -1, -1, -1, -1]);
+        return ({'start': -9999, 'end': -9999, 'wsp': -9999});
 
-    var start = canvasOverlay._map.latLngToContainerPoint([d[2],
-                                                           d[1]]);
+    var start = {'x': d.x,
+                 'y': d.y};
 
     var comp = components(wind_vec[0][4].wdr,
                           (wind_vec[0][4].wsp) * particle_len);
-    var end = canvasOverlay.
-            _map.
-            latLngToContainerPoint([d[2] - comp[1],
-                                    d[1] + comp[0]]);
-    return ([start.x, start.y, end.x, end.y,
-             d[2], d[1],
-             d[2] - comp[1], d[1] - comp[0],
-             wind_vec[0][4].wsp]);
+    var end = {'x': d.x + comp[1],
+               'y': d.y + comp[0]};
+    return ({'start': start, 'end': end, 'wsp': wind_vec[0][4].wsp});
 }
 
-function get_end_coords(canvasOverlay, start_x_lat, start_y_lng) {
-    var wind_vec = tree.search([start_y_lng, start_x_lat,
-                                start_y_lng, start_x_lat]);
+function get_end_coords(canvasOverlay, start) {
+    var particle_len = .2;
+    var wind_vec = tree.search([start.x, -start.y,
+                                start.x, -start.y]);
     if (wind_vec.length == 0)
-        return ([-1, -1, -1, -1, -1, -1, -1, -1]);
+        return ({'end': -9999,
+                 'wsp': -9999});
     var comp = components(wind_vec[0][4].wdr,
                           (wind_vec[0][4].wsp) * particle_len);
-    var end = canvasOverlay.
-            _map.
-            latLngToContainerPoint([start_x_lat - comp[1],
-                                    start_y_lng + comp[0]]);
-    return ([end.x, end.y, start_x_lat + comp[1],
-            start_y_lng + comp[0], wind_vec[0][4].wsp]);
+    var end = {'x': start.x + comp[1],
+               'y': start.y + comp[0]};
+
+    return ({'end': end,
+             'wsp': wind_vec[0][4].wsp});
 }
 
 function random_range(min, max) {
@@ -253,15 +253,59 @@ function components(direction, speed) {
     var theta = direction / 360 * Math.PI * 2;
     var u = -speed * Math.sin(theta);
     var v = -speed * Math.cos(theta);
-    return [u, v];
+    return [u, -v];
 }
+
+// build an r tree for fast searching the wind speed and direction
+/*
+ The latitude of Mexico City, Federal District, Mexico is
+ 19.432608 (y), and the longitude (x) is -99.133209
+ The variable data holds an array with Mexico City divided into
+ 10,000 cells like this:
+
+ [[pollution_value, longitude, latitude],...]
+
+ The lng and lat refer to the center of the cell
+ */
+create_rtree = function(data, wsp, canvasOverlay) {
+    // width and height of each cell
+    var cell_height = data[0][2] - data[pixels][2];
+    var cell_width = Math.abs(data[0][1]) - Math.abs(data[1][1]);
+    // fill the R-tree with all the wind cells
+    var squares = [];
+    for (var i = 0; i < data.length; i++) {
+        var d = data[i];
+        // [minX, minY, maxX, maxY] (bounding box coordinates)
+        min = canvasOverlay.
+            _map.
+            latLngToContainerPoint([d[2] - cell_height / 2,
+                                    d[1] - cell_width / 2]);
+        max = canvasOverlay.
+            _map.
+            latLngToContainerPoint([d[2] + cell_height / 2,
+                                    d[1] + cell_width / 2]);
+        squares.push([min.x,
+                      -min.y,
+                      max.x,
+                      -max.y,
+                      {
+                          wdr: d[0],
+                          wsp: wsp[i][0]
+                      }]);
+    }
+    var rtree = rbush(2);
+    rtree.load(squares);
+    return (rtree);
+};
 
 d3.json('/data/wdr_data.json', function(error, data) {
     d3.json('/data/wsp_data.json', function(error, wsp) {
         d3.json('/data/wsp_stations.json', function(error, stations) {
+
+
+            // map legend
             var legend = L.control({position: 'bottomright'});
             legend.onAdd = function(map) {
-
                 var div = L.DomUtil.create('div', 'info legend');
 
                 d_str = stations[1].datetime_mxc;
@@ -294,39 +338,6 @@ d3.json('/data/wdr_data.json', function(error, data) {
                 return div;
             };
 
-            // width and height of each cell
-            height = data[1][2] - data[pixels + 1][2];
-            width = data[1][1] - data[2][1];
-            // fill the R-tree with all the wind cells
-            var squares = [];
-            for (var i = 0; i < data.length; i++) {
-                var d = data[i];
-                squares.push([
-                    // latitudes are negative so we have to add to get the
-                    // lower left corner
-                    d[1] + width / 2,
-                    d[2] - height / 2,
-                    // upper right corner
-                    d[1] - width / 2,
-                    d[2] + height / 2,
-                    {
-                        wdr: d[0],
-                        wsp: wsp[i][0]
-                    }]);
-            }
-            tree = rbush(2);
-            tree.load(squares);
-
-            // for (var j = 0; j < 150; j++) {
-            //     console.log(j)
-            //     tree = rbush(j)
-            //     tree.load(squares);
-            //     console.time('tree');
-            //     for (var i = 0; i < 10000; i++)
-            //         tree.search([-99.34973279877691, 19.374493310358307, -99.34973279877691, 19.374493310358307]);
-            //     console.timeEnd('tree');
-            // }
-
             legend.addTo(leafletMap);
             L.canvasOverlay()
                 .drawing(drawingOnCanvas)
@@ -343,7 +354,18 @@ d3.json('/data/wdr_data.json', function(error, data) {
                 }
             }).addTo(leafletMap);
 
-            // build an r tree for fast searching the wind speed and direction
+
+            // for (var j = 0; j < 150; j++) {
+            //     console.log(j)
+            //     tree = rbush(j)
+            //     tree.load(squares);
+            //     console.time('tree');
+            //     for (var i = 0; i < 10000; i++)
+            //         tree.search([-99.34973279877691, 19.374493310358307, -99.34973279877691, 19.374493310358307]);
+            //     console.timeEnd('tree');
+            // }
+
+            // create small rectangles for each station
             for (var i = 0; i < stations.length; i++) {
                 var c = L.circle([stations[i]['lat'], stations[i]['lon']],
                                  550);
@@ -404,11 +426,21 @@ d3.json('/data/wdr_data.json', function(error, data) {
                 canvas_width = params.canvas.width;
                 canvas_height = params.canvas.height;
 
+                console.time('create tree');
+                tree = create_rtree(data, wsp, canvasOverlay);
+                console.timeEnd('create tree');
 
                 particles = new Array(num_particles);
-
+                //var cell_height = data[0][2] - data[pixels][2];
+                //var cell_width = Math.abs(data[0][1]) - Math.abs(data[1][1]);
+                // The size of the canvas to draw on
+                // left_x, right_x, top_y, bottom_y
+                var canvas_coords = [data[0][1],
+                                     data[Math.sqrt(data.length) - 1][1],
+                                     data[0][2],
+                                     data[data.length - 1][2]];
                 for (var i = 0; i < num_particles; i++) {
-                    particles[i] = new Particle(canvasOverlay, data,
+                    particles[i] = new Particle(canvasOverlay, canvas_coords,
                                                 canvas_width, canvas_height);
                 }
 
@@ -442,8 +474,6 @@ d3.json('/data/wdr_data.json', function(error, data) {
                         window['mousemove'].innerHTML = Math.round(wsp[i][0]) +
                             ' m/s';
                         break;
-                    } else {
-                        //window[e.type].innerHTML = '';
                     }
                 }
 

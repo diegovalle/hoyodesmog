@@ -57,9 +57,9 @@ var particles;
 // length of particle movement in degrees
 // var particle_len = .1;//0.000259248 * 1;
 // line width of each particle
-var lineWidth = 2;
+var lineWidth = 1.2;
 // Maximum age of the particle before generating a new one
-var MaxAge = 40;
+var MaxAge = 60;
 var strokeStyle = 'black';
 var ctx;
 
@@ -112,7 +112,7 @@ var hash = new L.Hash(leafletMap);
 pip = function(point, vs) {
     // ray-casting algorithm based on
     // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-
+    //console.time('pip')
     var x = point[0], y = point[1];
 
     var inside = false;
@@ -124,7 +124,7 @@ pip = function(point, vs) {
                 (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
     }
-
+    //console.timeEnd('pip')
     return inside;
 };
 
@@ -154,15 +154,18 @@ function Particle(canvasOverlay, canvas_coords,
     var right_bottom = canvasOverlay._map
             .latLngToContainerPoint([canvas_coords[3],
                                      canvas_coords[1]]);
-    this.canvas_coords_px = {'left_x': left_top.x,
-                               'right_x': right_bottom.x,
-                               'top_y': left_top.y,
-                               'bottom_y': right_bottom.y};
+    // size of the canvas which contains the cells measured in
+    // pixels
+    this.canvas_coords_px = {'left_x': left_top.x < 0 ? 0 : left_top.x,
+                             'right_x': right_bottom.x > canvas_width ? canvas_width : right_bottom.x,
+                             'top_y': left_top.y  < 0 ? 0 : left_top.y,
+                             'bottom_y': right_bottom.y > canvas_height ? canvas_height : right_bottom.y};
 
-    this.particle_len = (right_bottom.y - left_top.y) / (1000);
+
+    this.particle_len = (this.canvas_coords_px.left_x - this.canvas_coords_px.right_x) * .01;
     var coords_start = get_random_coords(this.canvasOverlay,
                                          this.canvas_coords_px,
-                                        this.particle_len);
+                                         this.particle_len);
 
     this.start = coords_start.start;
     this.end = coords_start.end;
@@ -177,17 +180,21 @@ Particle.prototype.move = function() {
     var coords_end = get_end_coords(this.canvasOverlay,
                                     this.start,
                                     this.particle_len);
-    canvas_rect = [[this.canvas_coords_px.left_x, this.canvas_coords_px.top_y],
-                   [this.canvas_coords_px.left_x, this.canvas_coords_px.bottom_y],
-                   [this.canvas_coords_px.right_x, this.canvas_coords_px.bottom_y],
-                   [this.canvas_coords_px.right_x, this.canvas_coords_px.top_y]];
+    var canvas_rect = [[this.canvas_coords_px.left_x,
+                        this.canvas_coords_px.top_y],
+                       [this.canvas_coords_px.left_x,
+                        this.canvas_coords_px.bottom_y],
+                       [this.canvas_coords_px.right_x,
+                        this.canvas_coords_px.bottom_y],
+                       [this.canvas_coords_px.right_x,
+                        this.canvas_coords_px.top_y]];
     //if(end[0] === -1 | this.count > 30 |
     //   !pip([this.start_y_lng, this.start_x_lat], canvas_rect)) {
-    if (coords_end[0] === -9999 | (Math.random() < .05 & this.count > MaxAge) |
+    if (coords_end[0] === -9999 | (Math.random() < .1 & this.count > MaxAge) | (Math.random() < .025) |
         !pip([this.start.x, this.start.y], canvas_rect)) {
         var coords_start = get_random_coords(this.canvasOverlay,
                                              this.canvas_coords_px,
-                                            this.particle_len);
+                                             this.particle_len);
         this.start = coords_start.start;
         this.end = coords_start.end;
         this.wsp = coords_start.wsp;
@@ -224,12 +231,8 @@ function get_random_coords(canvasOverlay, canvas_coords_px, particle_len) {
 
     var start = {'x': d.x,
                  'y': d.y};
-
-    var comp = components(wind_vec[0][4].wdr,
-                          (wind_vec[0][4].wsp) * particle_len);
-    var end = {'x': d.x + comp[0],
-               'y': d.y + comp[1]};
-    return ({'start': start, 'end': end, 'wsp': wind_vec[0][4].wsp});
+    // Start as a point to avoid drawing a big ugly line with no blend-in
+    return ({'start': start, 'end': start, 'wsp': wind_vec[0][4].wsp});
 }
 
 function get_end_coords(canvasOverlay, start, particle_len) {
@@ -241,8 +244,8 @@ function get_end_coords(canvasOverlay, start, particle_len) {
                  'wsp': -9999});
     var comp = components(wind_vec[0][4].wdr,
                           (wind_vec[0][4].wsp) * particle_len);
-    var end = {'x': start.x + comp[0],
-               'y': start.y + comp[1]};
+    var end = {'x': start.x + comp.x,
+               'y': start.y + comp.y};
 
     return ({'end': end,
              'wsp': wind_vec[0][4].wsp});
@@ -262,7 +265,7 @@ function components(direction, speed) {
     var theta = direction / 360 * Math.PI * 2;
     var x = -speed * Math.sin(theta);
     var y = -speed * Math.cos(theta);
-    return [x, -y];
+    return {'x':x, 'y':-y};
 }
 
 // build an r tree for fast searching the wind speed and direction
@@ -479,7 +482,7 @@ d3.json('/data/wdr_data.json', function(error, data) {
                     ]);
                     if (isin) {
                         window['mousemove'].innerHTML = Math.round(wsp[i][0]) +
-                            ' m/s' + d[0];
+                            ' m/s';
                         break;
                     }
                 }

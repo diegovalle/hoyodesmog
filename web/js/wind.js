@@ -55,11 +55,12 @@ var requestId;
 var num_particles = 3000;
 var particles;
 // length of particle movement in degrees
-var particle_len = .1;//0.000259248 * 1;
+// var particle_len = .1;//0.000259248 * 1;
 // line width of each particle
 var lineWidth = 2;
 // Maximum age of the particle before generating a new one
 var MaxAge = 40;
+var strokeStyle = 'black';
 var ctx;
 
 
@@ -99,7 +100,7 @@ var ctx;
 
 //var points = data; // data loaded from data.js
 var leafletMap = L.map('map').setView([19.48, -99.1], 10);
-L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
     subdomains: 'abcd',
     maxZoom: 19
@@ -153,13 +154,15 @@ function Particle(canvasOverlay, canvas_coords,
     var right_bottom = canvasOverlay._map
             .latLngToContainerPoint([canvas_coords[3],
                                      canvas_coords[1]]);
-    this.canvas_coords_latLng = {'left_x': left_top.x,
+    this.canvas_coords_px = {'left_x': left_top.x,
                                'right_x': right_bottom.x,
                                'top_y': left_top.y,
                                'bottom_y': right_bottom.y};
 
+    this.particle_len = (right_bottom.y - left_top.y) / (1000);
     var coords_start = get_random_coords(this.canvasOverlay,
-                                         this.canvas_coords_latLng);
+                                         this.canvas_coords_px,
+                                        this.particle_len);
 
     this.start = coords_start.start;
     this.end = coords_start.end;
@@ -172,16 +175,19 @@ function Particle(canvasOverlay, canvas_coords,
 Particle.prototype.move = function() {
     this.start= this.end;
     var coords_end = get_end_coords(this.canvasOverlay,
-                         this.start);
-    // canvas_rect = [[this.left_x, this.top_y],
-    //                [this.left_x, this.bottom_y],
-    //                [this.right_x, this.bottom_y],
-    //                [this.right_x, this.top_y]];
+                                    this.start,
+                                    this.particle_len);
+    canvas_rect = [[this.canvas_coords_px.left_x, this.canvas_coords_px.top_y],
+                   [this.canvas_coords_px.left_x, this.canvas_coords_px.bottom_y],
+                   [this.canvas_coords_px.right_x, this.canvas_coords_px.bottom_y],
+                   [this.canvas_coords_px.right_x, this.canvas_coords_px.top_y]];
     //if(end[0] === -1 | this.count > 30 |
     //   !pip([this.start_y_lng, this.start_x_lat], canvas_rect)) {
-    if (coords_end[0] === -9999 | Math.random() < .1 | this.count > MaxAge) {
+    if (coords_end[0] === -9999 | (Math.random() < .05 & this.count > MaxAge) |
+        !pip([this.start.x, this.start.y], canvas_rect)) {
         var coords_start = get_random_coords(this.canvasOverlay,
-                                             this.canvas_coords_latLng);
+                                             this.canvas_coords_px,
+                                            this.particle_len);
         this.start = coords_start.start;
         this.end = coords_start.end;
         this.wsp = coords_start.wsp;
@@ -196,7 +202,7 @@ Particle.prototype.move = function() {
 Particle.prototype.draw = function(ctx) {
     ctx.beginPath();
     canvas_line(ctx, this.start.x, this.start.y,
-                this.end.x, this.end.y, 'black');
+                this.end.x, this.end.y, strokeStyle);
     ctx.stroke();
 };
 
@@ -207,11 +213,10 @@ function canvas_line(context, fromx, fromy, tox, toy, color) {
     context.lineTo(tox, toy);
 }
 
-function get_random_coords(canvasOverlay, canvas_coords) {
-    var particle_len = .2;
+function get_random_coords(canvasOverlay, canvas_coords_px, particle_len) {
     var d = {'value': 0,
-             'x': random_range(canvas_coords.left_x, canvas_coords.right_x),
-             'y': random_range(canvas_coords.top_y, canvas_coords.bottom_y)
+             'x': random_range(canvas_coords_px.left_x, canvas_coords_px.right_x),
+             'y': random_range(canvas_coords_px.top_y, canvas_coords_px.bottom_y)
             };
     var wind_vec = tree.search([d.x, -d.y, d.x, -d.y]);
     if (wind_vec.length == 0)
@@ -222,12 +227,12 @@ function get_random_coords(canvasOverlay, canvas_coords) {
 
     var comp = components(wind_vec[0][4].wdr,
                           (wind_vec[0][4].wsp) * particle_len);
-    var end = {'x': d.x + comp[1],
-               'y': d.y + comp[0]};
+    var end = {'x': d.x + comp[0],
+               'y': d.y + comp[1]};
     return ({'start': start, 'end': end, 'wsp': wind_vec[0][4].wsp});
 }
 
-function get_end_coords(canvasOverlay, start) {
+function get_end_coords(canvasOverlay, start, particle_len) {
     var particle_len = .2;
     var wind_vec = tree.search([start.x, -start.y,
                                 start.x, -start.y]);
@@ -236,8 +241,8 @@ function get_end_coords(canvasOverlay, start) {
                  'wsp': -9999});
     var comp = components(wind_vec[0][4].wdr,
                           (wind_vec[0][4].wsp) * particle_len);
-    var end = {'x': start.x + comp[1],
-               'y': start.y + comp[0]};
+    var end = {'x': start.x + comp[0],
+               'y': start.y + comp[1]};
 
     return ({'end': end,
              'wsp': wind_vec[0][4].wsp});
@@ -249,11 +254,15 @@ function random_range(min, max) {
 
 // Wind direction:
 // https://compuweather.com/files/2009/10/CompuWeather-Wind-Direction-Compass-Chart.pdf
+// Wind Direction is indicated in terms of degrees from true north
+// (360°). Wind Direction indicates the compass direction from which
+// the wind is blowing.  In other words, if the wind direction is
+// 180°, the wind is from the south toward the north
 function components(direction, speed) {
     var theta = direction / 360 * Math.PI * 2;
-    var u = -speed * Math.sin(theta);
-    var v = -speed * Math.cos(theta);
-    return [u, -v];
+    var x = -speed * Math.sin(theta);
+    var y = -speed * Math.cos(theta);
+    return [x, -y];
 }
 
 // build an r tree for fast searching the wind speed and direction
@@ -309,24 +318,22 @@ d3.json('/data/wdr_data.json', function(error, data) {
                 var div = L.DomUtil.create('div', 'info legend');
 
                 d_str = stations[1].datetime_mxc;
-                var d = new Date(d_str.substr(0, 4), d_str.substr(5, 2),
-                                 d_str.substr(8, 2), d_str.substr(11, 2),
-                                 d_str.substr(14, 2), d_str.substr(17, 2));
-                var day = d.getDate();
-                var monthIndex = d.getMonth();
-                var year = d.getFullYear();
-                var hours = d.getHours();
-                if (lang === 'en')
+                d = moment(d_str, 'YYYY-MM-DD %H:%m:%s');
+                if (lang === 'en') {
+                    d.locale(lang);
                     div.innerHTML = 'Wind Speed: <span ' +
-                    'id="mousemove"></span><br><span style="">' +
-                    monthNames_en[monthIndex - 1] + ' ' + day + ', ' + hours +
-                    'h </span><br>';
-                else
+                        'id="mousemove"></span><br><span style="">' +
+                        d.format('MMM DD, H:mm') +
+                        //monthNames_en[monthIndex - 1] + ' ' + day + ', ' + hours +
+                        'h </span><br>';
+                }
+                else {
+                    d.locale(lang);
                     div.innerHTML = 'Velocidad: <span ' +
-                    'id="mousemove"></span><br><span style="">' +
-                    hours + 'h, ' + day + ' de ' +
-                    monthNames_es[monthIndex - 1] +
-                    ' ' + '</span><br>';
+                        'id="mousemove"></span><br><em>' +
+                        d.format('H:mm[h], DD[ de ]MMM') +
+                        '</em><br>';
+                }
                 categories = lang === 'en' ? categories_en : categories_es;
                 for (var i = 0; i < categories.length; i++) {
                     div.innerHTML +=
@@ -472,7 +479,7 @@ d3.json('/data/wdr_data.json', function(error, data) {
                     ]);
                     if (isin) {
                         window['mousemove'].innerHTML = Math.round(wsp[i][0]) +
-                            ' m/s';
+                            ' m/s' + d[0];
                         break;
                     }
                 }

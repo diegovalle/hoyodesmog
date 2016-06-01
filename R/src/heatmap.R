@@ -57,6 +57,8 @@ write_json("timestamp_heatmap.json",
 line=as.character(Sys.time())
 write(line,file="time.txt",append=TRUE)
 
+
+
 # p <- qmplot(x, y, data = geog.grd, geom = "blank",
 #             maptype = "roadmap", source = "google")  +
 #   geom_tile(data = idw, aes(x = lon, y = lat, fill = var1.pred), alpha = .5) +

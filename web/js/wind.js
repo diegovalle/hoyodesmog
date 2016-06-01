@@ -326,7 +326,7 @@ d3.json('/data/wdr_data.json', function(error, data) {
                     d.locale(lang);
                     div.innerHTML = 'Wind Speed: <span ' +
                         'id="mousemove"></span><br><span style="">' +
-                        d.format('MMM DD, H:mm') +
+                        d.format('MMM D, H:mm') +
                         //monthNames_en[monthIndex - 1] + ' ' + day + ', ' + hours +
                         'h </span><br>';
                 }
@@ -334,7 +334,7 @@ d3.json('/data/wdr_data.json', function(error, data) {
                     d.locale(lang);
                     div.innerHTML = 'Velocidad: <span ' +
                         'id="mousemove"></span><br><em>' +
-                        d.format('H:mm[h], DD[ de ]MMM') +
+                        d.format('H:mm[h], D[ de ]MMM') +
                         '</em><br>';
                 }
                 categories = lang === 'en' ? categories_en : categories_es;

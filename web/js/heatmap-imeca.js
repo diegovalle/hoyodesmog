@@ -96,7 +96,7 @@ d3.json('/data/heatmap_data.json', function(error, data) {
                 div.innerHTML = '' +
                 'IMECA Value: <span ' +
                 'id="mousemove"></span><br><span style="">' +
-                 d.format('MMM DD, H:mm') +
+                 d.format('MMM D, H:mm') +
                 //monthNames_en[monthIndex - 1] + ' ' + day + ', ' + hours +
                 'h </span><br>';
             }
@@ -105,7 +105,7 @@ d3.json('/data/heatmap_data.json', function(error, data) {
                 div.innerHTML = '' +
                 'Índice IMECA: <span ' +
                 'id="mousemove"></span><br><em>' +
-                d.format('H:mm[h], DD[ de ]MMM') +
+                d.format('H:mm[h], D[ de ]MMM') +
                 '</em><br>';
             }
             var categories = lang === 'en' ? categories_en : categories_es;

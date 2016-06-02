@@ -441,14 +441,14 @@ d3.json('/data/wdr_data.json', function(error, data) {
                 console.timeEnd('create tree');
 
                 particles = new Array(num_particles);
-                //var cell_height = data[0][2] - data[pixels][2];
-                //var cell_width = Math.abs(data[0][1]) - Math.abs(data[1][1]);
+                var cell_height = data[0][2] - data[pixels][2];
+                var cell_width = Math.abs(data[0][1]) - Math.abs(data[1][1]);
                 // The size of the canvas to draw on
                 // left_x, right_x, top_y, bottom_y
-                var canvas_coords = [data[0][1],
-                                     data[Math.sqrt(data.length) - 1][1],
-                                     data[0][2],
-                                     data[data.length - 1][2]];
+                var canvas_coords = [data[0][1] - cell_width / 2,
+                                     data[Math.sqrt(data.length) - 1][1] + cell_width / 2,
+                                     data[0][2] + cell_height / 2,
+                                     data[data.length - 1][2] - cell_height / 2];
                 for (var i = 0; i < num_particles; i++) {
                     particles[i] = new Particle(canvasOverlay, canvas_coords,
                                                 canvas_width, canvas_height);

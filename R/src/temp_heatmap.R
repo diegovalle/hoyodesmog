@@ -43,52 +43,57 @@ df$datetime <- strptime(str_c(df$date, " ", df$hour),
 # Convert to MXC time
 df$datetime_mxc <- as.POSIXct(format(df$datetime, tz="America/Mexico_City", usetz=TRUE))
 
-
-if(file.exists("timestamp_tmp.json")) {
-  timestamp <- fromJSON("timestamp_tmp.json", flatten=TRUE)
+heatmap_temp <- function(){
+  geog.o3 <- df[,c("lat", "lon", "value")]
+  coordinates(geog.o3) <- ~lon+lat
+  #spplot(geog.o3)
   
-  if(df$datetime_mxc[[1]] <= timestamp )
-    stop("no new data")
+  pixels = 100
+  geog.grd <- expand.grid(x=seq((min(coordinates(geog.o3)[,1])-.15),
+                                (max(coordinates(geog.o3)[,1])+.15),
+                                length.out=pixels),
+                          y=seq((min(coordinates(geog.o3)[,2])-.15),
+                                (max(coordinates(geog.o3)[,2])+.15),
+                                length.out=pixels))
   
-} 
+  grd.pts <- SpatialPixels(SpatialPoints((geog.grd)))
+  grd.pts <- as(grd.pts, "SpatialGrid")
+  
+  #plot(grd.pts, cex = 1.5, col = "grey")
+  #points(geog.o3, pch = 1, col = "red", cex = 1)
+  
+  geog.idw <- idw(value ~ 1, geog.o3, grd.pts, idp = 2, debug.level =0)
+  
+  #spplot(geog.idw["var1.pred"])
+  
+  idw = as.data.frame(geog.idw)
+  names(idw) <- c("var1.pred", "var1.var", "lon", "lat")
+  
+  # p <- qmplot(x, y, data = geog.grd, geom = "blank",
+  #             maptype = "roadmap", source = "google")  +
+  #   geom_tile(data = idw, aes(x = lon, y = lat, fill = var1.pred), alpha = .5) +
+  #   scale_fill_viridis("IMECAS", limits = c(0,40), option = "inferno") +
+  #   geom_point(data = mxc, aes(x = lon, y = lat, color = value), size = 2, alpha = .5) +
+  #   scale_color_viridis("IMECAS",limits = c(0,40), option = "inferno") +
+  #   ggtitle("Air quality in MXC")
+  #ggsave("map.png", plot = p, width = 9, height = 8, dpi = 100)
+  
+  write_json("../web/data/temperature_data.json",
+             idw[,c("var1.pred", "lon", "lat")], "values")
+  write_json("../web/data/temperature_stations.json",
+             df)
+  write_json("timestamps/timestamp_tmp.json",
+             df$datetime_mxc[[1]])
+}
 
-geog.o3 <- df[,c("lat", "lon", "value")]
-coordinates(geog.o3) <- ~lon+lat
-#spplot(geog.o3)
-
-pixels = 100
-geog.grd <- expand.grid(x=seq((min(coordinates(geog.o3)[,1])-.15),
-                              (max(coordinates(geog.o3)[,1])+.15),
-                              length.out=pixels),
-                        y=seq((min(coordinates(geog.o3)[,2])-.15),
-                              (max(coordinates(geog.o3)[,2])+.15),
-                              length.out=pixels))
-
-grd.pts <- SpatialPixels(SpatialPoints((geog.grd)))
-grd.pts <- as(grd.pts, "SpatialGrid")
-
-#plot(grd.pts, cex = 1.5, col = "grey")
-#points(geog.o3, pch = 1, col = "red", cex = 1)
-
-geog.idw <- idw(value ~ 1, geog.o3, grd.pts, idp = 2, debug.level =0)
-
-#spplot(geog.idw["var1.pred"])
-
-idw = as.data.frame(geog.idw)
-names(idw) <- c("var1.pred", "var1.var", "lon", "lat")
-
-# p <- qmplot(x, y, data = geog.grd, geom = "blank",
-#             maptype = "roadmap", source = "google")  +
-#   geom_tile(data = idw, aes(x = lon, y = lat, fill = var1.pred), alpha = .5) +
-#   scale_fill_viridis("IMECAS", limits = c(0,40), option = "inferno") +
-#   geom_point(data = mxc, aes(x = lon, y = lat, color = value), size = 2, alpha = .5) +
-#   scale_color_viridis("IMECAS",limits = c(0,40), option = "inferno") +
-#   ggtitle("Air quality in MXC")
-#ggsave("map.png", plot = p, width = 9, height = 8, dpi = 100)
-
-write_json("../web/data/temperature_data.json",
-           idw[,c("var1.pred", "lon", "lat")], "values")
-write_json("../web/data/temperature_stations.json",
-           df)
-write_json("temperature_heatmap.json",
-           mxc$datetime_mxc[[1]])
+if(file.exists("timestamps/timestamp_tmp.json")) {
+  timestamp <- fromJSON("timestamps/timestamp_tmp.json", flatten=TRUE)
+  
+  if(df$datetime_mxc[[1]] <= timestamp ) {
+    print("no new data")
+  } else {
+    heatmap_temp()
+  }
+} else {
+  heatmap_temp()
+}

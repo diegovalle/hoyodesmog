@@ -6,56 +6,65 @@ write_json <- function(file_name, stuff, dataframe = NULL) {
 
 mxc <- get_latest_data()
 
-if(file.exists("timestamp_heatmap.json")) {
-  timestamp <- fromJSON("timestamp_heatmap.json", flatten=TRUE)
+heatmap <- function(){
+  print(mxc$datetime[[1]])
+  mxc <- left_join(mxc, stations, by = "station_code")
+  mxc <- mxc[!is.na(mxc$value),]
   
-  if(mxc$datetime[[1]] <= timestamp )
-    stop("no new data")
   
-} 
+  geog.o3 <- mxc[,c("lat", "lon", "value")]
+  coordinates(geog.o3) <- ~lon+lat
+  #spplot(geog.o3)
+  
+  pixels = 100
+  geog.grd <- expand.grid(x=seq((min(coordinates(geog.o3)[,1])-.15),
+                                (max(coordinates(geog.o3)[,1])+.15),
+                                length.out=pixels),
+                          y=seq((min(coordinates(geog.o3)[,2])-.15),
+                                (max(coordinates(geog.o3)[,2])+.15),
+                                length.out=pixels))
+  
+  grd.pts <- SpatialPixels(SpatialPoints((geog.grd)))
+  grd.pts <- as(grd.pts, "SpatialGrid")
+  
+  #plot(grd.pts, cex = 1.5, col = "grey")
+  #points(geog.o3, pch = 1, col = "red", cex = 1)
+  
+  geog.idw <- idw(value ~ 1, geog.o3, grd.pts, idp = 6, debug.level =0)
+  
+  #spplot(geog.idw["var1.pred"])
+  
+  idw = as.data.frame(geog.idw)
+  names(idw) <- c("var1.pred", "var1.var", "lon", "lat")
+  
+  
+  
+  write_json("../web/data/heatmap_data.json",
+             idw[,c("var1.pred", "lon", "lat")], "values")
+  write_json("../web/data/heatmap_stations.json",
+             mxc)
+  write_json("timestamps/timestamp_heatmap.json",
+             mxc$datetime[[1]])
+  
+  line=as.character(Sys.time())
+  write(line,file="time.txt",append=TRUE)
+}
+
+if(file.exists("timestamps/timestamp_heatmap.json")) {
+  timestamp <- fromJSON("timestamps/timestamp_heatmap.json", flatten=TRUE)
+  
+  if(mxc$datetime[[1]] <= timestamp ) {
+    print("no new data")
+  } else {
+    heatmap()
+    
+  }
+  
+} else {
+  heatmap()
+}
   
 
-print(mxc$datetime[[1]])
-mxc <- left_join(mxc, stations, by = "station_code")
-mxc <- mxc[!is.na(mxc$value),]
-
-
-geog.o3 <- mxc[,c("lat", "lon", "value")]
-coordinates(geog.o3) <- ~lon+lat
-#spplot(geog.o3)
-
-pixels = 100
-geog.grd <- expand.grid(x=seq((min(coordinates(geog.o3)[,1])-.15),
-                              (max(coordinates(geog.o3)[,1])+.15),
-                              length.out=pixels),
-                        y=seq((min(coordinates(geog.o3)[,2])-.15),
-                              (max(coordinates(geog.o3)[,2])+.15),
-                              length.out=pixels))
-
-grd.pts <- SpatialPixels(SpatialPoints((geog.grd)))
-grd.pts <- as(grd.pts, "SpatialGrid")
-
-#plot(grd.pts, cex = 1.5, col = "grey")
-#points(geog.o3, pch = 1, col = "red", cex = 1)
-
-geog.idw <- idw(value ~ 1, geog.o3, grd.pts, idp = 6, debug.level =0)
-
-#spplot(geog.idw["var1.pred"])
-
-idw = as.data.frame(geog.idw)
-names(idw) <- c("var1.pred", "var1.var", "lon", "lat")
-
-
-
-write_json("../web/data/heatmap_data.json",
-           idw[,c("var1.pred", "lon", "lat")], "values")
-write_json("../web/data/heatmap_stations.json",
-           mxc)
-write_json("timestamp_heatmap.json",
-           mxc$datetime[[1]])
-
-line=as.character(Sys.time())
-write(line,file="time.txt",append=TRUE)
 
 
 

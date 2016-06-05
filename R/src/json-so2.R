@@ -1,6 +1,6 @@
 
 
-fileName <- "timestamp_so2.json"
+fileName <- "timestamps/timestamp_so2.json"
 pollutant <- "SO2"
 if(file.exists(fileName)) {
   timestamp <- fromJSON(fileName, flatten=TRUE)

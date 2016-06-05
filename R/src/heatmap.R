@@ -50,19 +50,8 @@ heatmap <- function(){
   write(line,file="time.txt",append=TRUE)
 }
 
-if(file.exists("timestamps/timestamp_heatmap.json")) {
-  timestamp <- fromJSON("timestamps/timestamp_heatmap.json", flatten=TRUE)
-  
-  if(mxc$datetime[[1]] <= timestamp ) {
-    print("no new data")
-  } else {
-    heatmap()
-    
-  }
-  
-} else {
-  heatmap()
-}
+
+heatmap()
   
 
 

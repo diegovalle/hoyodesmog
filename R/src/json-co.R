@@ -1,4 +1,4 @@
-fileName <- "timestamp_co.json"
+fileName <- "timestamps/timestamp_co.json"
 pollutant <- "CO"
 
 if(file.exists(fileName)) {

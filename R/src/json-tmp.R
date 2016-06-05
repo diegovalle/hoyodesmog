@@ -1,4 +1,4 @@
-fileName <- "timestamp_tmp.json"
+fileName <- "timestamps/timestamp_tmp_json.json"
 pollutant <- "TMP"
 
 if(file.exists(fileName)) {

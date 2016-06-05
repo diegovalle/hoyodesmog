@@ -34,8 +34,8 @@ main() {
         printf "\n\n%s and %s have DIFFERENT content\n" $OLDFILE $NEWFILE
         echo "date right now: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H %Z')"
 
-        Rscript $SCRIPT
         echo "output from program:"
+        Rscript $SCRIPT
 
         mv -f $NEWFILE $OLDFILE
     fi

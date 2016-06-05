@@ -35,6 +35,8 @@ main() {
         echo "date right now: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H %Z')"
 
         echo "output from program:"
+        # sleep to prevent running the heatmap at the same time
+        sleep 30
         Rscript $SCRIPT
 
         mv -f $NEWFILE $OLDFILE

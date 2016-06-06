@@ -1,6 +1,17 @@
-# hoyodesmog
+# HoyoDeSmog
 
-The template to build the website is not free software. 
+Web site for hoyodesmog.diegovalle.net
+
+To install copy the files to /var/www/hoyodesmog.diegovalle.net, add
+the .conf file to nginx, and add the following lines to cron in a
+system with R already installed.
+
+```{sh}
+1-25,30,40,50 * * * * /var/www/hoyodesmog.diegovalle.net/R/run-all.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-all.txt
+1-25,30,40,50 * * * * /var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt
+```
+
+The template used by the website is not free software.
 
 License: pixelarity.com/license
 

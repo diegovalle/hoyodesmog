@@ -12,4 +12,6 @@ R/timestamps/heatmap_aire_old.html
 aire_new.html
 aire_old.html
 log.txt
+log-all.txt
+log-heatmap.txt
 time.txt

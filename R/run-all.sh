@@ -39,6 +39,8 @@ main() {
         sleep 30
         Rscript $SCRIPT
 
+        printf "\n\n"
+
         mv -f $NEWFILE $OLDFILE
     fi
 }

@@ -37,6 +37,8 @@ main() {
         echo "output from program:"
         Rscript $SCRIPT
 
+        printf "\n\n"
+
         mv -f $NEWFILE $OLDFILE
     fi
 }

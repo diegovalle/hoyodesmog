@@ -53,7 +53,7 @@ heatmap(mxc)
 
 try({
   if(max(mxc$value, na.rm = TRUE) >= 140) {
-    max_idx <- which(mxc$value == max(mxc$value))
+    max_idx <- which(mxc$value == max(mxc$value, na.rm = TRUE))
     SENDGRID_PASS <- Sys.getenv("SENDGRID_PASS") 
     SENDGRID_USER <- Sys.getenv("SENDGRID_USER")
     EMAIL_ADDRESS <- Sys.getenv("EMAIL_ADDRESS")

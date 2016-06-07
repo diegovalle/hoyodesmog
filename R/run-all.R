@@ -15,7 +15,8 @@ packages.to.load <- c("viridis",
                       "chron",
                       "ggmap",
                       "caTools",
-                      "lubridate")
+                      "lubridate",
+                      "mailR")
 packages.not.installed <- setdiff(packages.to.load, installed.packages()[,"Package"])
 if(length(packages.not.installed)) install.packages(packages.not.installed,
                                                     repos="http://cran.rstudio.com")

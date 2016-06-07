@@ -4,9 +4,7 @@ write_json <- function(file_name, stuff, dataframe = NULL) {
   
 }
 
-mxc <- get_latest_data()
-
-heatmap <- function(){
+heatmap <- function(mxc){
   print(mxc$datetime[[1]])
   mxc <- left_join(mxc, stations, by = "station_code")
   mxc <- mxc[!is.na(mxc$value),]
@@ -50,10 +48,26 @@ heatmap <- function(){
   write(line,file="time.txt",append=TRUE)
 }
 
+mxc <- get_latest_data()
+heatmap(mxc)
 
-heatmap()
-  
-
+try({
+  if(max(mxc$value) <= 140) {
+    max_idx <- which(mxc$value == max(mxc$value))
+    SENDGRID_PASS <- Sys.getenv("SENDGRID_PASS") 
+    SENDGRID_USER <- Sys.getenv("SENDGRID_USER")
+    send.mail(from = "diegovalle@gmail.com",
+              to = c("Diego Valle-Jones <diegovalle@gmail.com>"),
+              subject = "IMECA above 140",
+              body = str_c(mxc$station_code[max_idx], " - ", mxc$municipio[max_idx]),
+              smtp = list(host.name = "smtp.sendgrid.net", port = 465, 
+                          user.name = SENDGRID_USER, 
+                          passwd = SENDGRID_PASS, 
+                          ssl = TRUE),
+              authenticate = TRUE,
+              send = TRUE)
+  }
+})
 
 
 

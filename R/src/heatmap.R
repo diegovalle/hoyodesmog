@@ -57,7 +57,7 @@ try({
     SENDGRID_PASS <- Sys.getenv("SENDGRID_PASS") 
     SENDGRID_USER <- Sys.getenv("SENDGRID_USER")
     EMAIL_ADDRESS <- Sys.getenv("EMAIL_ADDRESS")
-    send.mail(from = "diegovalle@gmail.com",
+    send.mail(from = EMAIL_ADDRESS,
               to = str_c("<", EMAIL_ADDRESS, ">"),
               subject = str_c("IMECA of ", mxc$value[max_idx]),
               body = str_c(mxc$station_code[max_idx], " - ", mxc$municipio[max_idx]),

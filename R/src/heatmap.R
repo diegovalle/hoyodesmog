@@ -59,7 +59,7 @@ try({
     EMAIL_ADDRESS <- Sys.getenv("EMAIL_ADDRESS")
     send.mail(from = "diegovalle@gmail.com",
               to = str_c("<", EMAIL_ADDRESS, ">"),
-              subject = "IMECA above 140",
+              subject = str_c("IMECA of ", mxc$value[max_idx]),
               body = str_c(mxc$station_code[max_idx], " - ", mxc$municipio[max_idx]),
               smtp = list(host.name = "smtp.sendgrid.net", port = 465, 
                           user.name = SENDGRID_USER, 

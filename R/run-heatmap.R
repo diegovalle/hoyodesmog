@@ -5,6 +5,7 @@ if (!require("aire.zmvm", quietly = TRUE)) {
   devtools::install_github('diegovalle/aire.zmvm')
   require("aire.zmvm")
 }
+# R CMD javareconf -e
 packages.to.load <- c("viridis",
                       "dplyr",
                       "methods",

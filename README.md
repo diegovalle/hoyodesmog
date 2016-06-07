@@ -11,6 +11,12 @@ system with R already installed.
 1-25,30,40,50 * * * * /var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt
 ```
 
+If you have a sendgrid account you can set the EMAIL_ADDRESS,
+SENDGRID_USER and SENDGRID_PASS to have the program send you and email
+when 140 IMECAS are reached
+
+#License
+
 The template used by the website is not free software.
 
 License: pixelarity.com/license

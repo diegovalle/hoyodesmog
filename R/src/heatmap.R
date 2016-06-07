@@ -56,8 +56,9 @@ try({
     max_idx <- which(mxc$value == max(mxc$value))
     SENDGRID_PASS <- Sys.getenv("SENDGRID_PASS") 
     SENDGRID_USER <- Sys.getenv("SENDGRID_USER")
+    EMAIL_ADDRESS <- Sys.getenv("EMAIL_ADDRESS")
     send.mail(from = "diegovalle@gmail.com",
-              to = c("Diego Valle-Jones <diegovalle@gmail.com>"),
+              to = str_c("<", EMAIL_ADDRESS, ">"),
               subject = "IMECA above 140",
               body = str_c(mxc$station_code[max_idx], " - ", mxc$municipio[max_idx]),
               smtp = list(host.name = "smtp.sendgrid.net", port = 465, 

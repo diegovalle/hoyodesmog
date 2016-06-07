@@ -37,6 +37,8 @@ main() {
         echo "output from program:"
         Rscript $SCRIPT
 
+        printf "\n\n"
+
         mv -f $NEWFILE $OLDFILE
     fi
 }
@@ -45,5 +47,9 @@ main() {
     # Wait for lock on /tmp/pollution.lock (fd 200)
     flock -n 200
     # Do stuff
+    main
+    #since this script is called from cron, and cron has a minimum
+    #interval of 1 min run it again after 30s
+    sleep 30
     main
 ) 200>$LOCKFILE

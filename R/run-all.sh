@@ -23,13 +23,13 @@ main() {
         echo "no data" > $OLDFILE
     fi
 
-    curl http://www.aire.df.gob.mx/ultima-hora-reporte.php 2>&1 | grep -A1 textohora  > $NEWFILE
+    curl -L -s http://www.aire.cdmx.gob.mx/ultima-hora-reporte.php 2>&1 | grep -A1 textohora  > $NEWFILE
     oldfile_md5=$(md5sum $OLDFILE | awk '{ print $1 }')
     newfile_md5=$(md5sum $NEWFILE | awk '{ print $1 }')
 
     if [ "$oldfile_md5" = "$newfile_md5" ]
     then
-        printf "%s and %s have the same content\n" $OLDFILE $NEWFILE
+        printf "$(TZ="America/Mexico_City" date +'%Y-%m-%d %H %Z') %s and %s have the same content\n" $OLDFILE $NEWFILE
     else
         printf "\n\n%s and %s have DIFFERENT content\n" $OLDFILE $NEWFILE
         echo "date right now: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H %Z')"

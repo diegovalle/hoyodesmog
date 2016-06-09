@@ -1,0 +1,31 @@
+language: R
+
+apt_packages:
+  - r-cran-rjava
+
+before_install:
+  - git submodule update --init --recursive
+  - sudo apt-get -qq update
+  - sudo apt-get install -y npm
+  - sudo R CMD javareconf
+
+install:
+  - npm install -g grunt-cli bower
+  - npm install -g simplehttpserver
+  - npm install
+  #   - bower install
+
+before_script:
+  - npm install -g casperjs
+  - phantomjs --version; casperjs --version
+  - cd R; Rscript run-all.R; Rscript run-heatmap.R
+  - simplehttpserver web/ & #shooting up a web server for the tests
+
+script: casperjs test tests/test.js
+
+# whitelist
+branches:
+  only:
+    - master
+    - develop
+    - travis

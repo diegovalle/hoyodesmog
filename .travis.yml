@@ -5,9 +5,9 @@ apt_packages:
 
 before_install:
   - git submodule update --init --recursive
-  - apt-get -qq update
-  - apt-get install -y npm
-  - R CMD javareconf
+  - sudo apt-get -qq update
+  - sudo apt-get install -y npm
+  - sudo R CMD javareconf
 
 install:
   - npm install -g grunt-cli bower

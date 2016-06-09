@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/diegovalle/hoyodesmog.svg?branch=master)](https://travis-ci.org/diegovalle/hoyodesmog)
-[![Build Status](https://travis-ci.org/diegovalle/hoyodesmog.svg?branch=develop)](https://travis-ci.org/diegovalle/hoyodesmog)
+Master: [![Build Status](https://travis-ci.org/diegovalle/hoyodesmog.svg?branch=master)](https://travis-ci.org/diegovalle/hoyodesmog)
+Develop: [![Build Status](https://travis-ci.org/diegovalle/hoyodesmog.svg?branch=develop)](https://travis-ci.org/diegovalle/hoyodesmog)
 # HoyoDeSmog
 
 Web site for hoyodesmog.diegovalle.net

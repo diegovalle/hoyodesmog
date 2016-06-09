@@ -19,7 +19,7 @@ before_script:
   - cd R && Rscript run-heatmap.R && Rscript run-all.R
   - simplehttpserver web/ & #shooting up a web server for the tests
 
-script: casperjs test web/tests/test.js
+script: pwd && cd .. && casperjs test web/tests/test.js
 
 # whitelist
 branches:

@@ -12,8 +12,6 @@ before_install:
 install:
   - npm install -g grunt-cli bower
   - npm install -g simplehttpserver
-  - npm install
-  #   - bower install
 
 before_script:
   - npm install -g casperjs

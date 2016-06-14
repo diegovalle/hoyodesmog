@@ -1,0 +1,66 @@
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  /* IE6-8 compat */
+  src: url("/assets/css/fonts/montserrat-b2634b01035e573d67fd3c75e4a54dac223c5289.eot");
+  src: local("Montserrat-Regular"), 
+    url("/assets/css/fonts/montserrat-61cb89b110ed43d78c22ee23415ca0975be3cc9e.woff") format("woff"), 
+    url("/assets/css/fonts/montserrat-4f1d92a440694955be886c511cda5b3285eea139.svg#Montserrat") format("svg"), 
+    url("/assets/css/fonts/montserrat-b2634b01035e573d67fd3c75e4a54dac223c5289.eot") format("embedded-opentype"), 
+    url("/assets/css/fonts/montserrat-533acd2a3f55146ef3b2890c2e4face86492dfbc.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  src: local("Montserrat-Bold"), 
+    url("/assets/css/fonts/montserrat-72522d594a67810a26c1858894cb418e9fe38702.woff") format("woff"), 
+    url("/assets/css/fonts/montserrat-92ed90f1bcd52eced62d06c5a80f8244b24f0b4a.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: italic;
+  font-weight: 400;
+  src: local("Source Sans Pro Italic"), 
+    local("SourceSansPro-It"), 
+    url("/assets/css/fonts/sourcesanspro-4ceed62110637a3eda67a920a7943b5ee458f258.woff") format("woff"), 
+    url("/assets/css/fonts/sourcesanspro-98448b0727dd8a4f4017be8ffd591f9f253a8218.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: italic;
+  font-weight: 600;
+  src: local("Source Sans Pro Semibold Italic"), 
+    local("SourceSansPro-SemiboldIt"), 
+    url("/assets/css/fonts/sourcesanspro-3b561c12175214acfcd7bb1fde8850d05e55e4f0.woff") format("woff"), 
+    url("/assets/css/fonts/sourcesanspro-b90ea71942bc6daa68d487414b7b9fa26c5586b0.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  /* IE6-8 compat */
+  src: url("/assets/css/fonts/sourcesanspro-be7e003a3c66ae17a5343ba76888f8f1ea537fb0.eot");
+  src: local("Source Sans Pro"), 
+    local("SourceSansPro-Regular"), 
+    url("/assets/css/fonts/sourcesanspro-29c9632b40abe339a91d1d90eea2880453408a62.woff") format("woff"), 
+    url("/assets/css/fonts/sourcesanspro-c57c96f69c2d8453677130c17c1fd352cf7523eb.svg#SourceSansPro") format("svg"), 
+    url("/assets/css/fonts/sourcesanspro-be7e003a3c66ae17a5343ba76888f8f1ea537fb0.eot") format("embedded-opentype"), 
+    url("/assets/css/fonts/sourcesanspro-f89cfe3d291adac167e8d95a8c17636581ceb19f.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 600;
+  src: local("Source Sans Pro Semibold"), 
+    local("SourceSansPro-Semibold"), 
+    url("/assets/css/fonts/sourcesanspro-c6e05bd39ac316d19cb74d3791bff2e876328e12.woff") format("woff"), 
+    url("/assets/css/fonts/sourcesanspro-200d52cc0aedc817f64a113fa9486926bc701e05.ttf") format("truetype");
+}
+

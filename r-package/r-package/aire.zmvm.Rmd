@@ -345,7 +345,7 @@ Here's what the grid looks like:
 plot(geography.pts, cex = 1.5, col = "grey")
 points(geography.o3, pch = 1, col = "red", cex = 1)
 
-# For radiation pollution the exponent shoudl be 2
+# For radiation pollution the exponent should be 2
 # See http://www.sciencedirect.com/science/article/pii/S009830041200372X
 geography.idw <- idw(value ~ 1, geography.o3, geography.pts, idp = 2)
 ```

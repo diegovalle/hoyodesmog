@@ -298,7 +298,7 @@ mxc <- get_latest_data()
 
 ```
 
-The package includes a data.frame with the locations of all stations
+The package includes a data.frame with the location of all stations
 
 ```{r message=FALSE}
 data("stations")
@@ -345,7 +345,9 @@ Here's what the grid looks like:
 plot(geography.pts, cex = 1.5, col = "grey")
 points(geography.o3, pch = 1, col = "red", cex = 1)
 
-geography.idw <- idw(value ~ 1, geography.o3, geography.pts, idp=6)
+# For radiation pollution the exponent should be 2
+# See http://www.sciencedirect.com/science/article/pii/S009830041200372X
+geography.idw <- idw(value ~ 1, geography.o3, geography.pts, idp = 2)
 ```
 
 coloring the grid with the weigthed values:

@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+aire.zmvm_cache/*
+aire.zmvm_files/*

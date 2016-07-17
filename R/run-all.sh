@@ -11,6 +11,8 @@ OLDFILE=timestamps/all_aire_old.html
 NEWFILE=timestamps/all_aire_new.html
 SCRIPT=run-all.R
 
+: "${RUNALL_HEALTHCHECK:?Need to set RUNALL_HEALTHCHECK non-empty}"
+
 if [ -d $DIR ]
 then
     cd $DIR
@@ -42,6 +44,7 @@ main() {
         printf "\n\n"
 
         mv -f $NEWFILE $OLDFILE
+        curl -fsS --retry 3 "$RUNALL_HEALTHCHECK" > /dev/null
     fi
 }
 

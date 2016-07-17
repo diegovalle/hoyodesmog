@@ -11,6 +11,8 @@ OLDFILE=timestamps/heatmap_aire_old.html
 NEWFILE=timestamps/heatmap_aire_new.html
 SCRIPT=run-heatmap.R
 
+: "${HEATMAP_HEALTHCHECK:?Need to set HEATMAP_HEALTCHECK non-empty}"
+
 if [ -d $DIR ]
 then
     cd $DIR
@@ -40,6 +42,7 @@ main() {
         printf "\n\n"
 
         mv -f $NEWFILE $OLDFILE
+        curl -fsS --retry 3 "$HEATMAP_HEALTHCHECK" > /dev/null
     fi
 }
 

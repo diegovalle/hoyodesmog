@@ -1,0 +1,253 @@
+# ansible-playbook playbook.yml --ask-vault-pass
+
+---
+
+- hosts: hoyodesmog
+  vars:
+    pacakges_to_remove: ['apache', 'samba', 'sendmail',
+    'bind9', 'ncsd', 'sasl', 'exim', 'ntp']
+    packages_to_install: [ 'git', 'r-base', 'r-base-dev',
+    'r-cran-rjava', 'curl', 'nginx',
+    'sqlite3', 'libxml2-dev', 'mailutils',
+    'r-cran-xml', 'libgdal1-dev', 'libproj-dev',
+    'imagemagick', 'optipng', 'htop', 'ufw','unattended-upgrades']
+    deploy_user_name: deploy
+    deploy_public_keys:
+      - vps.pub
+    r_repository:
+      - type: deb
+        url: "http://cran.rstudio.com/bin/linux/ubuntu  {{ ansible_distribution_release }}/"
+
+  tasks:
+    - name: Load secrets
+      include_vars: secrets.yml
+      no_log: true
+# Structure of secrets.yml
+
+
+# EMAIL_ADDRESS:
+# SENDGRID_USER:
+# SENDGRID_PASS:
+## created with:
+## mkpasswd --method=SHA-512
+# DEPLOY_PASSWORD:
+# ROOT_PASSWORD:
+# HEATMAP_HEALTHCHECK:
+# RUNALL_HEALTHCHECK:
+
+    - name: apt-get update
+      raw: apt-get update -qq
+
+    - name: Change root password
+      user: name=root password="{{ ROOT_PASSWORD }}"
+
+    - name: Add deploy user
+      user: name={{ deploy_user_name }} password="{{ DEPLOY_PASSWORD }}" shell=/bin/bash
+
+    - name: Add authorized keys for deploy user
+      authorized_key: user={{ deploy_user_name }} key="{{ lookup('file', item) }}"
+      with_items: "{{deploy_public_keys}}"
+
+    - name: Add deploy user to sudoers
+      lineinfile: dest=/etc/sudoers
+                  regexp="{{ deploy_user_name }} ALL"
+                  line="{{ deploy_user_name }} ALL=(ALL) ALL"
+                  state=present
+
+    - name: Remove Packages
+      apt: name="{{ item }}" state=absent
+      with_items:
+        - apache
+        - samba
+        - sendmail,
+        - bind9
+        - ncsd
+        - sasl
+        - exim
+        - ntp
+
+    - name: Add R repository public key
+      apt_key:
+        id: E084DAB9
+        keyserver: keyserver.ubuntu.com
+        state: present
+      tags:
+        - r-repository-public-key
+
+    - name: Add R repository
+      apt_repository:
+        repo: "{{ item.type }} {{ item.url }}"
+        state: present
+        update_cache: true
+      with_items: "{{ r_repository }}"
+      tags:
+        - r-repository-add
+
+    - name: Install Packages
+      apt: name="{{ item }}" state=latest
+      with_items:
+        - git
+        - r-base
+        - r-base-dev
+        - r-cran-rjava
+        - curl
+        - nginx
+        - sqlite3
+        - libxml2-dev
+        - mailutils
+        - r-cran-xml
+        - libgdal1-dev
+        - libproj-dev
+        - imagemagick
+        - optipng
+        - htop
+        #- ufw
+        #- fail2ban
+        - unattended-upgrades
+
+    - name: Installs postfix mail server
+      apt: pkg=postfix state=installed update_cache=true
+      notify:
+        - start postfix
+
+    - name: Adjust APT update intervals
+      copy: src=config/apt_periodic dest=/etc/apt/apt.conf.d/10periodic
+
+    # - name: Setup ufw
+    #   ufw: state=enabled policy=deny
+
+    # - name: Allow ssh traffic
+    #   ufw: rule=allow port=22 proto=tcp
+
+    # - name: Allow http traffic
+    #   ufw: rule=allow port=80 proto=tcp
+
+    # - name: Allow https traffic
+    #   ufw: rule=allow port=443 proto=tcp
+
+    - name: Creates .Rprofile with default repo
+      lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://cran.rstudio.com";options(repos = r)})' create=True
+
+    - name: Creates .Rprofile with default repo
+      lineinfile: dest=/home/{{deploy_user_name}}/.Renviron line='R_LIBS=/home/{{deploy_user_name}}/R/rpackages' create=True
+
+    - name: Creates user R package directory
+      file: path=/home/{{deploy_user_name}}/R/rpackages state=directory  owner={{deploy_user_name}} group={{deploy_user_name}}
+
+    - name: Creates .Rprofile with default repo
+      lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://cran.rstudio.com";options(repos = r)})' create=True
+
+    - name: Clone hoyodesmog
+      git: repo=https://github.com/diegovalle/hoyodesmog dest=/var/www/hoyodesmog.diegovalle.net force=yes
+
+    - name: Change persmissions of /var/www/hoyodesmog.diegovalle.net
+      file: dest=/var/www/hoyodesmog.diegovalle.net owner=deploy group=www-data mode=0775 recurse=yes
+
+    - name: Config java
+      command: R CMD javareconf -e
+
+    - name: Add R packages
+      command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs='{{item}}')"
+      with_items:
+        - ggplot2
+        - viridis
+        - devtools
+        - dplyr
+        - methods
+        - jsonlite
+        - gstat
+        - sp
+        - stringr
+        - chron
+        - ggmap
+        - caTools
+        - lubridate
+        - mailR
+        - readr
+
+    # - name: Install github R packages
+    #   command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "devtools::install_github('{{item}}')"
+    #   with_items:
+    #     - diegovalle/aire.zmvm
+      #become: yes
+      #become_user: "{{deploy_user_name}}"
+
+    - name: Copy nginx.conf to /etc/nginx/sites-enabled
+      command: cp /var/www/hoyodesmog.diegovalle.net/web/nginx.conf /etc/nginx/sites-enabled/hoyodesmog.diegovalle.net
+      notify: Restart nginx
+
+    - name: Disallow password authentication
+      lineinfile: dest=/etc/ssh/sshd_config
+                  regexp="^PasswordAuthentication"
+                  line="PasswordAuthentication no"
+                  state=present
+      notify: Restart ssh
+
+    - name: Disallow root SSH access
+      lineinfile: dest=/etc/ssh/sshd_config
+                  regexp="^PermitRootLogin"
+                  line="PermitRootLogin no"
+                  state=present
+      notify: Restart ssh
+
+    - name: Copy virtual-regexp for postfix (send all mail to myself)
+      copy: src=config/virtual-regexp dest=/etc/postfix/virtual-regexp
+      notify:
+        - postmap virtual-regexp
+
+    - name: Sendgrid authentication info
+      lineinfile:
+        dest: /etc/postfix/sendgrid_passwd
+        line: "[smtp.sendgrid.net]:587 {{SENDGRID_USER}}:{{SENDGRID_PASS}}"
+        create: True
+        owner: root
+        group: root
+        mode: 0600
+      notify:
+        - postmap virtual
+        - postmap sendgrid_passwd
+
+    - name: Postfix + sendgrid
+      register: sendgrid
+      lineinfile:
+        dest: /etc/postfix/main.cf
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      with_items:
+        - { regexp: '^smtp_sasl_auth_enable =', line: 'smtp_sasl_auth_enable = yes' }
+        - { regexp: '^smtp_sasl_password_maps =', line: 'smtp_sasl_password_maps = hash:/etc/postfix/sendgrid_passwd' }
+        - { regexp: '^smtp_sasl_security_options =', line: 'smtp_sasl_security_options = noanonymous' }
+        - { regexp: '^smtp_tls_security_level =', line: 'smtp_tls_security_level = encrypt' }
+        - { regexp: '^header_size_limit =', line: 'header_size_limit = 4096000' }
+        - { regexp: '^relayhost =', line: 'relayhost = [smtp.sendgrid.net]:587' }
+        - { regexp: '^virtual_maps =', line: 'virtual_maps = hash:/etc/postfix/virtual, regexp:/etc/postfix/virtual-regexp' }
+      notify:
+        - Restart postfix
+
+    - name: cron job for imeca map
+      cron: name="all charts" minute="1-25,30,40,50" user=deploy job="export RUNALL_HEALTHCHECK={{RUNALL_HEALTHCHECK_URL}};/var/www/hoyodesmog.diegovalle.net/R/run-all.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-all.txt"
+
+    - name: cront job for everything else
+      cron: name="frontpage heatmap" minute="1-25,30,40,50" user=deploy job="export EMAIL_ADDRESS={{EMAIL_ADDRESS}};export SENDGRID_USER={{SENDGRID_USER}};export SENDGRID_PASS={{SENDGRID_PASS}};export HEATMAP_HEALTHCHECK={{HEATMAP_HEALTHCHECK_URL}};/var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt"
+
+  handlers:
+    - name: Restart nginx
+      service: name=nginx state=restarted
+
+    - name: Restart ssh
+      service: name=ssh state=restarted
+
+    - name: Restart postfix
+      service: name=postfix state=restarted
+
+    - name: start postfix
+      service: name=postfix state=started
+
+    - name: postmap sendgrid_passwd
+      command: postmap /etc/postfix/sendgrid_passwd
+
+    - name: postmap virtual
+      shell: touch /etc/postfix/virtual && postmap /etc/postfix/virtual
+
+    - name: postmap virutal-regexp
+      command: postmap /etc/postfix/virtual-regexp

@@ -12,6 +12,7 @@ before_install:
 install:
   - npm install -g grunt-cli bower
   - npm install -g simplehttpserver
+  - pip install ansible
 
 before_script:
   - npm install -g casperjs
@@ -20,7 +21,10 @@ before_script:
   - simplehttpserver web/ > /dev/null & #shooting up a web server for the tests
   - sleep 15
 
-script: casperjs test web/tests/test.js
+script:
+  - casperjs test web/tests/test.js
+  - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --syntax-check
+  - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --sudo
 
 # whitelist
 branches:

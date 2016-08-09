@@ -4,8 +4,27 @@ Develop: [![Build Status](https://travis-ci.org/diegovalle/hoyodesmog.svg?branch
 
 Web site for hoyodesmog.diegovalle.net
 
-To install copy the files to /var/www/hoyodesmog.diegovalle.net, add
-the .conf file to nginx, and add the following lines to cron in a
+It is recommended to use the ansible playbook in the ansible directory
+to install. You'll need to create a secrets.yml (it's encrypted in
+this repo) file with the following structure:
+
+```yml
+      # Structure of secrets.yml
+      EMAIL_ADDRESS:
+      SENDGRID_USER:
+      SENDGRID_PASS:
+      ## created with:
+      ## mkpasswd --method=SHA-512
+      DEPLOY_PASSWORD:
+      ROOT_PASSWORD:
+      HEATMAP_HEALTHCHECK:
+      RUNALL_HEALTHCHECK:
+```
+
+The *_HEALTHCHECK variables are for [deadmansnitch] like services
+
+To manually install, copy the files to /var/www/hoyodesmog.diegovalle.net, add
+the nginx.conf file to the sites-available directory under nginx, and add the following lines to cron in a
 system with R already installed.
 
 ```{sh}

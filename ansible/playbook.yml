@@ -1,6 +1,12 @@
 # ansible-playbook playbook.yml --ask-vault-pass
 
 ---
+- hosts: all
+  gather_facts: False
+
+  tasks:
+  - name: install python 2
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
 - hosts: hoyodesmog
   vars:
@@ -22,18 +28,18 @@
     - name: Load secrets
       include_vars: secrets.yml
       no_log: true
-# Structure of secrets.yml
 
+      # Structure of secrets.yml
 
-# EMAIL_ADDRESS:
-# SENDGRID_USER:
-# SENDGRID_PASS:
-## created with:
-## mkpasswd --method=SHA-512
-# DEPLOY_PASSWORD:
-# ROOT_PASSWORD:
-# HEATMAP_HEALTHCHECK:
-# RUNALL_HEALTHCHECK:
+      # EMAIL_ADDRESS:
+      # SENDGRID_USER:
+      # SENDGRID_PASS:
+      ## created with:
+      ## mkpasswd --method=SHA-512
+      # DEPLOY_PASSWORD:
+      # ROOT_PASSWORD:
+      # HEATMAP_HEALTHCHECK:
+      # RUNALL_HEALTHCHECK:
 
     - name: apt-get update
       raw: apt-get update -qq

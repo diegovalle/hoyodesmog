@@ -10,13 +10,7 @@
 
 - hosts: hoyodesmog
   vars:
-    pacakges_to_remove: ['apache', 'samba', 'sendmail',
-    'bind9', 'ncsd', 'sasl', 'exim', 'ntp']
-    packages_to_install: [ 'git', 'r-base', 'r-base-dev',
-    'r-cran-rjava', 'curl', 'nginx',
-    'sqlite3', 'libxml2-dev', 'mailutils',
-    'r-cran-xml', 'libgdal1-dev', 'libproj-dev',
-    'imagemagick', 'optipng', 'htop', 'ufw','unattended-upgrades']
+    testing: 'false'
     deploy_user_name: deploy
     deploy_public_keys:
       - vps.pub
@@ -26,7 +20,13 @@
 
   tasks:
     - name: Load secrets
+      when: testing != 'true'
       include_vars: secrets.yml
+      no_log: true
+
+    - name: Load secrets
+      when: testing == 'true'
+      include_vars: secrets-test.yml
       no_log: true
 
       # Structure of secrets.yml

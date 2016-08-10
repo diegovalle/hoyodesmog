@@ -24,7 +24,7 @@ before_script:
 script:
   - casperjs test web/tests/test.js
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --syntax-check
-  # - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --sudo
+  - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --sudo --extra-vars "testing=true"
 
 # whitelist
 branches:

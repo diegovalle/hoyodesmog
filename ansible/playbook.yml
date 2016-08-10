@@ -255,5 +255,5 @@
     - name: postmap virtual
       shell: touch /etc/postfix/virtual && postmap /etc/postfix/virtual
 
-    - name: postmap virutal-regexp
+    - name: postmap virtual-regexp
       command: postmap /etc/postfix/virtual-regexp

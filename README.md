@@ -17,8 +17,8 @@ this repo) file with the following structure:
       ## mkpasswd --method=SHA-512
       DEPLOY_PASSWORD:
       ROOT_PASSWORD:
-      HEATMAP_HEALTHCHECK:
-      RUNALL_HEALTHCHECK:
+      HEATMAP_HEALTHCHECK_URL:
+      RUNALL_HEALTHCHECK_URL:
 ```
 
 The *_HEALTHCHECK variables are for [deadmansnitch] like services

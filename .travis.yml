@@ -1,4 +1,5 @@
 language: R
+dist: trusty
 
 apt_packages:
   - r-cran-rjava

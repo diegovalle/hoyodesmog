@@ -24,7 +24,7 @@
       include_vars: secrets.yml
       no_log: true
 
-    - name: Load secrets
+    - name: Load secrets (test version)
       when: testing == 'true'
       include_vars: secrets-test.yml
       no_log: true

@@ -1,5 +1,5 @@
 if (!require(devtools, quietly = TRUE)) {
-  install.packages("devtools", repos="http://cran.rstudio.com")
+  install.packages("devtools", repos = "http://cran.rstudio.com")
 }
 if (!require("aire.zmvm", quietly = TRUE)) {
   devtools::install_github('diegovalle/aire.zmvm')
@@ -29,7 +29,7 @@ for(p in packages.to.load)
 
 #source(file.path("src", "heatmap.R"))
 
-cat("wsp_heatmap.R")
+cat("\n\nwsp_heatmap.R\n\n")
 source(file.path("src", "wsp_heatmap.R"))
 
 cat("\n\nwdr_heatmap.R")

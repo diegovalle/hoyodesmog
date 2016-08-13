@@ -36,6 +36,7 @@ df <- arrange(df, station_code, pollutant, date, hour)
 df <- subset(df, date == max(df$date) & hour == tail(df, 1)$hour) 
 df <- left_join(df, stations, by = "station_code")
 df <- df[!is.na(df$value),]
+df <- df[!is.na(df$lon),]
 # The time is given in hours with no DST
 # GMT has no DST
 df$datetime <- strptime(str_c(df$date, " ", df$hour),

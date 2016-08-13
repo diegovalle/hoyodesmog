@@ -52,18 +52,19 @@ mxc <- get_latest_data()
 heatmap(mxc)
 
 try({
-  if(max(mxc$value, na.rm = TRUE) >= 151) {
+  if (max(mxc$value, na.rm = TRUE) >= 151) {
     max_idx <- which(mxc$value == max(mxc$value, na.rm = TRUE))
-    SENDGRID_PASS <- Sys.getenv("SENDGRID_PASS") 
+    SENDGRID_PASS <- Sys.getenv("SENDGRID_PASS")
     SENDGRID_USER <- Sys.getenv("SENDGRID_USER")
     EMAIL_ADDRESS <- Sys.getenv("EMAIL_ADDRESS")
     send.mail(from = EMAIL_ADDRESS,
               to = str_c("<", EMAIL_ADDRESS, ">"),
               subject = str_c("IMECA of ", mxc$value[max_idx]),
-              body = str_c(mxc$station_code[max_idx], " - ", mxc$municipio[max_idx]),
-              smtp = list(host.name = "smtp.sendgrid.net", port = 465, 
-                          user.name = SENDGRID_USER, 
-                          passwd = SENDGRID_PASS, 
+              body = str_c(mxc$station_code[max_idx], " - ",
+                           mxc$municipio[max_idx]),
+              smtp = list(host.name = "smtp.sendgrid.net", port = 465,
+                          user.name = SENDGRID_USER,
+                          passwd = SENDGRID_PASS,
                           ssl = TRUE),
               authenticate = TRUE,
               send = TRUE)

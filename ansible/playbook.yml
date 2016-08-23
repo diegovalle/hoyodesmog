@@ -218,25 +218,11 @@
       notify: Restart nginx
 
 
-    - name: Disallow password authentication
-      lineinfile: dest=/etc/ssh/sshd_config
-                  regexp="^PasswordAuthentication"
-                  line="PasswordAuthentication no"
-                  state=present
-      notify: Restart ssh
-
-    - name: Disallow root SSH access
-      lineinfile: dest=/etc/ssh/sshd_config
-                  regexp="^PermitRootLogin"
-                  line="PermitRootLogin no"
-                  state=present
-      notify: Restart ssh
-
     - name: Copy over h5bp configuration
       copy: src={{ item }} dest=/etc/nginx/{{ item }}
       with_items:
         - h5bp
-        - h5bp/mime.types
+        - mime.types
 
     - name: copy nginx.conf
       template:
@@ -259,7 +245,22 @@
       notify: Restart nginx
 
 
+      #ssh
 
+
+    - name: Disallow password authentication
+      lineinfile: dest=/etc/ssh/sshd_config
+                  regexp="^PasswordAuthentication"
+                  line="PasswordAuthentication no"
+                  state=present
+      notify: Restart ssh
+
+    - name: Disallow root SSH access
+      lineinfile: dest=/etc/ssh/sshd_config
+                  regexp="^PermitRootLogin"
+                  line="PermitRootLogin no"
+                  state=present
+      notify: Restart ssh
 
 
       # Postfix
@@ -302,6 +303,8 @@
         - { regexp: '^virtual_maps =', line: 'virtual_maps = hash:/etc/postfix/virtual, regexp:/etc/postfix/virtual-regexp' }
       notify:
         - Restart postfix
+
+    # Cron Jobs
 
     - name: cron job for imeca map
       cron: name="all charts" minute="1-25,30,40,50" user=deploy job="export RUNALL_HEALTHCHECK={{RUNALL_HEALTHCHECK_URL}};/var/www/hoyodesmog.diegovalle.net/R/run-all.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-all.txt"

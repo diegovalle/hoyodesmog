@@ -231,7 +231,7 @@
         owner: root
         group: root
         mode: 0644
-      notify: restart nginx
+      notify: Restart nginx
 
     - name: verify /etc/nginx/sites-enabled/ exists
       file: path=/etc/nginx/sites-enabled/ state=directory owner=root group=root mode=0700

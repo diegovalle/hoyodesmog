@@ -4,6 +4,10 @@ dist: trusty
 apt_packages:
   - r-cran-rjava
 
+addons:
+  hosts:
+    - hoyodesmog.diegovalle.net
+
 before_install:
   - git submodule update --init --recursive
   - sudo apt-get -qq update
@@ -27,6 +31,7 @@ script:
   - casperjs test web/tests/test.js
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --syntax-check
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --sudo --extra-vars "testing=true"
+  - curl http://hoyodesmog.diegovalle.net
 
 # whitelist
 branches:

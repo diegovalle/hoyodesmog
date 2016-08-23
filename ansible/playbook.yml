@@ -17,6 +17,9 @@
     r_repository:
       - type: deb
         url: "http://cran.rstudio.com/bin/linux/ubuntu  {{ ansible_distribution_release }}/"
+    nginx_user: www-data
+    access_log: /var/log/nginx/access.log
+    error_log: /var/log/nginx/error.log
 
   tasks:
     - name: Load secrets
@@ -97,7 +100,6 @@
         - r-base-dev
         - r-cran-rjava
         - curl
-        - nginx
         - sqlite3
         - libxml2-dev
         - mailutils
@@ -110,11 +112,6 @@
         #- ufw
         #- fail2ban
         - unattended-upgrades
-
-    - name: Installs postfix mail server
-      apt: pkg=postfix state=installed update_cache=true
-      notify:
-        - start postfix
 
     - name: Adjust APT update intervals
       copy: src=config/apt_periodic dest=/etc/apt/apt.conf.d/10periodic
@@ -178,9 +175,49 @@
       #become: yes
       #become_user: "{{deploy_user_name}}"
 
-    - name: Copy nginx.conf to /etc/nginx/sites-enabled
-      command: cp /var/www/hoyodesmog.diegovalle.net/web/nginx.conf /etc/nginx/sites-enabled/hoyodesmog.diegovalle.net
+    # Install nginx
+
+    - name: modify apt-key
+      apt_key:
+      url: "https://nginx.org/keys/nginx_signing.key"
+
+    - name: modify repository
+      apt_repository:
+        repo: "{{ item }}"
+        state: present
+      with_items:
+        - "deb http://nginx.org/packages/mainline/ubuntu/ {{ansible_distribution_release}} nginx"
+        - "deb-src http://nginx.org/packages/mainline/ubuntu/ {{ansible_distribution_release}} nginx"
+
+    - name: install openssl
+      apt:
+        name: openssl
+        state: present
+
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+        force: yes
       notify: Restart nginx
+
+    - name: Ensure that nginx snippets dir exists
+      file:
+        path: "/etc/nginx/snippets/"
+        state: directory
+        owner: "root"
+        group: "root"
+        mode: "0644"
+
+    - name: Generate useful snippets
+      template:
+        src: "{{ item }}"
+        dest: "/etc/nginx/snippets/{{ item }}"
+      with_items:
+        - referral-spam.conf
+        - acme-challenge.conf
+      notify: Restart nginx
+
 
     - name: Disallow password authentication
       lineinfile: dest=/etc/ssh/sshd_config
@@ -195,6 +232,43 @@
                   line="PermitRootLogin no"
                   state=present
       notify: Restart ssh
+
+    - name: Copy over h5bp configuration
+      copy: src={{ item }} dest=/etc/nginx/{{ item }}
+      with_items:
+        - h5bp
+        - mime.types
+
+    - name: copy nginx.conf
+      template:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart nginx
+
+    - name: verify /etc/nginx/sites-enabled/ exists
+      file: path=/etc/nginx/sites-enabled/ state=directory owner=root group=root mode=0700
+
+    - name: Copy over website configuration
+      copy: src={{ item }} dest=/etc/nginx/sites-enabled/{{ item }}
+      with_items:
+        - hoyodesmog.diegovalle.net
+        - ssl.no-default
+        - no-default
+      notify: Restart nginx
+
+
+
+
+
+      # Postfix
+
+    - name: Installs postfix mail server
+      apt: pkg=postfix state=installed update_cache=true
+      notify:
+        - start postfix
 
     - name: Copy virtual-regexp for postfix (send all mail to myself)
       copy: src=config/virtual-regexp dest=/etc/postfix/virtual-regexp

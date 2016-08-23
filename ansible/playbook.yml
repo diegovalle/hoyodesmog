@@ -236,7 +236,7 @@
       copy: src={{ item }} dest=/etc/nginx/{{ item }}
       with_items:
         - h5bp
-        - mime.types
+        - h5bp/mime.types
 
     - name: copy nginx.conf
       template:

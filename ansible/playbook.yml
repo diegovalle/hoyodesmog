@@ -177,9 +177,9 @@
 
     # Install nginx
 
-    - name: modify apt-key
+    - name: add apt-key
       apt_key:
-        url: "https://nginx.org/keys/nginx_signing.key"
+        url: "http://nginx.org/keys/nginx_signing.key"
 
     - name: modify repository
       apt_repository:

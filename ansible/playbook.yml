@@ -179,7 +179,7 @@
 
     - name: modify apt-key
       apt_key:
-      url: "https://nginx.org/keys/nginx_signing.key"
+        url: "https://nginx.org/keys/nginx_signing.key"
 
     - name: modify repository
       apt_repository:

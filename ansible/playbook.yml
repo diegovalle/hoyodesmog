@@ -178,7 +178,7 @@
     # Install nginx
 
     - name: add apt-key
-      command: curl https://nginx.org/keys/nginx_signing.key | /usr/bin/apt-key add -
+      shell: curl https://nginx.org/keys/nginx_signing.key | /usr/bin/apt-key add -
 
     - name: modify repository
       apt_repository:

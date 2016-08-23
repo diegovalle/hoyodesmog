@@ -178,8 +178,7 @@
     # Install nginx
 
     - name: add apt-key
-      apt_key:
-        url: "http://nginx.org/keys/nginx_signing.key"
+      command: curl https://nginx.org/keys/nginx_signing.key | /usr/bin/apt-key add -
 
     - name: modify repository
       apt_repository:
@@ -210,7 +209,7 @@
         mode: "0644"
 
     - name: Generate useful snippets
-      template:
+      copy:
         src: "{{ item }}"
         dest: "/etc/nginx/snippets/{{ item }}"
       with_items:

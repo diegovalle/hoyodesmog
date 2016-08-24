@@ -265,7 +265,6 @@
         owner: '{{ letsencrypt_user }}'
         group: '{{ www-data }}'
 
-
     - name: create ssl certs directory
       file:
         path: /etc/nginx/ssl/
@@ -275,8 +274,7 @@
         mode: 0660
 
     - name: letsencrypt user has permission to restart nginx
-      lineinfile: dest=/home/{{ letsencrypt_user }}/.bashrc state=present regexp='^acme.sh=' line='acme.sh=~/.acme.sh/acme.sh'
-
+      lineinfile: dest=/etc/sudoers state=present regexp='^{{ letsencrypt_user }}  ALL=NOPASSWD: /usr/sbin/nginx -s reload' line='{{ letsencrypt_user }}  ALL=NOPASSWD: /usr/sbin/nginx -s reload' validate='visudo -cf %s'
 
     - name: generate 2048 dhparam
       command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048 creates=/etc/nginx/ssl/dhparam.pem
@@ -286,9 +284,9 @@
       when: testing == 'true'
       copy: src={{ item }} dest=/etc/nginx/ssl/{{ item }}
       with_items:
-        - cert.csr
-        - chained.pem
-        - domain.key
+        - self-signed-certs/cert.csr
+        - self-signed-certs/chained.pem
+        - self-signed-certs/domain.key
       notify: Restart nginx
 
 

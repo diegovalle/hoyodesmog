@@ -20,6 +20,9 @@
     nginx_user: www-data
     access_log: /var/log/nginx/access.log
     error_log: /var/log/nginx/error.log
+    letsencrypt_user: letsencrypt
+    letsencrypt_group: letsencrypt
+    letsencrypt_cronjob_daysofmonth: 1
 
   tasks:
     - name: Load secrets
@@ -244,8 +247,52 @@
         - no-default
       notify: Restart nginx
 
+      # SSL
+    - name: create group
+      group:
+        name: '{{ letsencrypt_group }}'
+        system: yes
 
-      #ssh
+    - name: create user
+      user:
+        name: '{{ letsencrypt_user }}'
+        group: '{{ letsencrypt_group }}', '{{ www-data }}'
+
+    - name: create challenges directory
+      file:
+        path: /var/www/challenges
+        state: directory
+        owner: '{{ letsencrypt_user }}'
+        group: '{{ www-data }}'
+
+
+    - name: create ssl certs directory
+      file:
+        path: /etc/nginx/ssl/
+        state: directory
+        owner: root
+        group: '{{ letsencrypt_user }}'
+        mode: 0660
+
+    - name: letsencrypt user has permission to restart nginx
+      lineinfile: dest=/home/{{ letsencrypt_user }}/.bashrc state=present regexp='^acme.sh=' line='acme.sh=~/.acme.sh/acme.sh'
+
+
+    - name: generate 2048 dhparam
+      command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048 creates=/etc/nginx/ssl/dhparam.pem
+      notify: Restart nginx
+
+    - name: Copy over website configuration
+      when: testing == 'true'
+      copy: src={{ item }} dest=/etc/nginx/ssl/{{ item }}
+      with_items:
+        - cert.csr
+        - chained.pem
+        - domain.key
+      notify: Restart nginx
+
+
+      # ssh
 
 
     - name: Disallow password authentication

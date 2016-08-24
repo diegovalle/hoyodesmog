@@ -256,7 +256,7 @@
     - name: create user
       user:
         name: '{{ letsencrypt_user }}'
-        group: '{{ letsencrypt_group }}', '{{ www-data }}'
+        group: '{{ letsencrypt_group }}, {{ www-data }}'
 
     - name: create challenges directory
       file:

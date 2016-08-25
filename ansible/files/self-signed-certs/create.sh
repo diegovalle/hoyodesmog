@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
-openssl genrsa -des3 -passout pass:x -out domain.pass.key 2048
-openssl rsa -passin pass:x -in domain.pass.key -out domain.key
-rm domain.pass.key
-openssl req -new -key domain.key -out cert.csr -subj "/C=US/ST=PA/L=Collegeville/O=aa.com/OU=/CN=aa.com"
-openssl x509 -req -sha256 -days 365 -in cert.csr -signkey domain.key -out cert.crt
-openssl x509 -in cert.crt -out chained.pem -outform PEM
-cp /etc/nginx/ssl/hoyodesmog.diegovalle.net/
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout domain-selfsigned.key -out cert-selfsigned.crt -subj "/C=US/ST=PA/L=Collegeville/O=hoyodesmog.diegovalle.net/OU=/CN=hoyodesmog.diegovalle.net"
+wget -O - https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem > intermediate.pem
+cat cert-selfsigned.crt  intermediate.pem > chained.pem
+

@@ -293,9 +293,9 @@
       when: testing == 'true'
       copy: src={{ item }} dest=/etc/nginx/ssl/hoyodesmog.diegovalle.net/{{ item }}
       with_items:
-        - cert.crt
+        - cert-selfsigned.crt
         - chained.pem
-        - domain.key
+        - domain-selfsigned.key
       notify: Restart nginx
 
 

@@ -31,7 +31,7 @@ script:
   - casperjs test web/tests/test.js
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --syntax-check
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --sudo --extra-vars "testing=true"
-  - curl -kLv http://hoyodesmog.diegovalle.net
+  #- curl -kLv http://hoyodesmog.diegovalle.net
 
 # whitelist
 branches:

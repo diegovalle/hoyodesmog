@@ -23,7 +23,7 @@ install:
 before_script:
   - npm install -g casperjs
   - phantomjs --version; casperjs --version
-  #- cd R && Rscript run-heatmap.R && Rscript run-all.R && cd ..
+  - cd R && Rscript run-heatmap.R && Rscript run-all.R && cd ..
   - simplehttpserver web/ > /dev/null & #shooting up a web server for the tests
   - sleep 30
 

@@ -291,7 +291,7 @@
 
     - name: Copy over website configuration
       when: testing == 'true'
-      copy: src={{ item }} dest=/etc/nginx/ssl/{{ item }}
+      copy: src={{ item }} dest=/etc/nginx/ssl/../{{ item }}
       with_items:
         - self-signed-certs/cert.csr
         - self-signed-certs/chained.pem

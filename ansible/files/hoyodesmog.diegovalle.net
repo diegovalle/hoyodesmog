@@ -24,7 +24,7 @@ server {
     ssl_certificate /etc/nginx/ssl/hoyodesmog.diegovalle.net/cert.crt;
     ssl_certificate_key /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key;
     ## verify chain of trust of OCSP response using Root CA and Intermediate certs
-    ssl_trusted_certificate /etc/nginx/ssl/hoyodesmog.diegovalle.net/chained.pem;
+    #ssl_trusted_certificate /etc/nginx/ssl/hoyodesmog.diegovalle.net/chained.pem;
 
     include h5bp/directive-only/ssl.conf;
     include h5bp/directive-only/ssl-stapling.conf;

@@ -293,7 +293,7 @@
       when: testing == 'true'
       copy: src={{ item }} dest=/etc/nginx/ssl/hoyodesmog.diegovalle.net/{{ item }}
       with_items:
-        - cert.csr
+        - cert.crt
         - chained.pem
         - domain.key
       notify: Restart nginx

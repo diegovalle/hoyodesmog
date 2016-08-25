@@ -256,14 +256,14 @@
     - name: create user
       user:
         name: '{{ letsencrypt_user }}'
-        group: '{{ letsencrypt_group }}, {{ www-data }}'
+        group: '{{ letsencrypt_group }},{{ nginx_user }}'
 
     - name: create challenges directory
       file:
         path: /var/www/challenges
         state: directory
         owner: '{{ letsencrypt_user }}'
-        group: '{{ www-data }}'
+        group: '{{ nginx_user }}'
 
     - name: create ssl certs directory
       file:

@@ -253,6 +253,11 @@
         name: '{{ letsencrypt_group }}'
         system: yes
 
+    - name: create group
+      group:
+        name: '{{ nginx_user }}'
+        system: yes
+
     - name: create user
       user:
         name: '{{ letsencrypt_user }}'

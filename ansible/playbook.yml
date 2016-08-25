@@ -224,7 +224,7 @@
     - name: Copy over h5bp configuration
       copy: src={{ item }} dest=/etc/nginx/{{ item }}
       with_items:
-        - h5bp
+        - h5bp/
         - mime.types
 
     - name: copy nginx.conf

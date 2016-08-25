@@ -28,7 +28,6 @@ server {
 
     include h5bp/directive-only/ssl.conf;
     add_header Strict-Transport-Security "max-age=31536000;";
-    include h5bp/ssl.conf;
     include h5bp/ssl-stapling.conf;
     
   # to generate your dhparam.pem file, run in the terminal

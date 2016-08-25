@@ -272,7 +272,7 @@
 
     - name: create ssl certs directory
       file:
-        path: /etc/nginx/ssl/
+        path: /etc/nginx/ssl/hoyodesmog.diegovalle.net/
         state: directory
         owner: root
         group: '{{ letsencrypt_user }}'
@@ -291,7 +291,7 @@
 
     - name: Copy over self-signed certificates
       when: testing == 'true'
-      copy: src={{ item }} dest=/etc/nginx/ssl/{{ item }}
+      copy: src={{ item }} dest=/etc/nginx/ssl/hoyodesmog.diegovalle.net/{{ item }}
       with_items:
         - cert.csr
         - chained.pem

@@ -261,7 +261,7 @@
     - name: create user
       user:
         name: '{{ letsencrypt_user }}'
-        group: '{{ letsencrypt_group }},{{ nginx_user }}'
+        groups: '{{ letsencrypt_group }},{{ nginx_user }}'
 
     - name: create challenges directory
       file:

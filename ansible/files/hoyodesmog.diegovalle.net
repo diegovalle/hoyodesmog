@@ -7,7 +7,7 @@ server {
     
     include snippets/acme-challenge.conf;
     
-    return 301 https://hoyodesmog.diegovalle.net;$request_uri;
+    return 301 https://hoyodesmog.diegovalle.net$request_uri;
 }
 
 server {

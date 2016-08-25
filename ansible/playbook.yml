@@ -289,7 +289,7 @@
       command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048 creates=/etc/nginx/ssl/dhparam.pem
       notify: Restart nginx
 
-    - name: Copy over website configuration
+    - name: Copy over self-signed certificates
       when: testing == 'true'
       copy: src={{ item }} dest=/etc/nginx/ssl/{{ item }}
       with_items:

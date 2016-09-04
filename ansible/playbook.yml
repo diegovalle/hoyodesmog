@@ -132,7 +132,7 @@
     #   ufw: rule=allow port=443 proto=tcp
 
     - name: Creates .Rprofile with default repo
-      lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://cran.rstudio.com";options(repos = r)})' create=True
+      lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2016-09-03";options(repos = r)})' create=True
 
     - name: Creates .Rprofile with default repo
       lineinfile: dest=/home/{{deploy_user_name}}/.Renviron line='R_LIBS=/home/{{deploy_user_name}}/R/rpackages' create=True
@@ -141,7 +141,7 @@
       file: path=/home/{{deploy_user_name}}/R/rpackages state=directory  owner={{deploy_user_name}} group={{deploy_user_name}}
 
     - name: Creates .Rprofile with default repo
-      lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://cran.rstudio.com";options(repos = r)})' create=True
+      lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2016-09-03";options(repos = r)})' create=True
 
     - name: Clone hoyodesmog
       git: repo=https://github.com/diegovalle/hoyodesmog dest=/var/www/hoyodesmog.diegovalle.net force=yes
@@ -251,7 +251,6 @@
     - name: create group
       group:
         name: '{{ letsencrypt_group }}'
-        system: yes
 
     - name: create group
       group:
@@ -262,6 +261,14 @@
       user:
         name: '{{ letsencrypt_user }}'
         groups: '{{ letsencrypt_group }},{{ nginx_user }}'
+        shell: /bin/bash
+        home: /home/{{ letsencrypt_user }}
+
+    - name: copy scripts to create csr and renew the cert
+      copy: src={{ item }} dest=/home/{{ letsencrypt_user }}/ssl/{{ item }} owner={{ letsencrypt_user }} mode=0775
+      with_items:
+        - create_csr.sh
+        - renew_cert.sh
 
     - name: create challenges directory
       file:
@@ -311,8 +318,28 @@
         - domain.key
       notify: Restart nginx
 
+    - name: Copy over letsencrypt certs
+      when: testing == 'false'
+      copy: src={{ item }} dest=/{{ item }}
+      with_items:
+        - etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.csr
+        - etc/nginx/ssl/hoyodesmog.diegovalle.net/account.key
+        - etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key
 
-      # ssh
+    - name: Generate letsencrypt certificates
+      when: testing == 'false'
+      shell: /home/{{ letsencrypt_user}}/renew_cert.sh hoyodesmog.diegovalle.net
+
+    - name: add cron entry
+      cron:
+        name="hoyodesmog.diegovalle.net certificates"
+        minute="30"
+        day="11"
+        hour="3"
+        job="/home/{{ letsencrypt_user }}/renew_cert.sh diegovalle.net && curl -fsS --retry 3 {{ health_check_renew_blog_diegovalle.net }}  > /dev/null"
+
+
+    # ssh
 
 
     - name: Disallow password authentication
@@ -328,7 +355,6 @@
                   line="PermitRootLogin no"
                   state=present
       notify: Restart ssh
-
 
       # Postfix
 

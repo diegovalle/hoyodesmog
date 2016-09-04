@@ -5,14 +5,16 @@ server {
     # listen on both hosts
     server_name hoyodesmog.diegovalle.net;
     
+    location / {
+        return 301 https://hoyodesmog.diegovalle.net$request_uri;
+    }
     include snippets/acme-challenge.conf;
     
-    return 301 https://hoyodesmog.diegovalle.net$request_uri;
 }
 
 server {
-    listen [::]:443 ssl http2 deferred;  # for Linux
-    listen 443 ssl http2 deferred;  # for Linux
+    listen [::]:443 ssl http2;  # for Linux
+    listen 443 ssl http2;  # for Linux
     
     root /var/www/hoyodesmog.diegovalle.net/web;
     index index.html index.htm;

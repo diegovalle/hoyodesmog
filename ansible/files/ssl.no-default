@@ -8,5 +8,10 @@
 server {
   listen 443 ssl default_server;
   include h5bp/directive-only/ssl.conf;
+  # Generate the self-signed certs with:
+  # sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/default/nginx.key -out /etc/nginx/ssl/default/nginx.crt   -subj "/C=US/ST=CA/O=example.com/CN=example.com"
+  ssl_certificate /etc/nginx/ssl/default/nginx.crt;
+  ssl_certificate_key /etc/nginx/ssl/default/nginx.key;
   return 444;
 }
+

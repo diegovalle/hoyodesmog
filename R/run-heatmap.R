@@ -1,5 +1,5 @@
 if (!require(devtools, quietly = TRUE)) {
-  install.packages("devtools", repos="http://cran.rstudio.com")
+  install.packages("devtools", repos="https://mran.revolutionanalytics.com/snapshot/2016-09-03")
 }
 if (!require("aire.zmvm", quietly = TRUE)) {
   devtools::install_github('diegovalle/aire.zmvm')
@@ -20,7 +20,7 @@ packages.to.load <- c("viridis",
                       "mailR")
 packages.not.installed <- setdiff(packages.to.load, installed.packages()[,"Package"])
 if(length(packages.not.installed)) install.packages(packages.not.installed,
-                                                    repos="http://cran.rstudio.com")
+                                                    repos="https://mran.revolutionanalytics.com/snapshot/2016-09-03")
 for(p in packages.to.load)
   suppressPackageStartupMessages( stopifnot(
     require(p, quietly=TRUE,

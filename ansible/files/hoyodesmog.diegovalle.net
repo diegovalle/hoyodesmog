@@ -23,7 +23,7 @@ server {
     server_name hoyodesmog.diegovalle.net;
     
     #ssl on;
-    ssl_certificate /etc/nginx/ssl/hoyodesmog.diegovalle.net/cert.crt;
+    ssl_certificate /etc/nginx/ssl/hoyodesmog.diegovalle.net/chained.pem;
     ssl_certificate_key /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key;
     ## verify chain of trust of OCSP response using Root CA and Intermediate certs
     ssl_trusted_certificate /etc/nginx/ssl/hoyodesmog.diegovalle.net/chained.pem;

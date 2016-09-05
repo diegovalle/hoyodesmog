@@ -297,6 +297,13 @@
         group: '{{ letsencrypt_user }}'
         mode: 0660
 
+    - name: create challenges directory
+      file:
+        path: /var/www/challenges
+        state: directory
+        owner: '{{ letsencrypt_user }}'
+        group: '{{ nginx_user }}'
+
     - name: letsencrypt user has permission to restart nginx
       lineinfile:
         'dest=/etc/sudoers
@@ -317,22 +324,23 @@
       when: testing == 'true'
       copy: src={{ item }} dest=/etc/nginx/ssl/hoyodesmog.diegovalle.net/{{ item }}
       with_items:
-        - cert.crt
         - chained.pem
         - domain.key
       notify: Restart nginx
 
     - name: Copy over letsencrypt certs
       when: testing == 'false'
-      copy: src={{ item }} dest=/{{ item }}
+      copy: content={{ item.src }} dest=/{{ item.dest }}
       with_items:
-        - etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.csr
-        - etc/nginx/ssl/hoyodesmog.diegovalle.net/account.key
-        - etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key
+        - {src: {{domain_csr}}, dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.csr}
+        - {src: {{account_key}}, dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/account.key}
+        - {src: {{domain_key}}, dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key}
+      notify: Restart nginx
 
     - name: Generate letsencrypt certificates
       when: testing == 'false'
       shell: /home/{{ letsencrypt_user}}/ssl/renew_cert.sh hoyodesmog.diegovalle.net
+      notify: Restart nginx
 
     - name: letsencrypt user has permission to restart nginx
       lineinfile:
@@ -348,7 +356,7 @@
         minute="30"
         day="11"
         hour="3"
-        job="/home/{{ letsencrypt_user }}/renew_cert.sh hoyodesmog.diegovalle.net && curl -fsS --retry 3 {{ HEALTH_CHECK_LETSENCRYPT_HOYODEMOSG }}  > /dev/null"
+        job="/home/{{ letsencrypt_user }}/ssl/renew_cert.sh hoyodesmog.diegovalle.net && curl -fsS --retry 3 {{ HEALTH_CHECK_LETSENCRYPT_HOYODEMOSG }}  > /dev/null"
 
 
     # ssh

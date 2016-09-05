@@ -317,7 +317,7 @@
       notify: Restart nginx
 
     - name: Generate self-signed certificates for the default site
-      shell: sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/default/nginx.key -out /etc/nginx/ssl/default/nginx.crt   -subj "/C=US/ST=CA/O=example.com/CN=example.com"
+      shell: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/default/nginx.key -out /etc/nginx/ssl/default/nginx.crt   -subj "/C=US/ST=CA/O=example.com/CN=example.com"
       when: testing == 'true'
       notify: Restart nginx
 
@@ -336,12 +336,13 @@
         - {src: "{{domain_csr}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.csr}
         - {src: "{{account_key}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/account.key}
         - {src: "{{domain_key}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key}
+        - {src: "{{chained_pem}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/chained.pem}
       notify: Restart nginx
 
-    - name: Generate letsencrypt certificates
-      when: testing == 'false'
-      shell: /home/{{ letsencrypt_user}}/ssl/renew_cert.sh hoyodesmog.diegovalle.net
-      notify: Restart nginx
+    # - name: Generate letsencrypt certificates
+    #   when: testing == 'false'
+    #   shell: /home/{{ letsencrypt_user}}/ssl/renew_cert.sh hoyodesmog.diegovalle.net
+    #   notify: Restart nginx
 
     - name: letsencrypt user has permission to restart nginx
       lineinfile:

@@ -265,7 +265,7 @@
         home: /home/{{ letsencrypt_user }}
 
     - name: Ensure letencrypt home directory exists
-      file: path=/home/{{ letsencrypt_user }}/ssl state=directory owner={{ username }} group={{ nginx_group }} mode=0660 recurse=yes
+      file: path=/home/{{ letsencrypt_user }}/ssl state=directory owner={{ username }}  mode=0660 recurse=yes
 
 
     - name: copy scripts to create csr and renew the cert
@@ -333,6 +333,14 @@
     - name: Generate letsencrypt certificates
       when: testing == 'false'
       shell: /home/{{ letsencrypt_user}}/ssl/renew_cert.sh hoyodesmog.diegovalle.net
+
+    - name: letsencrypt user has permission to restart nginx
+      lineinfile:
+        'dest=/etc/sudoers
+        line="{{ letsencrypt_user }} ALL=NOPASSWD: /usr/sbin/nginx -s reload"
+        state=present
+        validate="visudo -cf %s"'
+
 
     - name: add cron entry
       cron:

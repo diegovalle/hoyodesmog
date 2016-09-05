@@ -170,6 +170,7 @@
         - lubridate
         - mailR
         - readr
+        - XML
 
     - name: Install github R packages
       command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "devtools::install_github('{{item}}')"
@@ -332,9 +333,9 @@
       when: testing == 'false'
       copy: content={{ item.src }} dest=/{{ item.dest }}
       with_items:
-        - {src: {{domain_csr}}, dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.csr}
-        - {src: {{account_key}}, dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/account.key}
-        - {src: {{domain_key}}, dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key}
+        - {src: "{{domain_csr}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.csr}
+        - {src: "{{account_key}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/account.key}
+        - {src: "{{domain_key}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key}
       notify: Restart nginx
 
     - name: Generate letsencrypt certificates

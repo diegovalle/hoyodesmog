@@ -17,7 +17,8 @@ packages.to.load <- c("viridis",
                       "ggmap",
                       "caTools",
                       "lubridate",
-                      "mailR")
+                      "mailR",
+                      "XML")
 packages.not.installed <- setdiff(packages.to.load, installed.packages()[,"Package"])
 if(length(packages.not.installed)) install.packages(packages.not.installed,
                                                     repos="https://mran.revolutionanalytics.com/snapshot/2016-09-03")

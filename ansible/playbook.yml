@@ -397,7 +397,7 @@
         create: True
         owner: root
         group: root
-        mode: 0600
+        mode: 0644
       notify:
         - postmap virtual
         - postmap sendgrid_passwd

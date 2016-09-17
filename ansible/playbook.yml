@@ -420,12 +420,17 @@
         - Restart postfix
 
     # Cron Jobs
+    - cronvar: name="RUNALL_HEALTHCHECK" value="{{RUNALL_HEALTHCHECK_URL}}"
+    - cronvar: name="SENDGRID_USER" value="{{SENDGRID_USER}}"
+    - cronvar: name="SENDGRID_PASS" value="{{SENDGRID_PASS}}"
+    - cronvar: name="HEATMAP_HEALTHCHECK" value="{{HEATMAP_HEALTHCHECK_URL}}"
+    - cronvar: name="EMAIL_ADDRESS" value="{{EMAIL_ADDRESS}}"
 
     - name: cron job for imeca map
-      cron: name="all charts" minute="1-25,30,40,50" user=deploy job="export RUNALL_HEALTHCHECK={{RUNALL_HEALTHCHECK_URL}};/var/www/hoyodesmog.diegovalle.net/R/run-all.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-all.txt"
+      cron: name="all charts" minute="1-25,30,40,50" user=deploy job="/var/www/hoyodesmog.diegovalle.net/R/run-all.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-all.txt"
 
     - name: cront job for everything else
-      cron: name="frontpage heatmap" minute="1-25,30,40,50" user=deploy job="export EMAIL_ADDRESS={{EMAIL_ADDRESS}};export SENDGRID_USER={{SENDGRID_USER}};export SENDGRID_PASS={{SENDGRID_PASS}};export HEATMAP_HEALTHCHECK={{HEATMAP_HEALTHCHECK_URL}};/var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt"
+      cron: name="frontpage heatmap" minute="1-25,30,40,50" user=deploy job="/var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt"
 
   handlers:
     - name: Restart nginx

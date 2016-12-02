@@ -415,6 +415,7 @@
         - { regexp: '^smtp_tls_security_level =', line: 'smtp_tls_security_level = encrypt' }
         - { regexp: '^header_size_limit =', line: 'header_size_limit = 4096000' }
         - { regexp: '^relayhost =', line: 'relayhost = [smtp.sendgrid.net]:587' }
+        - { regexp: '^inet_interfaces =', line: 'inet_interfaces = loopback-only' }
         - { regexp: '^virtual_maps =', line: 'virtual_maps = hash:/etc/postfix/virtual, regexp:/etc/postfix/virtual-regexp' }
       notify:
         - Restart postfix

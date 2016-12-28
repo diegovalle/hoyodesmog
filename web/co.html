@@ -52,6 +52,11 @@ License: pixelarity.com/license
 
         <link rel="stylesheet" href="assets/css/metricsgraphics.css" />
         <link rel="stylesheet" href="assets/css/smog.css" />
+        <style>
+         .mg-line2-color {
+             stroke: rgb(25, 50, 226);
+         }
+        </style>
     </head>
     <body>
 
@@ -153,8 +158,10 @@ License: pixelarity.com/license
          var station_codes_file = 'data/station_codes_co.json';
          var station_names_file = 'data/station_names_co.json';
          var y_label = "ppm";
-         var top_legend = ['CO','forecast'];
+         var top_legend = ['CO','8hr average'];
          var baseline = null;
+         var include_ma = true;
+         var period = 8;
         </script>
         <script src="js/small-multiples.js""></script>
         <!-- Google Analytics -->

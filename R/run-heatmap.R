@@ -18,7 +18,8 @@ packages.to.load <- c("viridis",
                       "caTools",
                       "lubridate",
                       "mailR",
-                      "XML")
+                      "XML",
+                      "zoo")
 packages.not.installed <- setdiff(packages.to.load, installed.packages()[,"Package"])
 if(length(packages.not.installed)) install.packages(packages.not.installed,
                                                     repos="https://mran.revolutionanalytics.com/snapshot/2016-09-03")
@@ -27,5 +28,5 @@ for(p in packages.to.load)
     require(p, quietly=TRUE,
             character.only=TRUE)))
 
-
+source(file.path("src", "json.R"))
 source(file.path("src", "heatmap.R"))

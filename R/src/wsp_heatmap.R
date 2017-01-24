@@ -52,11 +52,11 @@ heatmap_wsp <- function()  {
   #spplot(geog.o3)
   
   pixels = 100
-  geog.grd <- expand.grid(x=seq((min(coordinates(geog.o3)[,1])-.15),
-                                (max(coordinates(geog.o3)[,1])+.15),
+  geog.grd <- expand.grid(x=seq((min(coordinates(geog.o3)[,1])-.1),
+                                (max(coordinates(geog.o3)[,1])+.1),
                                 length.out=pixels),
-                          y=seq((min(coordinates(geog.o3)[,2])-.15),
-                                (max(coordinates(geog.o3)[,2])+.15),
+                          y=seq((min(coordinates(geog.o3)[,2])-.1),
+                                (max(coordinates(geog.o3)[,2])+.1),
                                 length.out=pixels))
   
   grd.pts <- SpatialPixels(SpatialPoints((geog.grd)))

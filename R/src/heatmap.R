@@ -1,55 +1,115 @@
+line=as.character(Sys.time())
+write(line,file="time.txt",append=TRUE)
+
 
 write_json <- function(file_name, stuff, dataframe = NULL) {
   writeLines(toJSON(stuff, dataframe = dataframe), file_name)
   
 }
 
-heatmap <- function(mxc){
-  print(mxc$datetime[[1]])
-  mxc <- left_join(mxc, stations, by = "station_code")
-  mxc <- mxc[!is.na(mxc$value),]
-  
-  
-  geog.o3 <- mxc[,c("lat", "lon", "value")]
-  coordinates(geog.o3) <- ~lon+lat
-  #spplot(geog.o3)
+get_grid <- function(df) {
+  df <- left_join(df, stations, by = "station_code")
+  df <- df[!is.na(df$value),]
+  geog <- df[,c("lat", "lon", "value")]
+  coordinates(geog) <- ~lon+lat
   
   pixels = 100
-  geog.grd <- expand.grid(x=seq((min(coordinates(geog.o3)[,1])-.15),
-                                (max(coordinates(geog.o3)[,1])+.15),
+  geog.grd <- expand.grid(x=seq((min(coordinates(geog)[,1])-.1),
+                                (max(coordinates(geog)[,1])+.1),
                                 length.out=pixels),
-                          y=seq((min(coordinates(geog.o3)[,2])-.15),
-                                (max(coordinates(geog.o3)[,2])+.15),
+                          y=seq((min(coordinates(geog)[,2])-.1),
+                                (max(coordinates(geog)[,2])+.1),
                                 length.out=pixels))
   
   grd.pts <- SpatialPixels(SpatialPoints((geog.grd)))
-  grd.pts <- as(grd.pts, "SpatialGrid")
-  
-  #plot(grd.pts, cex = 1.5, col = "grey")
-  #points(geog.o3, pch = 1, col = "red", cex = 1)
-  
-  geog.idw <- idw(value ~ 1, geog.o3, grd.pts, idp = 6, debug.level =0)
-  
-  #spplot(geog.idw["var1.pred"])
-  
-  idw = as.data.frame(geog.idw)
-  names(idw) <- c("var1.pred", "var1.var", "lon", "lat")
-  
-  
-  
-  write_json("../web/data/heatmap_data.json",
-             idw[,c("var1.pred", "lon", "lat")], "values")
-  write_json("../web/data/heatmap_stations.json",
-             mxc)
-  write_json("timestamps/timestamp_heatmap.json",
-             mxc$datetime[[1]])
-  
-  line=as.character(Sys.time())
-  write(line,file="time.txt",append=TRUE)
+  as(grd.pts, "SpatialGrid")
 }
 
+heatmap <- function(df, grid){
+  if(nrow(df) == 0){
+    return(data.frame(var1.pred = NA, var1.var = NA, lon = NA, lat = NA))
+  }
+  
+  df <- left_join(df, stations, by = "station_code")
+  df <- df[!is.na(df$value),]
+  df <- df[,c("lat", "lon", "value")]
+  coordinates(df) <- ~lon+lat
+  df.idw <- idw(value ~ 1, df, grid, idp = 2, debug.level = 0)
+  
+  idw = as.data.frame(df.idw)
+  names(idw) <- c("var1.pred", "var1.var", "lon", "lat")
+
+  idw
+}
+
+
+
+merge_latest <- function(df, mxc, pollut) {
+  mxc <- subset(mxc, pollutant == pollut)
+  for(station_code in mxc$station_code) {
+    idx <- which(station_code == mxc$station_code)
+    if(idx)
+      df$value[which(station_code == df$station_code)] <- mxc$value[idx]
+  }
+  df[!is.na(df$value),]
+}
+
+
+get_data_roll <- function(pollutant, mxc, ave) {
+  df <- get_station_single_month(pollutant, 2017, "01") %>% 
+    group_by(station_code) %>%
+    mutate(rollave = rollapply(value, ave,
+                               function(x) {
+                                 if(sum(is.na(x)) > ave / 4)
+                                   return(NA)
+                                 mean(x, na.rm = TRUE)},
+                               fill = NA, align = "right")) %>%
+    mutate(value = convert_to_imeca(rollave, pollutant)) %>%
+    filter(row_number() == n())
+  merge_latest(df, mxc, pollutant)
+}
+
+get_data_24 <- function(pollutant, mxc) {
+  df <- get_data_month(pollutant) %>% 
+    group_by(station_code) %>%
+    mutate(rollave = rollapply(value, 24,
+                               function(x) {
+                                 if(sum(is.na(x)) > 6)
+                                   return(NA)
+                                 mean(x, na.rm = TRUE)},
+                               fill = NA, align = "right")) %>%
+    mutate(value = convert_to_imeca(rollave, pollutant)) %>%
+    filter(row_number() == n())
+  
+}
+
+get_data_8 <- function(pollutant, mxc) {
+  df <- get_data_month(pollutant) %>% 
+    group_by(station_code) %>%
+    mutate(rollave = rollapply(value, 8,
+                               function(x) {
+                                 if(sum(is.na(x)) > 2)
+                                   return(NA)
+                                 mean(x, na.rm = TRUE)},
+                               fill = NA, align = "right")) %>%
+    mutate(value = convert_to_imeca(rollave, pollutant)) %>%
+    filter(row_number() == n())
+  merge_latest(df, mxc, pollutant)
+}
+
+get_data <- function(pollutant, mxc) {
+  df <- get_data_month(pollutant) %>% 
+    group_by(station_code) %>%
+    mutate(value = convert_to_imeca(value, pollutant)) %>%
+    filter(row_number() == n() )
+  merge_latest(df, mxc, pollutant)
+}
+
+
 mxc <- get_latest_data()
-heatmap(mxc)
+print(mxc$datetime[[1]])
+mxc2 <- left_join(mxc, stations, by = "station_code")
+mxc2 <- mxc2[!is.na(mxc2$value),]
 
 try({
   if (max(mxc$value, na.rm = TRUE) >= 151) {
@@ -70,6 +130,50 @@ try({
               send = TRUE)
   }
 })
+
+grid <- get_grid(mxc)
+
+if(all(mxc$pollutant == "03")) {
+  idw <- heatmap(mxc, grid)
+  idw$pollutant <- "O<sub>3</sub>"
+  write_json("../web/data/heatmap_data.json",
+             idw[,c("var1.pred", "lon", "lat", "pollutant")], "values")
+} else {
+  pm10 <- heatmap(get_data_24("PM10", mxc), grid)
+  o3 <- heatmap(get_data("O3", mxc), grid)
+  co <- heatmap(get_data_8("CO", mxc), grid)
+  no2 <- heatmap(get_data("NO2", mxc), grid)
+  so2 <- heatmap(get_data_24("SO2", mxc), grid)
+  
+  idw <- pm10
+  idw$var1.pred <- round(pmax(pm10$var1.pred, 
+                        o3$var1.pred,
+                        co$var1.pred,
+                        no2$var1.pred,
+                        so2$var1.pred, na.rm = TRUE))
+  idw$pollutant <- apply(data.frame(pm10$var1.pred, 
+                   o3$var1.pred,
+                   co$var1.pred,
+                   no2$var1.pred,
+                   so2$var1.pred),
+        1, function(x) {
+          switch(which.max(x),
+                 "1" = "PM<sub>10</sub>",
+                 "2" = "O<sub>3</sub>",
+                 "3" = "CO",
+                 "4" = "NO<sub>2</sub>",
+                 "5" = "SO<sub>2</sub>"
+          )
+        })
+  write_json("../web/data/heatmap_data.json",
+             idw[,c("var1.pred", "lon", "lat", "pollutant")], "values")
+  
+}
+
+write_json("../web/data/heatmap_stations.json",
+           mxc2)
+write_json("timestamps/timestamp_heatmap.json",
+           mxc$datetime[[1]])
 
 
 

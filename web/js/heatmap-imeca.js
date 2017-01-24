@@ -52,13 +52,14 @@ var pixels = 100;
 var gridx, gridy;
 
 //var points = data; // data loaded from data.js
-var leafletMap = L.map('map').setView([19.48, -99.1], 10);
+var leafletMap = L.map('map');
 L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
     subdomains: 'abcd',
     maxZoom: 19
 }).addTo(leafletMap);
-
+leafletMap.fitBounds([[19.72219, -99.39044], [19.72219, -98.88609],
+                      [19.15429, -99.39044], [19.15429, -98.88609]]);
 
 var hash = new L.Hash(leafletMap);
 
@@ -136,7 +137,7 @@ d3.json('/data/heatmap_data.json', function(error, data) {
 
         for (var i = 0; i < stations.length; i++) {
             var c = L.circle([stations[i]["lat"], stations[i]["lon"]],
-                             550);
+                             400);
             var rectangle = new L.Rectangle(c.getBounds(), {
                 color: "black",
                 fillColor: color_scale(stations[i].value),
@@ -242,9 +243,10 @@ d3.json('/data/heatmap_data.json', function(error, data) {
                     // upper right corner
                     d[1] + cell_width / 2,
                     d[2] + cell_height / 2,
-                    // add wind direction and speed as objects
+                    // add imeca and pollutant as objects
                     {
-                        value: Math.round(d[0])
+                        value: Math.round(d[0]),
+                        pollutant : d[3]
                     }]);
             }
             var rtree = rbush(2);
@@ -259,7 +261,9 @@ d3.json('/data/heatmap_data.json', function(error, data) {
             pollution_value = tree.search([e.latlng.lng, e.latlng.lat,
                                            e.latlng.lng, e.latlng.lat]);
             if (pollution_value.length) {
-                window['mousemove'].innerHTML = pollution_value[0][4].value;
+                window['mousemove'].innerHTML = pollution_value[0][4].value +
+                    ' <small style="font-size:12px">' +
+                    pollution_value[0][4].pollutant + '</small>';
             }
 
             // console.timeEnd('search for value');

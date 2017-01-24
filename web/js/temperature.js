@@ -44,7 +44,8 @@ L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x
     subdomains: 'abcd',
     maxZoom: 19
 }).addTo(leafletMap);
-
+leafletMap.fitBounds([[19.72219, -99.39044], [19.72219, -98.88609],
+                      [19.15429, -99.39044], [19.15429, -98.88609]]);
 
 var hash = new L.Hash(leafletMap);
 

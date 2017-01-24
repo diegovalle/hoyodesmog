@@ -99,12 +99,14 @@ var ctx;
 
 
 //var points = data; // data loaded from data.js
-var leafletMap = L.map('map').setView([19.48, -99.1], 10);
+var leafletMap = L.map('map');
 L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
     subdomains: 'abcd',
     maxZoom: 19
 }).addTo(leafletMap);
+leafletMap.fitBounds([[19.72219, -99.39044], [19.72219, -98.88609],
+                      [19.15429, -99.39044], [19.15429, -98.88609]]);
 
 
 

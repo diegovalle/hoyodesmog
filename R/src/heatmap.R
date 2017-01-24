@@ -139,11 +139,11 @@ if(all(mxc$pollutant == "03")) {
   write_json("../web/data/heatmap_data.json",
              idw[,c("var1.pred", "lon", "lat", "pollutant")], "values")
 } else {
-  pm10 <- heatmap(get_data_24("PM10", mxc), grid)
-  o3 <- heatmap(get_data("O3", mxc), grid)
-  co <- heatmap(get_data_8("CO", mxc), grid)
-  no2 <- heatmap(get_data("NO2", mxc), grid)
-  so2 <- heatmap(get_data_24("SO2", mxc), grid)
+  pm10 <- heatmap(get_data_roll("PM10", mxc, 24), grid)
+  o3 <- heatmap(get_data_roll("O3", mxc, 1), grid)
+  co <- heatmap(get_data_roll("CO", mxc, 8), grid)
+  no2 <- heatmap(get_data_roll("NO2", mxc, 1), grid)
+  so2 <- heatmap(get_data_roll("SO2", mxc, 24), grid)
   
   idw <- pm10
   idw$var1.pred <- round(pmax(pm10$var1.pred, 

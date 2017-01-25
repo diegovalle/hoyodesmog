@@ -65,7 +65,7 @@ heatmap_wdr <- function(){
   #plot(grd.pts, cex = 1.5, col = "grey")
   #points(geog.o3, pch = 1, col = "red", cex = 1)
   
-  geog.idw <- idw(value ~ 1, geog.o3, grd.pts, idp = 2, debug.level =0)
+  geog.idw <- idw(value ~ 1, geog.o3, grd.pts, idp = 6, debug.level =0)
   
   #spplot(geog.idw["var1.pred"])
   

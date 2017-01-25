@@ -105,6 +105,8 @@ L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{
     subdomains: 'abcd',
     maxZoom: 19
 }).addTo(leafletMap);
+//L.mapbox.accessToken = 'pk.eyJ1IjoiZGllZ292YWxsZXkiLCJhIjoiY2l5ZGI2NjRjMDBtMDJxbXhocml3MjdnbyJ9.aWk3BvZsieIOIWRrinTXqQ';
+//L.mapbox.styleLayer('mapbox://styles/mapbox/light-v9').addTo(leafletMap);
 leafletMap.fitBounds([[19.72219, -99.39044], [19.72219, -98.88609],
                       [19.15429, -99.39044], [19.15429, -98.88609]]);
 

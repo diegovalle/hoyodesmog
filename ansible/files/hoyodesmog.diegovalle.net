@@ -60,15 +60,18 @@ server {
             expires 1M;
             access_log off;
             add_header Cache-Control "public";
+            add_header Strict-Transport-Security "max-age=31536000;";
         }
         
         # Feed
         location ~* \.(?:rss|atom)$ {
             expires 1h;
             add_header Cache-Control "public";
+            add_header Strict-Transport-Security "max-age=31536000;";
         }
         
         location = / {
+            add_header Strict-Transport-Security "max-age=31536000;";
             expires -1;
             add_header Link "</images/mx.png>; rel=\"preload\"; as=\"image\"";
             add_header Link "</assets/js/d3.min.js>; rel=\"preload\"; as=\"script\"";
@@ -96,6 +99,7 @@ server {
         }    
         
         location = /es/ {
+            add_header Strict-Transport-Security "max-age=31536000;";
             expires -1;
             add_header Link "</assets/js/d3.min.js>; rel=\"preload\"; as=\"script\"";
             add_header Link "</assets/js/mapbox.js>; rel=\"preload\"; as=\"script\"";
@@ -124,6 +128,7 @@ server {
         }  
         
         location ~* \.html {
+            add_header Strict-Transport-Security "max-age=31536000;";
             expires -1;
             add_header Link "</images/mx.png>; rel=\"preload\"; as=\"image\"";
             add_header Link "</assets/js/jquery.min.js>; rel=\"preload\"; as=\"script\"";
@@ -142,6 +147,7 @@ server {
             add_header Link "</assets/css/css/font.css>; rel=\"preload\"; as=\"style\"";
         }
         location ~* index.html$ {
+            add_header Strict-Transport-Security "max-age=31536000;";
             expires -1;
             add_header Link "</images/mx.png>; rel=\"preload\"; as=\"image\"";
             add_header Link "</assets/js/d3.min.js>; rel=\"preload\"; as=\"script\"";
@@ -168,6 +174,7 @@ server {
             add_header Link "</assets/css/css/font.css>; rel=\"preload\"; as=\"style\"";
         }
         location ~* wind.html$ {
+            add_header Strict-Transport-Security "max-age=31536000;";
             expires -1;
             add_header Link "</images/mx.png>; rel=\"preload\"; as=\"image\"";
             add_header Link "</assets/js/d3.min.js>; rel=\"preload\"; as=\"script\"";
@@ -203,12 +210,14 @@ server {
         #}
         # cache.appcache, your document html and data
         location ~* \.(?:manifest|appcache|html?|xml|json|csv)$ {
+            add_header Strict-Transport-Security "max-age=31536000;";
             expires -1;
             # access_log logs/static.log; # I don't usually include a static log
         }
 
 	# CSS and Javascript
         location ~* \.(?:css|js)$ {
+            add_header Strict-Transport-Security "max-age=31536000;";
             expires 1y;
             access_log off;
             add_header Cache-Control "public";

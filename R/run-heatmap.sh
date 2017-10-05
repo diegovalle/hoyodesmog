@@ -86,8 +86,10 @@ main() {
         printf "\n\n"
 
         mv -f $NEWFILE $OLDFILE
-        ./netlifyctl -A "$NETLIFYAPIKEY" deploy
-        curl -fsS --retry 3 "$HEATMAP_HEALTHCHECK" > /dev/null
+        if [ "$CI" != "true" ]; then
+            ./netlifyctl -A "$NETLIFYAPIKEY" deploy
+            curl -fsS --retry 3 "$HEATMAP_HEALTHCHECK" > /dev/null
+        fi
         echo "Waiting for the the hour"
         read min sec <<<$(date +'%M %S')
         sleep $(( 3600 - 10#$min*60 - 10#$sec ))

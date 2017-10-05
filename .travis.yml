@@ -4,6 +4,11 @@ dist: trusty
 apt_packages:
   - r-cran-rjava
 
+env:
+  global:
+    - NETLIFYAPIKEY=abc123
+    - HEATMAP_HEALTHCHECK=http://example.com
+
 addons:
   hosts:
     - hoyodesmog.diegovalle.net
@@ -23,7 +28,8 @@ install:
 before_script:
   - npm install -g casperjs
   - phantomjs --version; casperjs --version
-  - cd R && Rscript run-heatmap.R && Rscript run-all.R && cd ..
+  - cd R && run-heatmap.sh
+  - cd R && Rscript run-heatmap.R  && cd ..
   - simplehttpserver web/ > /dev/null & #shooting up a web server for the tests
   - sleep 30
 

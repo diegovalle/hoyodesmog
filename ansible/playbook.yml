@@ -133,7 +133,7 @@
     #   ufw: rule=allow port=443 proto=tcp
 
     - name: Creates .Rprofile with default repo
-      lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2016-09-03";options(repos = r)})' create=True
+      lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2017-10-03";options(repos = r)})' create=True
 
     - name: Creates .Rprofile with default repo
       lineinfile: dest=/home/{{deploy_user_name}}/.Renviron line='R_LIBS=/home/{{deploy_user_name}}/R/rpackages' create=True
@@ -142,7 +142,7 @@
       file: path=/home/{{deploy_user_name}}/R/rpackages state=directory  owner={{deploy_user_name}} group={{deploy_user_name}}
 
     - name: Creates .Rprofile with default repo
-      lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2016-09-03";options(repos = r)})' create=True
+      lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2017-10-03";options(repos = r)})' create=True
 
     - name: Clone hoyodesmog
       git: repo=https://github.com/diegovalle/hoyodesmog dest=/var/www/hoyodesmog.diegovalle.net force=yes

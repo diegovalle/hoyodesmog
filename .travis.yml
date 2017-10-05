@@ -29,7 +29,7 @@ install:
 before_script:
   - npm install -g casperjs
   - phantomjs --version; casperjs --version
-  - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --sudo --extra-vars "testing=true"
+  - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --become --extra-vars "testing=true"
   - simplehttpserver web/ > /dev/null & #shooting up a web server for the tests
   - sleep 30
 

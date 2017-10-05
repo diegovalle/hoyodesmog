@@ -179,6 +179,8 @@
       command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "devtools::install_github('{{item}}')"
       with_items:
         - diegovalle/aire.zmvm
+      vars:
+        ansible_ssh_pipelining: true
       become: yes
       become_user: "{{deploy_user_name}}"
 

@@ -34,8 +34,7 @@ before_script:
   - sleep 30
 
 script:
-  - cd R && ./run-heatmap.sh && cd ..
-  - cd R && Rscript run-heatmap.R  && cd ..
+  - cd R && sudo ./run-heatmap.sh && cd ..
   - casperjs test web/tests/test.js
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --syntax-check
   - curl -kLv http://hoyodesmog.diegovalle.net | grep 'Real-Time Mexico'

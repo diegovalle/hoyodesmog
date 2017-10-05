@@ -7,7 +7,7 @@ casper.test.begin(
     1,
     function suite(test) {
         casper.start(partialURL, function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertTitle('Real-Time Mexico City Air Quality Index',
                                  'homepage title is the one expected');
                 test.assertExists('svg g path', 'station square exists');
@@ -17,7 +17,7 @@ casper.test.begin(
         });
 
         casper.thenOpen(partialURL + '/es/index.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('svg g path', 'station square exists');
                 test.assertExists('canvas', 'canvas exists');
                 test.assertExists('img.leaflet-tile-loaded', 'map tiles exist');
@@ -25,7 +25,7 @@ casper.test.begin(
         });
 
         casper.thenOpen(partialURL + '/es/temperature.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('svg g path', 'station square exists');
                 test.assertExists('canvas', 'canvas exists');
                 test.assertExists('img.leaflet-tile-loaded', 'map tiles exist');
@@ -33,7 +33,7 @@ casper.test.begin(
         });
 
         casper.thenOpen(partialURL + '/temperature.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('svg g path', 'station square exists');
                 test.assertExists('canvas', 'canvas exists');
                 test.assertExists('img.leaflet-tile-loaded', 'map tiles exist');
@@ -41,7 +41,7 @@ casper.test.begin(
         });
 
         casper.thenOpen(partialURL + '/wind.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('svg g path', 'station square exists');
                 test.assertExists('canvas', 'canvas exists');
                 test.assertExists('img.leaflet-tile',
@@ -50,7 +50,7 @@ casper.test.begin(
         });
 
         casper.thenOpen(partialURL + '/es/wind.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('svg g path', 'station square exists');
                 test.assertExists('canvas', 'canvas exists');
                 test.assertExists('img.leaflet-tile-loaded',
@@ -61,7 +61,7 @@ casper.test.begin(
 
 
         casper.thenOpen(partialURL + '/es/ozone.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
                 test.assertEval(function() {
@@ -71,7 +71,7 @@ casper.test.begin(
             });
         });
         casper.thenOpen(partialURL + '/ozone.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
                 test.assertEval(function() {
@@ -82,78 +82,78 @@ casper.test.begin(
         });
 
         casper.thenOpen(partialURL + '/es/pm10.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
         casper.thenOpen(partialURL + '/pm10.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
 
         casper.thenOpen(partialURL + '/es/so2.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
         casper.thenOpen(partialURL + '/so2.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
 
         casper.thenOpen(partialURL + '/es/no2.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
         casper.thenOpen(partialURL + '/no2.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
 
         casper.thenOpen(partialURL + '/es/co.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
         casper.thenOpen(partialURL + '/co.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
 
         casper.thenOpen(partialURL + '/es/nox.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
         casper.thenOpen(partialURL + '/nox.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
 
         casper.thenOpen(partialURL + '/es/pm25.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });
         });
         casper.thenOpen(partialURL + '/pm25.html', function() {
-            this.wait(10000, function() {
+            this.wait(45000, function() {
                 test.assertExists('div.line-chart svg path',
                                   'small multiple line chart exists');
             });

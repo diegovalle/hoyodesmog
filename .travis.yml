@@ -18,6 +18,7 @@ before_install:
   - git submodule update --init --recursive
   - sudo apt-get -qq update
   - sudo apt-get install -y npm
+  - sudo apt-get install -y lynx
   - sudo apt-get install -y r-cran-rjava
 #  - sudo R CMD javareconf
 

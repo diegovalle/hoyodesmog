@@ -13,6 +13,8 @@ SCRIPT=run-heatmap.R
 
 : "${HEATMAP_HEALTHCHECK:?Need to set HEATMAP_HEALTCHECK non-empty}"
 : "${NETLIFYAPIKEY:?Need to set NETLIFYAPIKEY non-empty}"
+# Set CI to false if its unset
+: "${CI:=false}"
 
 if [ -d $DIR ]
 then
@@ -85,7 +87,6 @@ main() {
 
         printf "\n\n"
 
-        mv -f $NEWFILE $OLDFILE
         # Don't update website or ping when running in CI
         if [ "$CI" != "true" ]; then
             ./netlifyctl -A "$NETLIFYAPIKEY" deploy
@@ -94,6 +95,7 @@ main() {
             #read min sec <<<$(date +'%M %S')
             #sleep $(( 3600 - 10#$min*60 - 10#$sec ))
         fi
+        mv -f $NEWFILE $OLDFILE
     fi
 }
 

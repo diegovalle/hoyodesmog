@@ -86,13 +86,14 @@ main() {
         printf "\n\n"
 
         mv -f $NEWFILE $OLDFILE
+        # Don't update website or ping when running in CI
         if [ "$CI" != "true" ]; then
             ./netlifyctl -A "$NETLIFYAPIKEY" deploy
             curl -fsS --retry 3 "$HEATMAP_HEALTHCHECK" > /dev/null
+            #echo "Waiting for the top of the hour"
+            #read min sec <<<$(date +'%M %S')
+            #sleep $(( 3600 - 10#$min*60 - 10#$sec ))
         fi
-        echo "Waiting for the the hour"
-        read min sec <<<$(date +'%M %S')
-        sleep $(( 3600 - 10#$min*60 - 10#$sec ))
     fi
 }
 

@@ -2,38 +2,8 @@ write_json <- function(file_name, stuff, dataframe = NULL) {
   writeLines(toJSON(stuff, dataframe = dataframe), file_name)
   
 }
-
-zpad <- function(x) str_pad(x, 2, "left", "0")
-
-
-current_datetime <- Sys.time()
-current_datetime <- with_tz(current_datetime, "America/Mexico_City")
-
-current_month <- month(current_datetime)
-last_month <- 0
-if(day(current_datetime) < 2) {
-  if(current_month == 1) {
-    last_month <- 12
-  } else {
-    last_month <- current_month - 1
-  }
-}
 pollutant="WDR"
-df <- get_station_single_month(pollutant = pollutant, 
-                               year =  year(current_datetime),
-                               month = zpad(current_month))
-if(last_month != 0) {
-  if(last_month == 12) {
-    year_to_download <-  year(current_datetime)-1
-  } else {
-    year_to_download <-  year(current_datetime)
-  }
-  df <- rbind(df,  get_station_single_month(pollutant = pollutant, 
-                                            year =  year_to_download,
-                                            month = zpad(last_month)))
-}
-
-
+df <- get_month_data("HORARIOS", pollutant, "")
 df <- arrange(df, station_code, pollutant, date, hour)
 df <- subset(df, date == max(df$date) & hour == tail(df, 1)$hour) 
 df <- left_join(df, stations, by = "station_code")
@@ -85,8 +55,6 @@ heatmap_wdr <- function(){
              idw[,c("var1.pred", "lon", "lat")], "values")
   write_json("../web/data/wdr_stations.json",
              df)
-  write_json("timestamps/timestamp_wdr.json",
-             df$datetime_mxc[[1]])
 }
 
 heatmap_wdr()

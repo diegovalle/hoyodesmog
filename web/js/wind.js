@@ -138,9 +138,7 @@ pip = function(point, vs) {
  19.432608 (y), and the longitude (x) is -99.133209
  The variable cell_data holds an array with Mexico City divided into
  10,000 cells like this:
-
  [[pollution_value, longitude, latitude],...]
-
  The lng and lat refer to the center of the cell
  */
 
@@ -279,9 +277,7 @@ function components(direction, speed) {
  19.432608 (y), and the longitude (x) is -99.133209
  The variable data holds an array with Mexico City divided into
  10,000 cells like this:
-
  [[pollution_value, longitude, latitude],...]
-
  The lng and lat refer to the center of the cell
  */
 create_rtree = function(data, wsp, canvasOverlay) {

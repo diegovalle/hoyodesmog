@@ -3,6 +3,8 @@
 .RData
 .Ruserdata
 *.json
+netlifyctl
+R/data/*.csv
 r-package/r-package/aire.zmvm_cache/*
 r-package/r-package/aire.zmvm_files/*
 R/timestamps/all_aire_new.html

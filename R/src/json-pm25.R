@@ -1,22 +1,6 @@
 
-
-fileName <- "timestamps/timestamp_pm25.json"
+pollutant <- "PM2"
+df <- get_month_data("HORARIOS", pollutant, "")
+# needs to be pm25 for the file name
 pollutant <- "PM25"
-if(file.exists(fileName)) {
-  timestamp <- fromJSON(fileName, flatten=TRUE)
-  df <- get_data_month(pollutant)
-  print(max(df$datetime_mxc))
-  
-  if(max(df$datetime_mxc) > timestamp ) {
-    create_json(df, pollutant)
-    write_json(fileName, max(df$datetime_mxc))
-  } else {
-    print("no new data")
-  }
-  
-} else {
-  df <- get_data_month(pollutant)
-  create_json(df, pollutant)
-  
-  write_json(fileName, max(df$datetime))
-}
+create_json(df, pollutant)

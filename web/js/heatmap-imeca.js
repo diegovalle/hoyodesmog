@@ -173,9 +173,7 @@ d3.json('/data/heatmap_data.json', function(error, data) {
              19.432608 (y), and the longitude (x) is -99.133209
              The variable data holds an array with Mexico City divided into
              10,000 cells like this:
-
              [[pollution_value, longitude, latitude],...]
-
              The lng and lat refer to the center of the cell
              */
             var cell_height = data[0][2] - data[pixels][2];
@@ -222,9 +220,7 @@ d3.json('/data/heatmap_data.json', function(error, data) {
          19.432608 (x), and the longitude (y) is -99.133209
          The variable data holds an array with Mexico City divided into
          10,000 cells like this:
-
          [[pollution_value, longitude, latitude],...]
-
          The lng and lat refer to the center of the cell
          */
         create_rtree = function(data) {

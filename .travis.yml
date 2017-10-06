@@ -33,6 +33,7 @@ before_script:
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --become --extra-vars "testing=true"
   - simplehttpserver web/ > /dev/null & #shooting up a web server for the tests
   - sleep 30
+  - echo 0 > R/number_of_errors.txt
 
 script:
   - cd R && sudo ./run-heatmap.sh && cd ..

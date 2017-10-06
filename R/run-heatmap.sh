@@ -69,7 +69,7 @@ main() {
         printf "$(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z') %s and %s have the same content\n" $OLDFILE $NEWFILE
     else
         printf "\n\n%s and %s have DIFFERENT content\n" $OLDFILE $NEWFILE
-        echo "date right before download: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
+        echo "Date right before download: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
         # Download data from aire.cdmx.gob.mx with lynx because of problems
         # doing it from R

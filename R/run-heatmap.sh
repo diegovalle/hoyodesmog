@@ -12,17 +12,18 @@ NEWFILE=timestamps/heatmap_aire_new.html
 SCRIPT=run-heatmap.R
 ERROR_FILE=number_of_errors.txt
 
+if [ -d $DIR ]
+then
+    cd $DIR
+fi
+
 : "${HEATMAP_HEALTHCHECK:?Need to set HEATMAP_HEALTCHECK non-empty}"
 : "${NETLIFYAPIKEY:?Need to set NETLIFYAPIKEY non-empty}"
 # Set CI to false if its unset
 : "${CI:=false}"
 # File to keep track of failed R executions
-if [  ! -e  $ERROR_FILE ]; then echo 0 > $ERROR_FILE; fi
+if [  ! -e  $ERROR_FILE ]; then printf 0 > $ERROR_FILE; fi
 
-if [ -d $DIR ]
-then
-    cd $DIR
-fi
 
 clean_html_table() {
     sleep 1
@@ -96,7 +97,7 @@ main() {
             sleep $((600*ERRORS))
         fi
         echo "output from program:"
-        Rscript $SCRIPT || ( ((++ERRORS)) && echo $ERRORS > $ERROR_FILE && exit 1)
+        Rscript $SCRIPT || ( ((++ERRORS)) && printf $ERRORS > $ERROR_FILE && exit 1)
 
         printf "\n\n"
 
@@ -110,7 +111,7 @@ main() {
         fi
         mv -f $NEWFILE $OLDFILE
         # Reset the error count after one run
-        echo 0 > $ERROR_FILE
+        printf 0 > $ERROR_FILE
     fi
 }
 

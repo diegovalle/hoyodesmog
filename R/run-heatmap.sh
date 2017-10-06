@@ -17,7 +17,7 @@ ERROR_FILE=number_of_errors.txt
 # Set CI to false if its unset
 : "${CI:=false}"
 # File to keep track of failed R executions
-if [ ! -f $ERROR_FILE ]; then echo 0 > $ERROR_FILE; fi
+if [  ! -e  $ERROR_FILE ]; then echo 0 > $ERROR_FILE; fi
 
 if [ -d $DIR ]
 then

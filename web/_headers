@@ -1,0 +1,127 @@
+/ 
+            Strict-Transport-Security: max-age=31536000;
+            Link: </images/mx.png>; rel=preload; as=image
+            Link: </data/heatmap_data.json>; rel=preload; as=script
+            Link: </data/heatmap_stations.json>; rel=preload; as=script
+            Link: </assets/js/d3.min.js>; rel=preload; as=script
+            Link: </assets/js/mapbox.js>; rel=preload; as=script
+            Link: </assets/js/jquery.min.js>; rel=preload; as=script
+            Link: </assets/js/jquery.dropotron.min.js>; rel=preload; as=script
+            Link: </assets/js/skel.min.js>; rel=preload; as=script
+            Link: </assets/js/util.js>; rel=preload; as=script
+            Link: </assets/js/main.js>; rel=preload; as=script
+            Link: </js/d3-color.js>; rel=preload; as=script
+            Link: </js/L.CanvasOverlay.js>; rel=preload; as=script
+            Link: </js/leaflet.locate/L.Control.Locate.min.js>; rel=preload; as=script
+            Link: </js/leaflet.hash/leaflet-hash.js>; rel=preload; as=script
+            Link: </assets/js/rbush.js>; rel=preload; as=script
+            Link: </assets/js/moment/moment.min.js>; rel=preload; as=script
+            Link: </assets/js/moment/locales.js>; rel=preload; as=script
+            Link: </js/heatmap-imeca.js?v=1.1>; rel=preload; as=script
+            Link: </assets/css/font-awesome.min.css>; rel=preload; as=style
+            Link: </assets/css/leaflet.css>; rel=preload; as=style
+            Link: </assets/css/smog.css>; rel=preload; as=style
+            Link: </assets/css/leaflet.locate/L.Control.Locate.min.css>; rel=preload; as=style
+            Link: </assets/css/main.css?v=1>; rel=preload; as=style
+            Link: </assets/fonts/fontawesome-webfont.woff2?v=4.3.0>; rel=preload; as=font
+            Link: </assets/css/css/font.css>; rel=preload; as=style
+            
+    
+        
+/es/
+            Strict-Transport-Security: max-age=31536000;
+            Link: </assets/js/d3.min.js>; rel=preload; as=script
+            Link: </assets/js/mapbox.js>; rel=preload; as=script
+            Link: </assets/js/jquery.min.js>; rel=preload; as=script
+            Link: </assets/js/jquery.dropotron.min.js>; rel=preload; as=script
+            Link: </assets/js/skel.min.js>; rel=preload; as=script
+            Link: </assets/js/util.js>; rel=preload; as=script
+            Link: </assets/js/main.js>; rel=preload; as=script
+            Link: </js/d3-color.js>; rel=preload; as=script
+            Link: </js/L.CanvasOverlay.js>; rel=preload; as=script
+            Link: </js/leaflet.locate/L.Control.Locate.min.js>; rel=preload; as=script
+            Link: </js/leaflet.hash/leaflet-hash.js>; rel=preload; as=script
+            Link: </assets/js/rbush.js>; rel=preload; as=script
+            Link: </assets/js/moment/moment.min.js>; rel=preload; as=script
+            Link: </assets/js/moment/locales.js>; rel=preload; as=script
+            Link: </images/us.png>; rel=preload; as=image
+            Link: </js/heatmap-imeca.js?v=1.1>; rel=preload; as=script
+            Link: </assets/css/font-awesome.min.css>; rel=preload; as=style
+            Link: </assets/css/leaflet.css>; rel=preload; as=style
+            Link: </assets/css/smog.css>; rel=preload; as=style
+            Link: </assets/css/leaflet.locate/L.Control.Locate.min.css>; rel=preload; as=style
+            Link: </assets/css/main.css?v=1>; rel=preload; as=style
+            Link: </assets/fonts/fontawesome-webfont.woff2?v=4.3.0>; rel=preload; as=font
+            Link: </assets/css/css/font.css>; rel=preload; as=style
+ 
+        
+*.html
+            Strict-Transport-Security: max-age=31536000;
+            Link: </images/mx.png>; rel=preload; as=image
+            Link: </assets/js/jquery.min.js>; rel=preload; as=script
+            Link: </assets/js/jquery.dropotron.min.js>; rel=preload; as=script
+            Link: </assets/js/skel.min.js>; rel=preload; as=script
+            Link: </assets/js/util.js>; rel=preload; as=script
+            Link: </assets/js/main.js>; rel=preload; as=script
+            Link: </js/d3-color.js>; rel=preload; as=script
+            Link: </js/L.CanvasOverlay.js>; rel=preload; as=script
+            Link: </js/leaflet.locate/L.Control.Locate.min.js>; rel=preload; as=script
+            Link: </js/leaflet.hash/leaflet-hash.js>; rel=preload; as=script
+            Link: </assets/js/rbush.js>; rel=preload; as=script
+            Link: </assets/js/moment/moment.min.js>; rel=preload; as=script
+            Link: </assets/js/moment/locales.js>; rel=preload; as=script
+            Link: </images/us.png>; rel=preload; as=image
+            Link: </assets/css/css/font.css>; rel=preload; as=style
+        
+/index.html
+            Strict-Transport-Security: max-age=31536000;
+            Link: </images/mx.png>; rel=preload; as=image
+            Link: </assets/js/d3.min.js>; rel=preload; as=script
+            Link: </assets/js/mapbox.js>; rel=preload; as=script
+            Link: </assets/js/jquery.min.js>; rel=preload; as=script
+            Link: </assets/js/jquery.dropotron.min.js>; rel=preload; as=script
+            Link: </assets/js/skel.min.js>; rel=preload; as=script
+            Link: </assets/js/util.js>; rel=preload; as=script
+            Link: </assets/js/main.js>; rel=preload; as=script
+            Link: </js/d3-color.js>; rel=preload; as=script
+            Link: </js/L.CanvasOverlay.js>; rel=preload; as=script
+            Link: </js/leaflet.locate/L.Control.Locate.min.js>; rel=preload; as=script
+            Link: </js/leaflet.hash/leaflet-hash.js>; rel=preload; as=script
+            Link: </assets/js/rbush.js>; rel=preload; as=script
+            Link: </assets/js/moment/moment.min.js>; rel=preload; as=script
+            Link: </assets/js/moment/locales.js>; rel=preload; as=script
+            Link: </js/heatmap-imeca.js?v=1.1>; rel=preload; as=script
+            Link: </assets/css/font-awesome.min.css>; rel=preload; as=style
+            Link: </assets/css/leaflet.css>; rel=preload; as=style
+            Link: </assets/css/smog.css>; rel=preload; as=style
+            Link: </assets/css/leaflet.locate/L.Control.Locate.min.css>; rel=preload; as=style
+            Link: </assets/css/main.css?v=1>; rel=preload; as=style
+            Link: </assets/fonts/fontawesome-webfont.woff2?v=4.3.0>; rel=preload; as=font
+            Link: </assets/css/css/font.css>; rel=preload; as=style
+        
+/wind.html
+            Strict-Transport-Security: max-age=31536000;
+            Link: </images/mx.png>; rel=preload; as=image
+            Link: </assets/js/d3.min.js>; rel=preload; as=script
+            Link: </assets/js/mapbox.js>; rel=preload; as=script
+            Link: </assets/js/jquery.min.js>; rel=preload; as=script
+            Link: </assets/js/jquery.dropotron.min.js>; rel=preload; as=script
+            Link: </assets/js/skel.min.js>; rel=preload; as=script
+            Link: </assets/js/util.js>; rel=preload; as=script
+            Link: </assets/js/main.js>; rel=preload; as=script
+            Link: </js/d3-color.js>; rel=preload; as=script
+            Link: </js/L.CanvasOverlay.js>; rel=preload; as=script
+            Link: </js/leaflet.locate/L.Control.Locate.min.js>; rel=preload; as=script
+            Link: </js/leaflet.hash/leaflet-hash.js>; rel=preload; as=script
+            Link: </assets/js/rbush.js>; rel=preload; as=script
+            Link: </assets/js/moment/moment.min.js>; rel=preload; as=script
+            Link: </assets/js/moment/locales.js>; rel=preload; as=script
+            Link: </assets/css/font-awesome.min.css>; rel=preload; as=style
+            Link: </assets/css/leaflet.css>; rel=preload; as=style
+            Link: </assets/css/smog.css>; rel=preload; as=style
+            Link: </assets/css/leaflet.locate/L.Control.Locate.min.css>; rel=preload; as=style
+            Link: </assets/css/main.css?v=1>; rel=preload; as=style
+            Link: </assets/fonts/fontawesome-webfont.woff2?v=4.3.0>; rel=preload; as=font
+            Link: </assets/css/css/font.css>; rel=preload; as=style
+            Link: </js/wind.js?v=1.1>; rel=preload; as=script
+     

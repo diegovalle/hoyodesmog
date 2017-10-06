@@ -10,11 +10,14 @@ LOCKFILE=/tmp/heatmap.lock
 OLDFILE=timestamps/heatmap_aire_old.html
 NEWFILE=timestamps/heatmap_aire_new.html
 SCRIPT=run-heatmap.R
+ERROR_FILE=number_of_errors.txt
 
 : "${HEATMAP_HEALTHCHECK:?Need to set HEATMAP_HEALTCHECK non-empty}"
 : "${NETLIFYAPIKEY:?Need to set NETLIFYAPIKEY non-empty}"
 # Set CI to false if its unset
 : "${CI:=false}"
+# File to keep track of failed R executions
+if [ ! -f $ERROR_FILE ]; then echo 0 > $ERROR_FILE; fi
 
 if [ -d $DIR ]
 then
@@ -22,7 +25,8 @@ then
 fi
 
 clean_html_table() {
-    lynx -dump -width 1000 "$1" | \
+    sleep 1
+    lynx -dump -width 2000 "$1" | \
         sed -e '/^.*Promedios horarios/ d' | \
         sed -e 's/^[ ]*//g' | \
         sed -e '/^$/d' | \
@@ -62,10 +66,10 @@ main() {
 
     if [ "$oldfile_md5" = "$newfile_md5" ]
     then
-        printf "$(TZ="America/Mexico_City" date +'%Y-%m-%d %H %Z') %s and %s have the same content\n" $OLDFILE $NEWFILE
+        printf "$(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z') %s and %s have the same content\n" $OLDFILE $NEWFILE
     else
         printf "\n\n%s and %s have DIFFERENT content\n" $OLDFILE $NEWFILE
-        echo "date right now: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H %Z')"
+        echo "date right before download: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
         # Download data from aire.cdmx.gob.mx with lynx because of problems
         # doing it from R
@@ -81,9 +85,18 @@ main() {
         download_data "wdr" "HORARIOS" "data/wdr.csv"
         download_data "tmp" "HORARIOS" "data/tmp.csv"
 
+        echo "Finished aire.cdmx Download"
 
+        # Make sure we don't enter an endless loop if there was an error
+        # when creating the website, if more than 5 continuous errors then
+        # sleep for 10 minutes
+        ERRORS=$(cat $ERROR_FILE)
+        if [ "$ERRORS" -gt 4 ]; then
+            echo "waiting 60 minutes because of too many errors in Rscript"
+            sleep $((600*ERRORS))
+        fi
         echo "output from program:"
-        Rscript $SCRIPT
+        Rscript $SCRIPT || ( ((++ERRORS)) && echo $ERRORS > $ERROR_FILE && exit 1)
 
         printf "\n\n"
 
@@ -96,6 +109,8 @@ main() {
             #sleep $(( 3600 - 10#$min*60 - 10#$sec ))
         fi
         mv -f $NEWFILE $OLDFILE
+        # Reset the error count after one run
+        echo 0 > $ERROR_FILE
     fi
 }
 

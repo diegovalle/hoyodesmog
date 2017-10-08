@@ -175,6 +175,7 @@
         - zoo
         - tidyr
         - rvest
+        - phylin
 
     - name: Install github R packages
       command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "devtools::install_github('{{item}}')"

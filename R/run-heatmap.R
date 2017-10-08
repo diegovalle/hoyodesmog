@@ -6,7 +6,8 @@ if (!require("aire.zmvm", quietly = TRUE)) {
   require("aire.zmvm")
 }
 # R CMD javareconf -e
-packages.to.load <- c("viridis",
+packages.to.load <- c("phylin",
+                      "viridis",
                       "dplyr",
                       "methods",
                       "jsonlite",

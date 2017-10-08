@@ -259,7 +259,7 @@ function random_range(min, max) {
 }
 
 // Wind direction:
-// https://compuweather.com/files/2009/10/CompuWeather-Wind-Direction-Compass-Chart.pdf
+// http://www.compuweather.com/files/2009/10/CompuWeather-Wind-Direction-Compass-Chart.pdf
 // Wind Direction is indicated in terms of degrees from true north
 // (360°). Wind Direction indicates the compass direction from which
 // the wind is blowing.  In other words, if the wind direction is

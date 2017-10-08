@@ -26,7 +26,7 @@ if [  ! -e  $ERROR_FILE ]; then printf 0 > $ERROR_FILE; fi
 
 
 clean_html_table() {
-    sleep 1
+    sleep 2
     lynx -dump -width 2000 "$1" | \
         sed -e '/^.*Promedios horarios/ d' | \
         sed -e 's/^[ ]*//g' | \
@@ -67,9 +67,9 @@ main() {
 
     if [ "$oldfile_md5" = "$newfile_md5" ]
     then
-        printf "$(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z') %s and %s have the same content\n" $OLDFILE $NEWFILE
+        printf "No change detected %s\n" "$(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
     else
-        printf "\n\n%s and %s have DIFFERENT content\n" $OLDFILE $NEWFILE
+        printf "\n\nDIFFERENT content\n"
         echo "Date right before download: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
         # Download data from aire.cdmx.gob.mx with lynx because of problems
@@ -86,25 +86,24 @@ main() {
         download_data "wdr" "HORARIOS" "data/wdr.csv"
         download_data "tmp" "HORARIOS" "data/tmp.csv"
 
-        echo "Finished aire.cdmx Download"
+        echo "Finished aire.cdmx download:  $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
         # Make sure we don't enter an endless loop if there was an error
         # when creating the website, if more than 5 continuous errors then
         # sleep for 10 minutes
         ERRORS=$(cat $ERROR_FILE)
         if [ "$ERRORS" -gt 4 ]; then
-            echo "waiting 60 minutes because of too many errors in Rscript"
+            echo "waiting $((600*ERRORS)) minutes because of too many errors in Rscript"
             sleep $((600*ERRORS))
         fi
         echo "output from program:"
-        Rscript $SCRIPT || ( ((++ERRORS)) && printf $ERRORS > $ERROR_FILE && exit 1)
+        Rscript $SCRIPT || ( ((++ERRORS)) && printf "%d" $ERRORS > $ERROR_FILE && echo "Rscript ERROR" && exit 1)
 
         printf "\n\n"
 
         # Don't update website or ping when running in CI
         if [ "$CI" != "true" ]; then
             ./netlifyctl -A "$NETLIFYAPIKEY" deploy
-            curl -fsS --retry 3 "$HEATMAP_HEALTHCHECK" > /dev/null
             #echo "Waiting for the top of the hour"
             #read min sec <<<$(date +'%M %S')
             #sleep $(( 3600 - 10#$min*60 - 10#$sec ))
@@ -112,6 +111,7 @@ main() {
         mv -f $NEWFILE $OLDFILE
         # Reset the error count after one run
         printf 0 > $ERROR_FILE
+        curl -fsS --retry 3 "$HEATMAP_HEALTHCHECK" > /dev/null
     fi
 }
 

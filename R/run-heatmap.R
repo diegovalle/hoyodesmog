@@ -31,6 +31,8 @@ for(p in packages.to.load)
             character.only=TRUE)))
 
 source(file.path("src", "functions.R"))
+
+cat("\n\nheatmap.R")
 source(file.path("src", "heatmap.R"))
 
 cat("\n\nwsp_heatmap.R")

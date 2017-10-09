@@ -1,5 +1,5 @@
 line=as.character(Sys.time())
-write(line,file="time.txt",append=TRUE)
+#write(line,file="time.txt",append=TRUE)
 
 
 write_json <- function(file_name, stuff, dataframe = NULL) {

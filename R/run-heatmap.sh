@@ -26,8 +26,7 @@ if [  ! -e  $ERROR_FILE ]; then printf 0 > $ERROR_FILE; fi
 
 
 clean_html_table() {
-    sleep 2
-    lynx -dump -width 2000 "$1" | \
+    timeout 4m lynx -dump -width 2000 "$1" | \
         sed -e '/^.*Promedios horarios/ d' | \
         sed -e 's/^[ ]*//g' | \
         sed -e '/^$/d' | \
@@ -40,8 +39,10 @@ download_data() {
     month=$(date +"%m")
     year=$(date +"%Y")
     parametro=$1
-    tipo=$2
-    FILENAME=$3
+    tipo="HORARIOS"
+    FILENAME=data/$parametro.csv
+    sleep "$2"
+    rm "$FILENAME"
     URL="http://www.aire.cdmx.gob.mx/estadisticas-consultas/concentraciones/respuesta.php?qtipo="
     if [ "$(date +"%d")" -lt 9 ]; then
         month_before="$(date -d 'last month' +'%m')"
@@ -74,17 +75,10 @@ main() {
 
         # Download data from aire.cdmx.gob.mx with lynx because of problems
         # doing it from R
-        download_data "pm10" "HORARIOS" "data/pm10.csv"
-        download_data "o3" "HORARIOS" "data/o3.csv"
-        download_data "co" "HORARIOS" "data/co.csv"
-        download_data "no2" "HORARIOS" "data/no2.csv"
-        download_data "so2" "HORARIOS" "data/so2.csv"
-
-        download_data "pm2" "HORARIOS" "data/pm2.csv"
-        download_data "nox" "HORARIOS" "data/nox.csv"
-        download_data "wsp" "HORARIOS" "data/wsp.csv"
-        download_data "wdr" "HORARIOS" "data/wdr.csv"
-        download_data "tmp" "HORARIOS" "data/tmp.csv"
+        ARRAY=( "pm10" "o3" "co" "no2" "so2" "pm2" "nox" "wsp" "wdr" "tmp")
+        export -f download_data
+        export -f clean_html_table
+        parallel download_data {} "{#}" ::: "${ARRAY[@]}"
 
         echo "Finished aire.cdmx download:  $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
@@ -97,7 +91,7 @@ main() {
             sleep $((600*ERRORS))
         fi
         echo "output from program:"
-        Rscript $SCRIPT || ( ((++ERRORS)) && printf "%d" $ERRORS > $ERROR_FILE && echo "Rscript ERROR" && exit 1)
+        timeout 4m Rscript $SCRIPT || ( ((++ERRORS)) && printf "%d" $ERRORS > $ERROR_FILE && echo "Rscript ERROR" && exit 1)
 
         printf "\n\n"
 

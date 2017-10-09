@@ -16,6 +16,7 @@ df$datetime <- strptime(str_c(df$date, " ", df$hour),
 # Convert to MXC time
 df$datetime_mxc <- as.POSIXct(format(df$datetime, tz="America/Mexico_City", usetz=TRUE))
 
+# modified to work with degrees from phylin::idw
 idw360 <-
   function(values, coords, grid, method="Shepard", p=2, R=2, N=15) {
    

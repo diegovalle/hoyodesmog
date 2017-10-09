@@ -116,6 +116,7 @@
         #- ufw
         #- fail2ban
         - unattended-upgrades
+        - parallel
 
     - name: Adjust APT update intervals
       copy: src=config/apt_periodic dest=/etc/apt/apt.conf.d/10periodic
@@ -443,6 +444,7 @@
     - cronvar: name="HEATMAP_HEALTHCHECK" value="{{HEATMAP_HEALTHCHECK_URL}}"
     - cronvar: name="NETLIFYAPIKEY" value="{{NETLIFYAPIKEY}}"
     - cronvar: name="EMAIL_ADDRESS" value="{{EMAIL_ADDRESS}}"
+    - cronvar: name="SHELL" value="/bin/bash"
 
     - name: cront job for everything else
       cron: name="frontpage heatmap" minute="1-25,30,40,50" user=deploy job="/var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt  2>&1"

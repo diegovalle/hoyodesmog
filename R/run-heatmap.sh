@@ -42,7 +42,7 @@ download_data() {
     tipo="HORARIOS"
     FILENAME=data/$parametro.csv
     sleep "$2"
-    rm "$FILENAME"
+    rm -f "$FILENAME"
     URL="http://www.aire.cdmx.gob.mx/estadisticas-consultas/concentraciones/respuesta.php?qtipo="
     if [ "$(date +"%d")" -lt 9 ]; then
         month_before="$(date -d 'last month' +'%m')"
@@ -66,10 +66,8 @@ main() {
     oldfile_md5=$(md5sum $OLDFILE | awk '{ print $1 }')
     newfile_md5=$(md5sum $NEWFILE | awk '{ print $1 }')
 
-    if [ "$oldfile_md5" = "$newfile_md5" ]
+    if [ "$oldfile_md5" != "$newfile_md5" ]
     then
-        printf "No change detected %s\n" "$(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
-    else
         printf "\n\nDIFFERENT content\n"
         echo "Date right before download: $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
@@ -78,7 +76,7 @@ main() {
         ARRAY=( "pm10" "o3" "co" "no2" "so2" "pm2" "nox" "wsp" "wdr" "tmp")
         export -f download_data
         export -f clean_html_table
-        parallel download_data {} "{#}" ::: "${ARRAY[@]}"
+        parallel -j 10 download_data {} "{#}" ::: "${ARRAY[@]}"
 
         echo "Finished aire.cdmx download:  $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 

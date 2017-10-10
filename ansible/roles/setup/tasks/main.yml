@@ -1,0 +1,76 @@
+- name: apt-get update
+  raw: apt-get update -qq
+
+- name: Change root password
+  user: name=root password="{{ ROOT_PASSWORD }}"
+
+- name: Add deploy user
+  user: name={{ deploy_user_name }} password="{{ DEPLOY_PASSWORD }}" shell=/bin/bash
+
+- name: Add authorized keys for deploy user
+  authorized_key: user={{ deploy_user_name }} key="{{ lookup('file', item) }}"
+  with_items: "{{deploy_public_keys}}"
+
+- name: Add deploy user to sudoers
+  lineinfile: dest=/etc/sudoers
+              regexp="{{ deploy_user_name }} ALL"
+              line="{{ deploy_user_name }} ALL=(ALL) ALL"
+              state=present
+
+- name: Remove Packages
+  apt: name="{{ item }}" state=absent
+  with_items:
+    - apache
+    - samba
+    - sendmail,
+    - bind9
+    - ncsd
+    - sasl
+    - exim
+    - ntp
+
+- name: Install Packages
+  apt: name="{{ item }}" state=latest
+  with_items:
+    - git
+    - curl
+    - sqlite3
+    - mailutils
+    - imagemagick
+    - optipng
+    - htop
+    #- ufw
+    #- fail2ban
+    - unattended-upgrades
+    - parallel
+    - lynx
+
+- name: Adjust APT update intervals
+  copy: src=config/apt_periodic dest=/etc/apt/apt.conf.d/10periodic
+
+# ssh
+- name: Disallow password authentication
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PasswordAuthentication"
+              line="PasswordAuthentication no"
+              state=present
+  notify: Restart ssh
+
+#- name: Disallow root SSH access
+#  lineinfile: dest=/etc/ssh/sshd_config
+#              regexp="^PermitRootLogin"
+#              line="PermitRootLogin no"
+#              state=present
+#  notify: Restart ssh
+
+# - name: Setup ufw
+#   ufw: state=enabled policy=deny
+
+# - name: Allow ssh traffic
+#   ufw: rule=allow port=22 proto=tcp
+
+# - name: Allow http traffic
+#   ufw: rule=allow port=80 proto=tcp
+
+# - name: Allow https traffic
+#   ufw: rule=allow port=443 proto=tcp

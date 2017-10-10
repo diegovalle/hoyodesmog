@@ -1,0 +1,46 @@
+- name: Add R repository public key
+  apt_key:
+    id: E084DAB9
+    keyserver: keyserver.ubuntu.com
+    state: present
+  tags:
+    - r-repository-public-key
+
+- name: Add R repository
+  apt_repository:
+    repo: "{{ item.type }} {{ item.url }}"
+    state: present
+    update_cache: true
+  with_items: "{{ r_repository }}"
+  tags:
+    - r-repository-add
+
+- name: Install Packages
+  apt: name="{{ item }}" state=latest
+  with_items:
+    - r-base
+    - r-base-dev
+    - r-cran-rjava
+    - libxml2-dev
+    - r-cran-xml
+    - libgdal1-dev
+    - libproj-dev
+
+- name: Creates .Rprofile with default repo
+  lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2017-10-03";options(repos = r)})' create=True
+  vars:
+    ansible_ssh_pipelining: true
+  become: yes
+  become_user: "{{deploy_user_name}}"
+
+- name: Creates .Rprofile with default repo
+  lineinfile: dest=/home/{{deploy_user_name}}/.Renviron line='R_LIBS=/home/{{deploy_user_name}}/R/rpackages' create=True
+
+- name: Creates user R package directory
+  file: path=/home/{{deploy_user_name}}/R/rpackages state=directory  owner={{deploy_user_name}} group={{deploy_user_name}}
+
+- name: Creates .Rprofile with default repo
+  lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2017-10-03";options(repos = r)})' create=True
+
+- name: Config java
+  command: R CMD javareconf -e

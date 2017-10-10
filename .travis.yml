@@ -30,14 +30,14 @@ install:
 before_script:
   - npm install -g casperjs
   - phantomjs --version; casperjs --version
+  - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --syntax-check
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --become --extra-vars "testing=true"
   - simplehttpserver web/ > /dev/null & #shooting up a web server for the tests
   - sleep 30
 
 script:
-  - cd R && sudo ./run-heatmap.sh && cd ..
+  - cd R && sudo -u deploy ./run-heatmap.sh && cd ..
   - casperjs test web/tests/test.js
-  - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --syntax-check
   - curl -kLv http://hoyodesmog.diegovalle.net | grep 'Real-Time Mexico'
 
 # whitelist

@@ -1,0 +1,107 @@
+- name: Clone hoyodesmog
+  git: repo=https://github.com/diegovalle/hoyodesmog dest=/var/www/hoyodesmog.diegovalle.net force=yes
+
+- name: Change persmissions of /var/www/hoyodesmog.diegovalle.net
+  file: dest=/var/www/hoyodesmog.diegovalle.net owner=deploy group=www-data mode=0775 recurse=yes
+
+- name: Add R packages
+  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs='{{item}}')"
+  with_items:
+    - ggplot2
+    - viridis
+    - devtools
+    - dplyr
+    - methods
+    - jsonlite
+    - gstat
+    - sp
+    - stringr
+    - chron
+    - ggmap
+    - caTools
+    - lubridate
+    - mailR
+    - readr
+    - XML
+    - zoo
+    - tidyr
+    - rvest
+    - phylin
+  vars:
+    ansible_ssh_pipelining: true
+    become: yes
+    become_user: "{{deploy_user_name}}"
+
+- name: Install github R packages
+  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "devtools::install_github('{{item}}')"
+  with_items:
+    - diegovalle/aire.zmvm
+  vars:
+    ansible_ssh_pipelining: true
+    become: yes
+    become_user: "{{deploy_user_name}}"
+
+- name: Download netlifyctl
+  get_url:
+    url: https://github.com/netlify/netlifyctl/releases/download/v0.1.4/netlifyctl-linux-amd64.tar.gz
+    dest: /tmp/netlifyctl-linux-amd64.tar.gz
+  vars:
+    ansible_ssh_pipelining: true
+    become: yes
+    become_user: "{{deploy_user_name}}"
+
+- name: Extract netlifyctl-linux-amd64.tar.gz
+  unarchive:
+    src: /tmp/netlifyctl-linux-amd64.tar.gz
+    dest: /var/www/hoyodesmog.diegovalle.net/R
+  vars:
+    ansible_ssh_pipelining: true
+    become: yes
+    become_user: "{{deploy_user_name}}"
+
+# Cron Jobs
+- cronvar:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
+    - name: "SENDGRID_USER"
+      value: "{{SENDGRID_USER}}"
+    - name: "SENDGRID_PASS"
+      value: "{{SENDGRID_PASS}}"
+    - name: "HEATMAP_HEALTHCHECK"
+      value: "{{HEATMAP_HEALTHCHECK_URL}}"
+    - name: "NETLIFYAPIKEY"
+      value: "{{NETLIFYAPIKEY}}"
+    - name: "EMAIL_ADDRESS"
+      value: "{{EMAIL_ADDRESS}}"
+    - name: "SHELL"
+      value: "/bin/bash"
+  vars:
+    ansible_ssh_pipelining: true
+    become: yes
+    become_user: "{{deploy_user_name}}"
+
+- name: cront job for hoyodesmog
+  cron: name="frontpage heatmap" minute="1-25,30,40,50" user=deploy job="/var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt  2>&1"
+  vars:
+    ansible_ssh_pipelining: true
+    become: yes
+    become_user: "{{deploy_user_name}}"
+
+- name: Copy over website configuration
+  copy: src={{ item }} dest=/etc/nginx/sites-enabled/{{ item }}
+  with_items:
+    - hoyodesmog.diegovalle.net
+  notify: Restart nginx
+
+- name: add cron entry
+  cron:
+    name="hoyodesmog.diegovalle.net certificates"
+    minute="30"
+    day="11"
+    hour="3"
+    job="/home/{{ letsencrypt_user }}/ssl/renew_cert.sh hoyodesmog.diegovalle.net && curl -fsS --retry 3 {{ HEALTH_CHECK_LETSENCRYPT_HOYODEMOSG }}  > /dev/null"
+  vars:
+    ansible_ssh_pipelining: true
+    become: yes
+    become_user: "{{letsencrypt_user}}"

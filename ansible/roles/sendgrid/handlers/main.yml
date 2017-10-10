@@ -1,0 +1,14 @@
+- name: Restart postfix
+  service: name=postfix state=restarted
+
+- name: start postfix
+  service: name=postfix state=started
+
+- name: postmap sendgrid_passwd
+  command: postmap /etc/postfix/sendgrid_passwd
+
+- name: postmap virtual
+  shell: touch /etc/postfix/virtual && postmap /etc/postfix/virtual
+
+- name: postmap virtual-regexp
+  command: postmap /etc/postfix/virtual-regexp

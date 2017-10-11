@@ -37,7 +37,7 @@ before_script:
 
 script:
   - sudo -u deploy /var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh
-  - sudo -u deploy casperjs test /var/www/hoyodesmog.diegovalle.net/web/tests/test.js
+  - casperjs test /var/www/hoyodesmog.diegovalle.net/web/tests/test.js
   - curl -kLv http://hoyodesmog.diegovalle.net | grep 'Real-Time Mexico'
 
 # whitelist

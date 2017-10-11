@@ -20,14 +20,7 @@ before_install:
   - sudo apt-get install -y npm
   - sudo apt-get install -y lynx
   - sudo apt-get install -y r-cran-rjava
-  - "export PHANTOMJS_VERSION=2.1.1"
-  - "phantomjs --version"
-  - "export PATH=$PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin:$PATH"
-  - "phantomjs --version"
-  - "if [ $(phantomjs --version) != '$PHANTOMJS_VERSION' ]; then rm -rf $PWD/travis_phantomjs; mkdir -p $PWD/travis_phantomjs; fi"
-  - "if [ $(phantomjs --version) != '$PHANTOMJS_VERSION' ]; then wget https://github.com/Medium/phantomjs/releases/download/v$PHANTOMJS_VERSION/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -O $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2; fi"
-  - "if [ $(phantomjs --version) != '$PHANTOMJS_VERSION' ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi"
-  - "phantomjs --version"
+#  - sudo R CMD javareconf
 
 install:
   - npm install -g grunt-cli bower
@@ -39,12 +32,12 @@ before_script:
   - phantomjs --version; casperjs --version
   - export ANSIBLE_HOST_KEY_CHECKING=False; ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --syntax-check
   - ansible-playbook -i ansible/tests/inventory ansible/playbook.yml --connection=local --become --extra-vars "testing=true"
-  - simplehttpserver web/ > /dev/null & #shooting up a web server for the tests
+  - simplehttpserver /var/www/hoyodesmog.diegovalle.net/web/ > /dev/null & #web server for the tests
   - sleep 30
 
 script:
-  - cd R && sudo -u deploy ./run-heatmap.sh && cd ..
-  - casperjs test web/tests/test.js
+  - cd /var/www/hoyodesmog.diegovalle.net/R && sudo -u deploy ./run-heatmap.sh && cd ~
+  - sudo -u deploy casperjs test /var/www/hoyodesmog.diegovalle.net/web/tests/test.js
   - curl -kLv http://hoyodesmog.diegovalle.net | grep 'Real-Time Mexico'
 
 # whitelist

@@ -1,0 +1,15 @@
+- name: Copy over letsencrypt certs
+  when: testing == 'false'
+  copy: content={{ item.src }} dest=/{{ item.dest }}
+  with_items:
+    - {src: "{{domain_csr}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.csr}
+    - {src: "{{account_key}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/account.key}
+    - {src: "{{domain_key}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key}
+    - {src: "{{chained_pem}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/chained.pem}
+  notify: Restart nginx
+
+- name: Copy over website configuration
+  copy: src={{ item }} dest=/etc/nginx/sites-enabled/{{ item }}
+  with_items:
+    - hoyodesmog.diegovalle.net
+  notify: Restart nginx

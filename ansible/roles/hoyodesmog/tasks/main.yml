@@ -88,12 +88,6 @@
     become: yes
     become_user: "{{deploy_user_name}}"
 
-- name: Copy over website configuration
-  copy: src={{ item }} dest=/etc/nginx/sites-enabled/{{ item }}
-  with_items:
-    - hoyodesmog.diegovalle.net
-  notify: Restart nginx
-
 - name: add cron entry
   cron:
     name="hoyodesmog.diegovalle.net certificates"

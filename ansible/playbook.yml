@@ -24,7 +24,7 @@
     letsencrypt_group: letsencrypt
     letsencrypt_cronjob_daysofmonth: 1
 
-  tasks:
+  pre_tasks:
     # for the structure of secrets.yml see secrets-test.yml
     - name: Load secrets
       when: testing != 'true'

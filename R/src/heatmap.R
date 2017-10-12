@@ -136,7 +136,7 @@ grid <- get_grid(mxc)
 if(all(mxc$pollutant == "03")) {
   idw <- heatmap(mxc, grid)
   idw$pollutant <- "O<sub>3</sub>"
-  write_json("../web/data/heatmap_data.json",
+  write_json("output/heatmap_data.json",
              idw[,c("var1.pred", "lon", "lat", "pollutant")], "values")
 } else {
   pm10 <- heatmap(get_data_roll("PM10", mxc, 24), grid)
@@ -165,12 +165,12 @@ if(all(mxc$pollutant == "03")) {
                  "5" = "SO<sub>2</sub>"
           )
         })
-  write_json("../web/data/heatmap_data.json",
+  write_json("output/heatmap_data.json",
              idw[,c("var1.pred", "lon", "lat", "pollutant")], "values")
   
 }
 
-write_json("../web/data/heatmap_stations.json",
+write_json("output/heatmap_stations.json",
            mxc2)
 # 
 # idw$lon[1] - idw$lon[2]

@@ -104,9 +104,9 @@ heatmap_wdr <- function(){
   idw = as.data.frame(temp)
   names(idw) <- c("var1.pred", "var1.var", "lon", "lat")
   
-  write_json("../web/data/wdr_data.json",
+  write_json("output/wdr_data.json",
              idw[,c("var1.pred", "lon", "lat")], "values")
-  write_json("../web/data/wdr_stations.json",
+  write_json("output/wdr_stations.json",
              df)
 }
 

@@ -40,7 +40,7 @@ download_data() {
     year=$(date +"%Y")
     parametro=$1
     tipo="HORARIOS"
-    FILENAME=data/$parametro.csv
+    FILENAME=airedata/$parametro.csv
     sleep "$2"
     rm -f "$FILENAME"
     URL="http://www.aire.cdmx.gob.mx/estadisticas-consultas/concentraciones/respuesta.php?qtipo="
@@ -53,6 +53,16 @@ download_data() {
     else
         clean_html_table "$URL$tipo&parametro=$parametro&anio=$year&qmes=$month" > "$FILENAME"
     fi
+}
+
+atomic_update() {
+    TEMP_LINK=output_link
+    CURRENT_DIR=$(pwd)
+    TEMP_OUTPUT=output$(date +"%Y%m%d%H%M%S")
+    # Atomic operation to change the website data directory
+    cp -al output latest/"$TEMP_OUTPUT"
+    ln -s "$CURRENT_DIR"/latest/"$TEMP_OUTPUT" $TEMP_LINK && mv -Tf $TEMP_LINK ../web/data
+    find latest -mindepth 1 -maxdepth 1 -type d ! -name "$TEMP_OUTPUT" ! -name .gitkeep ! -name "." -exec rm -rf {} +
 }
 
 main() {
@@ -93,17 +103,20 @@ main() {
 
         printf "\n\n"
 
+        atomic_update
         # Don't update website or ping when running in CI
         if [ "$CI" != "true" ]; then
             ./netlifyctl -A "$NETLIFYAPIKEY" deploy
-            #echo "Waiting for the top of the hour"
-            #read min sec <<<$(date +'%M %S')
-            #sleep $(( 3600 - 10#$min*60 - 10#$sec ))
         fi
+
         mv -f $NEWFILE $OLDFILE
-        # Reset the error count after one run
+        # Reset the error count after successful run
         printf 0 > $ERROR_FILE
         curl -fsS --retry 3 "$HEATMAP_HEALTHCHECK" > /dev/null
+
+        #echo "Waiting for the top of the hour"
+        #read min sec <<<$(date +'%M %S')
+        #sleep $(( 3600 - 10#$min*60 - 10#$sec ))
     fi
 }
 

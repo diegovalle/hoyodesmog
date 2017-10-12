@@ -53,9 +53,9 @@ heatmap_temp <- function(){
   #   ggtitle("Air quality in MXC")
   #ggsave("map.png", plot = p, width = 9, height = 8, dpi = 100)
   
-  write_json("../web/data/temperature_data.json",
+  write_json("output/temperature_data.json",
              idw[,c("var1.pred", "lon", "lat")], "values")
-  write_json("../web/data/temperature_stations.json",
+  write_json("output/temperature_stations.json",
              df)
 }
 

@@ -26,7 +26,7 @@ get_month_data <- function(criterion, pollutant, year, month = "") {
   # df <- html_table(html_nodes(poll_table, "table")[[1]], header = TRUE)
   
   pollutant = tolower(pollutant)
-  df <- read.csv(str_c("data/",
+  df <- read.csv(str_c("airedata/",
                        pollutant, ".csv"))
   
   #names(df) <- df[1,]
@@ -128,15 +128,15 @@ create_json <- function(o3, pollutant) {
     i <- i + 1
   }
   
-  sink(str_c("../web/data/station_codes_", tolower(pollutant), ".json"))
+  sink(str_c("output/station_codes_", tolower(pollutant), ".json"))
   print(toJSON(unique(o3$station_code), na = "null"))
   sink(file = NULL)
   
-  sink(str_c("../web/data/station_names_", tolower(pollutant), ".json"))
+  sink(str_c("output/station_names_", tolower(pollutant), ".json"))
   print(toJSON(stations[ ,c("station_code", "station_name")]))
   sink(file = NULL)
   
-  sink(str_c("../web/data/stations_", tolower(pollutant), ".json"))
+  sink(str_c("output/stations_", tolower(pollutant), ".json"))
   print(toJSON(ll, na = "null"))
   sink(file = NULL)
 }

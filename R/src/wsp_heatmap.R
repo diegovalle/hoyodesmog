@@ -52,9 +52,9 @@ heatmap_wsp <- function()  {
   #   ggtitle("Air quality in MXC")
   #ggsave("map.png", plot = p, width = 9, height = 8, dpi = 100)
   
-  write_json("../web/data/wsp_data.json",
+  write_json("output/wsp_data.json",
              idw[,c("var1.pred", "lon", "lat")], "values")
-  write_json("../web/data/wsp_stations.json",
+  write_json("output/wsp_stations.json",
              df)
 }
 

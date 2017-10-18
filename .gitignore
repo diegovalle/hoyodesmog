@@ -20,3 +20,4 @@ time.txt
 *r-package/r-package/aire.zmvm.html
 R/number_of_errors.txt
 R/latest/output*
+web/data/*.json

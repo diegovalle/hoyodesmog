@@ -20,7 +20,7 @@
     minute="30"
     day="11"
     hour="3"
-    job="/home/{{ letsencrypt_user }}/ssl/renew_cert.sh hoyodesmog.diegovalle.net && curl -fsS --retry 3 {{ HEALTH_CHECK_LETSENCRYPT_HOYODEMOSG }}  > /dev/null"
+    job="/home/{{ letsencrypt_user }}/ssl/renew_cert.sh hoyodesmog.diegovalle.net && curl -fsS --retry 3 {{ HEALTH_CHECK_LETSENCRYPT_HOYODEMOSG }}  > /dev/null 2>&1"
   vars:
     ansible_ssh_pipelining: true
     become: yes

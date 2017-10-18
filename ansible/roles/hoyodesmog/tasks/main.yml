@@ -82,7 +82,7 @@
     become_user: "{{deploy_user_name}}"
 
 - name: cron job for hoyodesmog
-  cron: name="Hoyodesmog website" user=deploy job="/var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt  2>&1"
+  cron: name="Hoyodesmog website" user=deploy job="/var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh >> /var/www/hoyodesmog.diegovalle.net/R/log-heatmap.txt 2>&1"
   vars:
     ansible_ssh_pipelining: true
     become: yes

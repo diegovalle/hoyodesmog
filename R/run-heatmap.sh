@@ -26,7 +26,7 @@ if [  ! -e  $ERROR_FILE ]; then printf 0 > $ERROR_FILE; fi
 
 
 clean_html_table() {
-    timeout 4m lynx -dump -width 2000 "$1" | \
+    lynx -dump -width 2000 "$1" | \
         sed -e '/^.*Promedios horarios/ d' | \
         sed -e 's/^[ ]*//g' | \
         sed -e '/^$/d' | \
@@ -41,7 +41,6 @@ download_data() {
     parametro=$1
     tipo="HORARIOS"
     FILENAME=airedata/$parametro.csv
-    sleep "$2"
     rm -f "$FILENAME"
     URL="http://www.aire.cdmx.gob.mx/estadisticas-consultas/concentraciones/respuesta.php?qtipo="
     if [ "$(date +"%d")" -lt 9 ]; then
@@ -86,7 +85,7 @@ main() {
         ARRAY=( "pm10" "o3" "co" "no2" "so2" "pm2" "nox" "wsp" "wdr" "tmp")
         export -f download_data
         export -f clean_html_table
-        parallel -j 10 download_data {} "{#}" ::: "${ARRAY[@]}"
+        parallel -j5 --joblog log-parallel.txt --timeout 240 --delay 1 download_data {} ::: "${ARRAY[@]}"
 
         echo "Finished aire.cdmx download:  $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
@@ -95,11 +94,11 @@ main() {
         # sleep for 10 minutes
         ERRORS=$(cat $ERROR_FILE)
         if [ "$ERRORS" -gt 4 ]; then
-            echo "waiting $((600*ERRORS)) minutes because of too many errors in Rscript"
+            echo "waiting $((600*ERRORS)) minutes because of too many ERRORs in Rscript"
             sleep $((600*ERRORS))
         fi
         echo "output from program:"
-        timeout 4m Rscript $SCRIPT || ( ((++ERRORS)) && printf "%d" $ERRORS > $ERROR_FILE && echo "Rscript ERROR" && exit 1)
+        timeout 4m Rscript $SCRIPT || ( ((++ERRORS)) && printf "%d" $ERRORS > $ERROR_FILE && echo "Rscript ERROR $(date)" && exit 1)
 
         printf "\n\n"
 
@@ -113,10 +112,6 @@ main() {
         # Reset the error count after successful run
         printf 0 > $ERROR_FILE
         curl -fsS --retry 3 "$HEATMAP_HEALTHCHECK" > /dev/null
-
-        #echo "Waiting for the top of the hour"
-        #read min sec <<<$(date +'%M %S')
-        #sleep $(( 3600 - 10#$min*60 - 10#$sec ))
     fi
 }
 

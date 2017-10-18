@@ -21,3 +21,4 @@ time.txt
 R/number_of_errors.txt
 R/latest/output*
 web/data/*.json
+R/log*

@@ -3,6 +3,7 @@
   with_items:
     - npm
     - nodejs
+    - nodejs-legacy
 
 - name: Install netlify-cli
   npm:  name=netlify-cli global=yes

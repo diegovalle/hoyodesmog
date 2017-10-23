@@ -7,6 +7,9 @@
 - name: Install netlify-cli
   npm:  name=netlify-cli global=yes
 
+- name: Create soft link
+  shell: ln -s $(which nodejs) /usr/bin/node
+
 - name: print to stdout
   command: netlify
   register: hello
@@ -15,5 +18,3 @@
 
 - debug: msg="{{ hello.stderr }}"
 
-- name: Create soft link
-  command: ln -s $(which nodejs) /usr/bin/node

@@ -2,12 +2,12 @@
   apt: name="{{ item }}" state=latest
   with_items:
     - npm
-    - node
+    - nodejs
 
 - name: Install netlify-cli
   npm:  name=netlify-cli global=yes
 
-- name: Install netlifly
+- name: Create soft link
   file:
     src: /usr/bin/node
     dest: /usr/bin/nodejs

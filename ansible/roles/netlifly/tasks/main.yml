@@ -8,7 +8,4 @@
   npm:  name=netlify-cli global=yes
 
 - name: Create soft link
-  file:
-    src: /usr/bin/node
-    dest: /usr/bin/nodejs
-    state: link
+  command: ln -s `which nodejs` /usr/bin/node

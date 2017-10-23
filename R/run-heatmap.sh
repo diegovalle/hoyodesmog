@@ -24,9 +24,8 @@ fi
 : "${CI:=false}"
 # File to keep track of failed R executions
 if [  ! -e  $ERROR_FILE ]; then printf 0 > $ERROR_FILE; fi
-trap "cleanup" INT TERM EXIT
 
-cleanup() {
+on_exit() {
     exit_code=$?
     if [ $exit_code -ge 1 ]; then
         ERRORS=$(cat $ERROR_FILE)
@@ -34,6 +33,7 @@ cleanup() {
         printf "%d" $ERRORS > $ERROR_FILE
         echo "ERROR $(date)"
     fi
+    trap "" EXIT INT TERM
     exit $exit_code
 }
 
@@ -83,7 +83,7 @@ main() {
         echo "no data" > $OLDFILE
     fi
 
-    curl -L -s http://www.aire.cdmx.gob.mx/ultima-hora-reporte.php 2>&1 | grep -A1 textohora  > $NEWFILE
+    curl -m 30 -L -s http://www.aire.cdmx.gob.mx/ultima-hora-reporte.php 2>&1 | grep -A1 textohora  > $NEWFILE
     oldfile_md5=$(md5sum $OLDFILE | awk '{ print $1 }')
     newfile_md5=$(md5sum $NEWFILE | awk '{ print $1 }')
 
@@ -104,6 +104,7 @@ main() {
         # Make sure we don't enter an endless loop if there was an error
         # when creating the website, if more than 5 continuous errors then
         # sleep for 10 minutes
+        trap "on_exit" INT TERM EXIT
         ERRORS=$(cat $ERROR_FILE)
         if [ "$ERRORS" -gt 4 ]; then
             echo "waiting $((600*ERRORS)) minutes because of too many ERRORs in Rscript"

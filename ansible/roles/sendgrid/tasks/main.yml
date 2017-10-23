@@ -17,10 +17,13 @@
     create: True
     owner: root
     group: root
-    mode: 0644
+    mode: 0600
   notify:
     - postmap virtual
     - postmap sendgrid_passwd
+
+- name: postmap
+  command: postmap /etc/postfix/sendgrid_passwd 
 
 - name: Postfix + sendgrid
   register: sendgrid

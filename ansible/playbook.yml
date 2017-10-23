@@ -38,7 +38,7 @@
 
   roles:
     - setup
-    - netlifly
+    - netlify
     - R
     - nginx
     - letsencrypt

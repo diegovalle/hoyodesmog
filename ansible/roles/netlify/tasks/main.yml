@@ -13,9 +13,9 @@
 
 - name: print to stdout
   command: netlify
-  register: hello
+  register: nout
 
-- debug: msg="{{ hello.stdout }}"
+- debug: msg="{{ nout.stdout }}"
 
-- debug: msg="{{ hello.stderr }}"
+- debug: msg="{{ nout.stderr }}"
 

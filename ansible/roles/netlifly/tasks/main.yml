@@ -2,6 +2,10 @@
   apt: name="{{ item }}" state=latest
   with_items:
     - npm
+    - node
+
+- name: Install netlify-cli
+  npm:  name=netlify-cli global=yes
 
 - name: Install netlifly
   file:

@@ -11,6 +11,7 @@ OLDFILE=timestamps/heatmap_aire_old.html
 NEWFILE=timestamps/heatmap_aire_new.html
 SCRIPT=run-heatmap.R
 ERROR_FILE=number_of_errors.txt
+NETLIFY="$(whereis netlify | sed 's/^.*: //g')"
 
 if [ -d $DIR ]
 then
@@ -23,7 +24,18 @@ fi
 : "${CI:=false}"
 # File to keep track of failed R executions
 if [  ! -e  $ERROR_FILE ]; then printf 0 > $ERROR_FILE; fi
+trap "cleanup" INT TERM EXIT
 
+cleanup() {
+    exit_code=$?
+    if [ $exit_code -ge 1 ]; then
+        ERRORS=$(cat $ERROR_FILE)
+        ((++ERRORS))
+        printf "%d" $ERRORS > $ERROR_FILE
+        echo "ERROR $(date)"
+    fi
+    exit $exit_code
+}
 
 clean_html_table() {
     lynx -dump -width 2000 "$1" | \
@@ -98,14 +110,14 @@ main() {
             sleep $((600*ERRORS))
         fi
         echo "output from program:"
-        timeout 4m Rscript $SCRIPT || ( ((++ERRORS)) && printf "%d" $ERRORS > $ERROR_FILE && echo "Rscript ERROR $(date)" && exit 1)
+        timeout 4m Rscript $SCRIPT
 
         printf "\n\n"
 
         atomic_update
         # Don't update website when running in CI
         if [ "$CI" != "true" ]; then
-            netlify -t "$NETLIFYAPIKEY" deploy
+            "$NETLIFY" -t "$NETLIFYAPIKEY" deploy
         fi
 
         mv -f $NEWFILE $OLDFILE

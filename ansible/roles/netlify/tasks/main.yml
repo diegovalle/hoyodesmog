@@ -8,7 +8,7 @@
   npm:  name=netlify-cli global=yes
 
 - name: print to stdout
-  command: echo $(netlifly)
+  command: echo $(netlify)
   register: hello
 
 - debug: msg="{{ hello.stdout }}"

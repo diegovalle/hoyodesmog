@@ -38,10 +38,10 @@
 
   roles:
     - setup
+    - netlifly
     - R
     - nginx
     - letsencrypt
     - sendgrid
     - hoyodesmog-nginx
-    - netlifly
     - hoyodesmog

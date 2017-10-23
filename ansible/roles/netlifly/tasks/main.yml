@@ -8,7 +8,12 @@
   npm:  name=netlify-cli global=yes
 
 - name: print to stdout
-  action: command echo $(which nodejs)
+  command: echo $(which nodejs)
+  register: hello
+
+- debug: msg="{{ hello.stdout }}"
+
+- debug: msg="{{ hello.stderr }}"
 
 - name: Create soft link
   command: ln -s $(which nodejs) /usr/bin/node

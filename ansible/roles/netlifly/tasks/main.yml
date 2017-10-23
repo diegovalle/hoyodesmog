@@ -1,0 +1,10 @@
+- name: Install npm
+  apt: name="{{ item }}" state=latest
+  with_items:
+    - npm
+
+- name: Install netlifly
+  file:
+    src: /usr/bin/node
+    dest: /usr/bin/nodejs
+    state: link

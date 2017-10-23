@@ -103,9 +103,9 @@ main() {
         printf "\n\n"
 
         atomic_update
-        # Don't update website or ping when running in CI
+        # Don't update website when running in CI
         if [ "$CI" != "true" ]; then
-            ./netlifyctl -A "$NETLIFYAPIKEY" deploy
+            netlify -t "$NETLIFYAPIKEY" deploy
         fi
 
         mv -f $NEWFILE $OLDFILE

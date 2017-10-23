@@ -41,23 +41,23 @@
     become: yes
     become_user: "{{deploy_user_name}}"
 
-- name: Download netlifyctl
-  get_url:
-    url: https://github.com/netlify/netlifyctl/releases/download/v0.1.4/netlifyctl-linux-amd64.tar.gz
-    dest: /tmp/netlifyctl-linux-amd64.tar.gz
-  vars:
-    ansible_ssh_pipelining: true
-    become: yes
-    become_user: "{{deploy_user_name}}"
+# - name: Download netlifyctl
+#   get_url:
+#     url: https://github.com/netlify/netlifyctl/releases/download/v0.1.4/netlifyctl-linux-amd64.tar.gz
+#     dest: /tmp/netlifyctl-linux-amd64.tar.gz
+#   vars:
+#     ansible_ssh_pipelining: true
+#     become: yes
+#     become_user: "{{deploy_user_name}}"
 
-- name: Extract netlifyctl-linux-amd64.tar.gz
-  unarchive:
-    src: /tmp/netlifyctl-linux-amd64.tar.gz
-    dest: /var/www/hoyodesmog.diegovalle.net/R
-  vars:
-    ansible_ssh_pipelining: true
-    become: yes
-    become_user: "{{deploy_user_name}}"
+# - name: Extract netlifyctl-linux-amd64.tar.gz
+#   unarchive:
+#     src: /tmp/netlifyctl-linux-amd64.tar.gz
+#     dest: /var/www/hoyodesmog.diegovalle.net/R
+#   vars:
+#     ansible_ssh_pipelining: true
+#     become: yes
+#     become_user: "{{deploy_user_name}}"
 
 # Cron Jobs
 - cronvar:
@@ -87,5 +87,3 @@
     ansible_ssh_pipelining: true
     become: yes
     become_user: "{{deploy_user_name}}"
-
-

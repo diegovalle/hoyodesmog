@@ -8,8 +8,8 @@
 - name: Install netlify-cli
   npm:  name=netlify-cli global=yes
 
-- name: Create soft link
-  shell: ln -s $(which nodejs) /usr/bin/node
+#- name: Create soft link
+#  shell: ln -s $(which nodejs) /usr/bin/node
 
 - name: print to stdout
   command: netlify

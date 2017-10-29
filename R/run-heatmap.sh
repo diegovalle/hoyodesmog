@@ -1,7 +1,5 @@
 #!/bin/bash
-set -e # stop the script on errors
-set -u # unset variables are an error
-set -o pipefail # piping a failed process into a successful one is an arror
+set -euo pipefail  # stop the script on errors, unset variables are an error and piping a failed
 export LANG="en_US.UTF-8"; export LC_CTYPE="en_US.UTF-8";
 export TZ="America/Mexico_City"
 DIR=/var/www/hoyodesmog.diegovalle.net/R
@@ -32,6 +30,13 @@ on_exit() {
         ((++ERRORS))
         printf "%d" $ERRORS > $ERROR_FILE
         echo "ERROR $(date)"
+        # Make sure we don't enter an endless loop if there was an error
+        # when creating the website, if more than 5 continuous errors then
+        # sleep for 50 minutes
+        if [ $ERRORS -ge 5 ]; then
+            echo "waiting $((600*ERRORS)) minutes because of too many ERRORs in Rscript"
+            sleep $((600*ERRORS))
+        fi
     fi
     trap "" EXIT INT TERM
     exit $exit_code
@@ -97,19 +102,13 @@ main() {
         ARRAY=( "pm10" "o3" "co" "no2" "so2" "pm2" "nox" "wsp" "wdr" "tmp")
         export -f download_data
         export -f clean_html_table
-        parallel -j5 --joblog log-parallel.txt --timeout 240 --delay 1 download_data {} ::: "${ARRAY[@]}"
+        # timeout because parallel --timeout sometimes doesn't work
+        timeout 4m parallel -j5 --joblog log-parallel.txt --timeout 240 --delay 1 download_data {} ::: "${ARRAY[@]}"
 
         echo "Finished aire.cdmx download:  $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
-        # Make sure we don't enter an endless loop if there was an error
-        # when creating the website, if more than 5 continuous errors then
-        # sleep for 10 minutes
         trap "on_exit" INT TERM EXIT
-        ERRORS=$(cat $ERROR_FILE)
-        if [ "$ERRORS" -gt 4 ]; then
-            echo "waiting $((600*ERRORS)) minutes because of too many ERRORs in Rscript"
-            sleep $((600*ERRORS))
-        fi
+
         echo "output from program:"
         timeout 4m Rscript $SCRIPT
 
@@ -129,7 +128,7 @@ main() {
 }
 
 (
-    # Wait for lock on /tmp/pollution.lock (fd 200)
+    # Wait for lock on /tmp/heatmap.lock (fd 200)
     flock -n 200
     # Do stuff
     main

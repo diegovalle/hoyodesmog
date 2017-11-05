@@ -14,7 +14,7 @@
     name: "Verify that R package aire.zmvm works"
     minute: 30
     hour: 2
-    day: */3
+    day: "*/3"
     job: 'curl -H "Authorization: Bearer $APPVEYOR_TOKEN" -H "Content-Type: application/json"  -X POST -d ''{ "accountName": "diegovalle", "projectSlug": "aire-zmvm", "branch": "master" }'' https://ci.appveyor.com/api/builds && curl -fsS --retry 3 "{{ HEALTH_CHECK_APPVEYOR }}" > /dev/null 2>&1'
     user: "{{ username }}"
   vars:

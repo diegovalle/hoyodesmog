@@ -117,7 +117,7 @@ main() {
         atomic_update
         # Don't update website when running in CI
         if [ "$CI" != "true" ]; then
-            "$NETLIFY" -t "$NETLIFYAPIKEY" deploy
+            timeout 90s "$NETLIFY" -t "$NETLIFYAPIKEY" deploy
         fi
 
         mv -f $NEWFILE $OLDFILE

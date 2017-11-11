@@ -103,7 +103,7 @@ main() {
         export -f download_data
         export -f clean_html_table
         # timeout because parallel --timeout sometimes doesn't work
-        timeout 4m parallel -j5 --joblog log-parallel.txt --timeout 240 --delay 1 download_data {} ::: "${ARRAY[@]}"
+        timeout 4m parallel -j5 --timeout 240 --delay 1 download_data {} ::: "${ARRAY[@]}"
 
         echo "Finished aire.cdmx download:  $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
@@ -117,7 +117,7 @@ main() {
         atomic_update
         # Don't update website when running in CI
         if [ "$CI" != "true" ]; then
-            timeout 90s "$NETLIFY" -t "$NETLIFYAPIKEY" deploy
+            timeout 30s "$NETLIFY" -t "$NETLIFYAPIKEY" deploy
         fi
 
         mv -f $NEWFILE $OLDFILE

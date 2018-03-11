@@ -94,7 +94,10 @@ get_month_data <- function(criterion, pollutant, year, month = "") {
                           "%Y-%m-%d %H", tz = "GMT+6") %>% as.POSIXct()
   # Convert to MXC time
   df$datetime_mxc <- as.POSIXct(format(df$datetime, tz="America/Mexico_City", usetz=TRUE))
-  
+  # Because we're converting tables with lynx
+  # sometimes there are extra rows at the bottom of the data.frame
+  # (basically the header is repeated at the bottom of the table)
+  df <- df[!is.na(df$date), ]
   df <- df %>%
     group_by(station_code) %>%
     arrange(station_code, date, hour) %>%

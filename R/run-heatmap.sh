@@ -49,7 +49,8 @@ clean_html_table() {
         sed -e '/^$/d' | \
         sed -e 's/\s\{1,\}/,/g' | \
         sed -e 's/nr/NA/g' | \
-        head -n -1
+        sed -n -e '1!{/^[0-9][0-9]\-[0-9][0-9]/p;}'
+
 }
 
 download_data() {

@@ -37,6 +37,7 @@ server {
     # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
     ssl_dhparam /etc/nginx/ssl/dhparam.pem;
     
+    rewrite ^/aire.zmvm.html /aire.zmvm/ redirect;
     
     error_page 404 /404.html;
     location  /404.html {

@@ -112,12 +112,12 @@ mxc2 <- left_join(mxc, stations, by = "station_code")
 mxc2 <- mxc2[!is.na(mxc2$value),]
 
 try({
-  if (max(mxc$value, na.rm = TRUE) >= 151) {
+  if (max(mxc$value, na.rm = TRUE) >= 145) {
     max_idx <- which(mxc$value == max(mxc$value, na.rm = TRUE))
     SENDGRID_PASS <- Sys.getenv("SENDGRID_PASS")
     SENDGRID_USER <- Sys.getenv("SENDGRID_USER")
     EMAIL_ADDRESS <- Sys.getenv("EMAIL_ADDRESS")
-    send.mail(from = EMAIL_ADDRESS,
+    send.mail(from = "imeca@ilsevalle.com",
               to = str_c("<", EMAIL_ADDRESS, ">"),
               subject = str_c("IMECA of ", mxc$value[max_idx]),
               body = str_c(mxc$station_code[max_idx], " - ",

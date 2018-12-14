@@ -20,6 +20,9 @@
   apt: update_cache=yes
   when: node_repo.changed
   
+- name: "Trust insecure npm"
+  shell: "npm config set strict-ssl false"
+  
 - name: Install netlify-cli
   npm:  name=netlify-cli global=yes
 

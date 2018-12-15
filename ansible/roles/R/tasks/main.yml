@@ -27,7 +27,7 @@
     - libproj-dev
 
 - name: Creates .Rprofile with default repo
-  lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2017-10-03";options(repos = r)})' create=True
+  lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2018-10-03";options(repos = r)})' create=True
   vars:
     ansible_ssh_pipelining: true
   become: yes
@@ -40,7 +40,13 @@
   file: path=/home/{{deploy_user_name}}/R/rpackages state=directory  owner={{deploy_user_name}} group={{deploy_user_name}}
 
 - name: Creates .Rprofile with default repo
-  lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2017-10-03";options(repos = r)})' create=True
+  lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2018-10-03";options(repos = r)})' create=True
 
 - name: Config java
   command: R CMD javareconf -e
+
+- name: print to stdout
+  command: "Rscript -e '.libPaths()'"
+  register: rout
+
+- debug: msg="{{ rout.stdout }}"

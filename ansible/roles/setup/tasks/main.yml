@@ -4,6 +4,16 @@
 - name: Change root password
   user: name=root password="{{ ROOT_PASSWORD }}"
 
+- name: Ensure group "deploy" exists
+  group:
+    name: deploy
+    state: present
+    
+- name: Ensure group "staff" exists
+  group:
+    name: staff
+    state: present
+
 - name: Add deploy user
   user: name={{ deploy_user_name }} group="deploy,staff" password="{{ DEPLOY_PASSWORD }}" shell=/bin/bash
 

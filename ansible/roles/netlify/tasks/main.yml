@@ -12,8 +12,8 @@
     repo: "{{ item }}"
     state: present
   with_items:
-    - "deb https://deb.nodesource.com/node_8.x {{ ansible_distribution_release }} main"
-    - "deb-src https://deb.nodesource.com/node_8.x {{ ansible_distribution_release }} main"
+    - "deb https://deb.nodesource.com/node_10.x {{ ansible_distribution_release }} main"
+    - "deb-src https://deb.nodesource.com/node_10.x {{ ansible_distribution_release }} main"
   register: node_repo
 
 - name: Update apt cache if repo was added.

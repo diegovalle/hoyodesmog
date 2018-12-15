@@ -34,7 +34,7 @@
   become_user: "{{deploy_user_name}}"
 
 #- name: Creates .Rprofile with default repo
-#  lineinfile: dest=/home/{{deploy_user_name}}/.Renviron line='R_LIBS=/home/{{deploy_user_name}}/R/rpackages' create=True
+#  lineinfile: dest=/home/{{deploy_user_name}}/.Renviron line='R_LIBS_SITE=/home/{{deploy_user_name}}/R/rpackages' create=True
 
 - name: Creates user R package directory
   file: path=/home/{{deploy_user_name}}/R/rpackages state=directory  owner={{deploy_user_name}} group={{deploy_user_name}}

@@ -20,6 +20,9 @@
   apt: update_cache=yes
   when: node_repo.changed
   
+- name: Ensure Node.js and npm are installed.
+  apt: "name=nodejs=10* state=present"
+  
 - name: "Trust insecure npm"
   shell: "npm config set strict-ssl false"
   

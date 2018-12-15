@@ -5,7 +5,7 @@
   user: name=root password="{{ ROOT_PASSWORD }}"
 
 - name: Add deploy user
-  user: name={{ deploy_user_name }} group="deploy, staff" password="{{ DEPLOY_PASSWORD }}" shell=/bin/bash
+  user: name={{ deploy_user_name }} group="deploy,staff" password="{{ DEPLOY_PASSWORD }}" shell=/bin/bash
 
 - name: Add authorized keys for deploy user
   authorized_key: user={{ deploy_user_name }} key="{{ lookup('file', item) }}"

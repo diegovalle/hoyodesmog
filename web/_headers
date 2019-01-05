@@ -57,7 +57,7 @@
             Link: <https://a.tiles.mapbox.com>; rel=preconnect
  
         
-*.html
+/*.html
             Strict-Transport-Security: max-age=31536000;
             Link: </images/mx.png>; rel=preload; as=image
             Link: </assets/js/jquery.min.js>; rel=preload; as=script

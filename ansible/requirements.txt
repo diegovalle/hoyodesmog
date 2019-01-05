@@ -10,5 +10,5 @@ paramiko==2.0.9
 pyasn1==0.1.9
 pycparser==2.14
 pycrypto==2.6.1
-PyYAML==3.11
+PyYAML>4.2b1
 six==1.10.0

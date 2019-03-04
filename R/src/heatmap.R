@@ -9,7 +9,7 @@ write_json <- function(file_name, stuff, dataframe = NULL) {
 
 get_grid <- function(df) {
   df <- left_join(df, stations, by = "station_code")
-  df <- df[!is.na(df$value),]
+  df <- df[!is.na(df$value) & !is.na(df$lat) & !is.na(df$lon),]
   geog <- df[,c("lat", "lon", "value")]
   coordinates(geog) <- ~lon+lat
   
@@ -31,7 +31,7 @@ heatmap <- function(df, grid){
   }
   
   df <- left_join(df, stations, by = "station_code")
-  df <- df[!is.na(df$value),]
+  df <- df[!is.na(df$value) & !is.na(df$lat) & !is.na(df$lon),]
   df <- df[,c("lat", "lon", "value")]
   coordinates(df) <- ~lon+lat
   df.idw <- idw(value ~ 1, df, grid, idp = 2, debug.level = 0)
@@ -106,10 +106,10 @@ get_data <- function(pollutant, mxc) {
 }
 
 
-mxc <- get_latest_data()
+mxc <- get_latest_imeca()
 print(mxc$datetime[[1]])
 mxc2 <- left_join(mxc, stations, by = "station_code")
-mxc2 <- mxc2[!is.na(mxc2$value),]
+mxc2 <- mxc2[!is.na(mxc2$value) & !is.na(mxc2$lat) & !is.na(mxc2$lon),]
 
 try({
   if (max(mxc$value, na.rm = TRUE) >= 145) {
@@ -140,6 +140,7 @@ if(all(mxc$pollutant == "03")) {
              idw[,c("var1.pred", "lon", "lat", "pollutant")], "values")
 } else {
   pm10 <- heatmap(get_data_roll("PM10", mxc, 24), grid)
+  pm2 <- heatmap(get_data_roll("PM2", mxc, 24), grid)
   o3 <- heatmap(get_data_roll("O3", mxc, 1), grid)
   co <- heatmap(get_data_roll("CO", mxc, 8), grid)
   no2 <- heatmap(get_data_roll("NO2", mxc, 1), grid)
@@ -147,22 +148,25 @@ if(all(mxc$pollutant == "03")) {
   
   idw <- pm10
   idw$var1.pred <- round(pmax(pm10$var1.pred, 
-                        o3$var1.pred,
-                        co$var1.pred,
-                        no2$var1.pred,
-                        so2$var1.pred, na.rm = TRUE))
-  idw$pollutant <- apply(data.frame(pm10$var1.pred, 
-                   o3$var1.pred,
-                   co$var1.pred,
-                   no2$var1.pred,
-                   so2$var1.pred),
+                              pm2$var1.pred, 
+                              o3$var1.pred,
+                              co$var1.pred,
+                              no2$var1.pred,
+                              so2$var1.pred, na.rm = TRUE))
+  idw$pollutant <- apply(data.frame(pm10$var1.pred,
+                                    pm2$var1.pred,
+                                    o3$var1.pred,
+                                    co$var1.pred,
+                                    no2$var1.pred,
+                                    so2$var1.pred),
         1, function(x) {
           switch(which.max(x),
                  "1" = "PM<sub>10</sub>",
-                 "2" = "O<sub>3</sub>",
-                 "3" = "CO",
-                 "4" = "NO<sub>2</sub>",
-                 "5" = "SO<sub>2</sub>"
+                 "2" = "PM<sub>2.5</sub>",
+                 "3" = "O<sub>3</sub>",
+                 "4" = "CO",
+                 "5" = "NO<sub>2</sub>",
+                 "6" = "SO<sub>2</sub>"
           )
         })
   write_json("output/heatmap_data.json",

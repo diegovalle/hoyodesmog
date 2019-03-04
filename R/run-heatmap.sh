@@ -34,7 +34,7 @@ on_exit() {
         # when creating the website, if more than 5 continuous errors then
         # sleep for 50 minutes
         if [ $ERRORS -ge 5 ]; then
-            echo "waiting $((600*ERRORS)) minutes because of too many ERRORs in Rscript"
+            echo "waiting $((600*ERRORS)) seconds because of too many ERRORs in Rscript"
             sleep $((600*ERRORS))
         fi
     fi

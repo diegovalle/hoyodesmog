@@ -49,6 +49,7 @@
     - imagemagick
     - optipng
     - htop
+    - tmux
     #- ufw
     #- fail2ban
     - unattended-upgrades

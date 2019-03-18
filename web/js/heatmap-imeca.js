@@ -53,8 +53,8 @@ var gridx, gridy;
 
 //var points = data; // data loaded from data.js
 var leafletMap = L.map('map');
- L.tileLayer.grayscale('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-     attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+ L.tileLayer.grayscale('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+     attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
      maxZoom: 19,
      fadeanimation: false
  }).addTo(leafletMap);
@@ -143,7 +143,7 @@ d3.json('/data/heatmap_data.json', function(error, data) {
             var rectangle = new L.Rectangle(c.getBounds(), {
                 color: "black",
                 fillColor: color_scale(stations[i].value),
-                fillOpacity: 0.25,
+                fillOpacity: 1,
                 lineCap: "square",
                 lineJoin: "miter"
             });

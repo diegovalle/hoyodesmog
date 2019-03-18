@@ -53,9 +53,10 @@ var gridx, gridy;
 
 //var points = data; // data loaded from data.js
 var leafletMap = L.map('map');
- L.tileLayer('https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
-     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-     maxZoom: 19
+ L.tileLayer.grayscale('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+     attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+     maxZoom: 19,
+     fadeanimation: false
  }).addTo(leafletMap);
 //L.mapbox.accessToken = 'pk.eyJ1IjoiZGllZ292YWxsZXkiLCJhIjoiY2l5ZGI2NjRjMDBtMDJxbXhocml3MjdnbyJ9.aWk3BvZsieIOIWRrinTXqQ';
 //L.mapbox.styleLayer('mapbox://styles/mapbox/light-v9').addTo(leafletMap);

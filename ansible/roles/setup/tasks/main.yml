@@ -28,33 +28,35 @@
               state=present
 
 - name: Remove Packages
-  apt: name="{{ item }}" state=absent
-  with_items:
-    - apache
-    - samba
-    - sendmail,
-    - bind9
-    - ncsd
-    - sasl
-    - exim
-    - ntp
+  apt: name="{{ packages }}" state=absent
+  vars:
+    packages:
+      - apache
+      - samba
+      - sendmail,
+      - bind9
+      - ncsd
+      - sasl
+      - exim
+      - ntp
 
 - name: Install Packages
-  apt: name="{{ item }}" state=latest
-  with_items:
-    - git
-    - curl
-    - sqlite3
-    - mailutils
-    - imagemagick
-    - optipng
-    - htop
-    - tmux
+  apt: name="{{ packages }}" state=latest
+  vars:
+    packages:
+      - git
+      - curl
+      - sqlite3
+      - mailutils
+      - imagemagick
+      - optipng
+      - htop
+      - tmux
     #- ufw
     #- fail2ban
-    - unattended-upgrades
-    - parallel
-    - lynx
+      - unattended-upgrades
+      - parallel
+      - lynx
 
 - name: Adjust APT update intervals
   copy: src=config/apt_periodic dest=/etc/apt/apt.conf.d/10periodic

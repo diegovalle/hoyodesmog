@@ -8,7 +8,7 @@
   command: postmap /etc/postfix/sendgrid_passwd
 
 - name: postmap virtual
-  shell: touch /etc/postfix/virtual && postmap /etc/postfix/virtual
+  shell: touch /etc/postfix/virtual && postmap /etc/postfix/virtual warning=false
 
 - name: postmap virtual-regexp
   command: postmap /etc/postfix/virtual-regexp

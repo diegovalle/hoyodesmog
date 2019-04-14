@@ -1,7 +1,7 @@
 # Postfix
 
 - name: Installs postfix mail server
-  apt: pkg=postfix state=installed update_cache=true
+  apt: pkg=postfix state=present update_cache=true
   notify:
     - start postfix
 

@@ -1,5 +1,5 @@
 language: R
-dist: trusty
+dist: xenial
 
 apt_packages:
   - r-cran-rjava

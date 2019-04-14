@@ -1,3 +1,15 @@
+---
+- name: Ensure group "radmin" exists
+  group:
+    name: radmin
+    state: present
+    
+- name: adding existing user '{{ username }}' to group radmin
+  user:
+    name: '{{ username }}'
+    groups: radmin
+    append: yes
+
 - name: Add R repository public key
   apt_key:
     id: E084DAB9
@@ -20,6 +32,7 @@
   vars:
     packages:
       - r-base
+      - r-recommended
       - r-base-dev
       - r-cran-rjava
       - libxml2-dev
@@ -42,6 +55,9 @@
 
 - name: Creates .Rprofile with default repo
   lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2018-10-03";options(repos = r)})' create=True
+  
+- name: Ensure /usr/local/lib/R/site-library/ is writable by radmin
+  file: dest=/usr/local/lib/R/site-library/ owner=root group=r-admin mode=u=rwX,g=rwX,o=rX recurse=yes
 
 - name: Config java
   command: R CMD javareconf -e

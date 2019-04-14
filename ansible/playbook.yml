@@ -14,9 +14,6 @@
     deploy_user_name: deploy
     deploy_public_keys:
       - vps.pub
-    r_repository:
-      - type: deb
-        url: "http://cran.rstudio.com/bin/linux/ubuntu  {{ ansible_distribution_release }}/"
     nginx_user: www-data
     access_log: /var/log/nginx/access.log
     error_log: /var/log/nginx/error.log

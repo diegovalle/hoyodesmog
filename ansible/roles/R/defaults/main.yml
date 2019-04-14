@@ -1,0 +1,12 @@
+---
+r_repository:
+  - type: deb
+    url: "https://cloud.r-project.org/bin/linux/ubuntu  {{ ansible_distribution_release }}/"
+r_packages: ['r-base', 'r-base-dev',
+             'r-cran-rjava', 'curl',
+             'libxml2-dev',
+             'r-cran-xml',
+             'libgdal-dev', 'libproj-dev']
+deploy_user_name: diego
+username: diego
+install_packages: true

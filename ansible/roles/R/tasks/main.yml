@@ -60,7 +60,7 @@
   file: dest=/usr/local/lib/R/site-library/ owner=root group=radmin mode=u=rwX,g=rwX,o=rX recurse=yes
 
 - name: Config java
-  command: R CMD javareconf -e
+  command: R CMD javareconf
 
 - name: print to stdout
   command: "Rscript -e '.libPaths()'"

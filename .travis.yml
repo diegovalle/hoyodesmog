@@ -1,8 +1,6 @@
-language: R
 dist: xenial
 
 apt_packages:
-  - r-cran-rjava
   - lynx
 
 env:
@@ -44,6 +42,5 @@ script:
 # whitelist
 branches:
   only:
-    - master
     - develop
     - travis

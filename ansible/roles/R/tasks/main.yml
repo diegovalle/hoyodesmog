@@ -57,7 +57,7 @@
   lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2018-10-03";options(repos = r)})' create=True
   
 - name: Ensure /usr/local/lib/R/site-library/ is writable by radmin
-  file: dest=/usr/local/lib/R/site-library/ owner=root group=r-admin mode=u=rwX,g=rwX,o=rX recurse=yes
+  file: dest=/usr/local/lib/R/site-library/ owner=root group=radmin mode=u=rwX,g=rwX,o=rX recurse=yes
 
 - name: Config java
   command: R CMD javareconf -e

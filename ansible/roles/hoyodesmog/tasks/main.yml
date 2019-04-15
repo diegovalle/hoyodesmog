@@ -5,7 +5,7 @@
   file: dest=/var/www/hoyodesmog.diegovalle.net owner=deploy group=www-data mode=0775 recurse=yes
 
 - name: Add R packages
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs='{{item}}')"
+  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages(pkgs='{{item}}', repos='https://cloud.r-project.org');quit(save = 'no', status = !require('{{item}}'))"
   with_items:
     - ggplot2
     - viridis

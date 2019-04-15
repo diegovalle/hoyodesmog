@@ -4,9 +4,9 @@
     name: radmin
     state: present
     
-- name: adding existing user '{{ username }}' to group radmin
+- name: adding existing user "{{ deploy_user_name }}" to group radmin
   user:
-    name: '{{ username }}'
+    name: "{{ deploy_user_name }}"
     groups: radmin
     append: yes
 

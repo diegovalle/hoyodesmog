@@ -7,6 +7,4 @@ r_packages: ['r-base', 'r-base-dev',
              'libxml2-dev',
              'r-cran-xml',
              'libgdal-dev', 'libproj-dev']
-deploy_user_name: diego
-username: diego
 install_packages: true

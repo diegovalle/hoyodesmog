@@ -15,8 +15,6 @@
     id: E298A3A825C0D65DFD57CBB651716619E084DAB9
     keyserver: keyserver.ubuntu.com
     state: present
-  tags:
-    - r-repository-public-key
 
 - name: Add R repository
   apt_repository:
@@ -24,8 +22,6 @@
     state: present
     update_cache: true
   with_items: "{{ r_repository }}"
-  tags:
-    - r-repository-add
 
 - name: Install Packages
   apt: name="{{ packages }}" state=latest

@@ -11,26 +11,33 @@
     - viridis
     - devtools
     - dplyr
-    - methods
-    - jsonlite
-    - gstat
-    - sp
+    #- methods
+    #- jsonlite
+    #- gstat
+    #- sp
     - stringr
-    - chron
-    - ggmap
-    - caTools
-    - lubridate
+    #- chron
+    #- ggmap
+    #- caTools
+    #- lubridate
     - mailR
-    - readr
-    - XML
-    - zoo
+    #- readr
+    #- XML
+    #- zoo
     - tidyr
     - rvest
-    - phylin
+    #- phylin
   vars:
     ansible_ssh_pipelining: true
     become: yes
     become_user: "{{deploy_user_name}}"
+
+#apt-get update     # refresh
+#apt-get install software-properties-common
+#add-apt-repository -y "ppa:marutter/rrutter"
+#add-apt-repository -y "ppa:marutter/c2d4u"
+#apt-get update     # now with new repos
+#apt-get install r-cran-readr
 
 - name: Install github R packages
   command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "devtools::install_github('{{item}}')"
@@ -63,6 +70,7 @@
 - cronvar:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
+    user: "{{deploy_user_name}}"
   with_items:
     - name: "SENDGRID_USER"
       value: "{{SENDGRID_USER}}"

@@ -39,6 +39,7 @@
       - r-cran-xml
       - libgdal1-dev
       - libproj-dev
+      - libssl-dev
 
 - name: Creates .Rprofile with default repo
   lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2018-10-03";options(repos = r)})' create=True

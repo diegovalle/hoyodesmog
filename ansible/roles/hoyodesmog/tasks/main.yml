@@ -59,7 +59,7 @@
       - r-cran-readr
       - r-cran-stringr
       - r-cran-tidyr
-  when: ansible_memory_mb.real.total ><= 2048
+  when: ansible_memory_mb.real.total <= 2048
 
 - name: Install github R packages
   command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "devtools::install_github('{{item}}')"

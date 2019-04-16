@@ -1,5 +1,5 @@
 ---
 r_repository:
   - type: deb
-    url: "https://cloud.r-project.org/bin/linux/ubuntu  {{ ansible_distribution_release }}{{ {{ ansible_distribution_version is version('18.04', '>=') }} | ternary('-cran35', '') }}/"
+    url: "https://cloud.r-project.org/bin/linux/ubuntu  {{ ansible_distribution_release }}{{ ansible_distribution_version is version('18.04', '>=') | ternary('-cran35', '') }}/"
 install_packages: true

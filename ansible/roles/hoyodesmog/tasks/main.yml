@@ -40,13 +40,13 @@
   apt_repository:
     repo: ppa:marutter/rrutter
     update_cache: yes
-  when: ansible_memory_mb.real.total <= 2048
+  when: ansible_memory_mb.real.total < 2048
     
 - name: add c2d4u repository
   apt_repository:
     repo: ppa:marutter/c2d4u
     update_cache: yes
-  when: ansible_memory_mb.real.total <= 2048
+  when: ansible_memory_mb.real.total < 2048
 
 - name: Install precompiled R packages
   apt: name="{{ packages }}" state=latest
@@ -59,7 +59,7 @@
       - r-cran-readr
       - r-cran-stringr
       - r-cran-tidyr
-  when: ansible_memory_mb.real.total <= 2048
+  when: ansible_memory_mb.real.total < 2048
 
 - name: Install github R packages
   command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "devtools::install_github('{{item}}')"

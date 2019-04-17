@@ -21,6 +21,7 @@
   notify:
     - postmap virtual
     - postmap sendgrid_passwd
+  no_log: true
 
 - name: postmap
   command: postmap /etc/postfix/sendgrid_passwd 

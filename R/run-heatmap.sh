@@ -9,7 +9,7 @@ OLDFILE=timestamps/heatmap_aire_old.html
 NEWFILE=timestamps/heatmap_aire_new.html
 SCRIPT=run-heatmap.R
 ERROR_FILE=number_of_errors.txt
-NETLIFY="$(whereis netlify | sed 's/^.*: //g')"
+#NETLIFY="$(whereis netlify | sed 's/^.*: //g')"
 
 if [ -d $DIR ]
 then
@@ -117,9 +117,9 @@ main() {
 
         atomic_update
         # Don't update website when running in CI
-        if [ "$CI" != "true" ]; then
-            timeout 30s "$NETLIFY" -t "$NETLIFYAPIKEY" deploy
-        fi
+        #if [ "$CI" != "true" ]; then
+        #    timeout 30s "$NETLIFY" -t "$NETLIFYAPIKEY" deploy
+        #fi
 
         mv -f $NEWFILE $OLDFILE
         # Reset the error count after successful run

@@ -44,8 +44,8 @@
   file:
     path: /etc/nginx/ssl/default/
     state: directory
-    owner: root
-    group: '{{ letsencrypt_user }}'
+    owner: '{{ letsencrypt_user }}'
+    group: root
     mode: 0770
 
 - name: create challenges directory

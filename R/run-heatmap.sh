@@ -17,7 +17,7 @@ then
 fi
 
 : "${HEATMAP_HEALTHCHECK:?Need to set HEATMAP_HEALTCHECK non-empty}"
-: "${NETLIFYAPIKEY:?Need to set NETLIFYAPIKEY non-empty}"
+#: "${NETLIFYAPIKEY:?Need to set NETLIFYAPIKEY non-empty}"
 # Set CI to false if its unset
 : "${CI:=false}"
 # File to keep track of failed R executions

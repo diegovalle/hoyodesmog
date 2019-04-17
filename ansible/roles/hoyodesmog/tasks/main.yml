@@ -100,8 +100,6 @@
       value: "{{SENDGRID_PASS}}"
     - name: "HEATMAP_HEALTHCHECK"
       value: "{{HEATMAP_HEALTHCHECK_URL}}"
-    - name: "NETLIFYAPIKEY"
-      value: "{{NETLIFYAPIKEY}}"
     - name: "EMAIL_ADDRESS"
       value: "{{EMAIL_ADDRESS}}"
     - name: "SHELL"

@@ -17,6 +17,7 @@
 - name: add cron entry to renew cert
   cron:
     name="renew hoyodesmog.diegovalle.net certificate"
+    user="{{ letsencrypt_user }}"
     minute="30"
     day="11"
     hour="3"

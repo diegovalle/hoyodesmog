@@ -16,7 +16,7 @@
     home: /home/{{ letsencrypt_user }}
 
 - name: Ensure letencrypt home directory exists
-  file: path=/home/{{ letsencrypt_user }}/ssl state=directory owner={{ letsencrypt_user }}  mode=0660 recurse=yes
+  file: path=/home/{{ letsencrypt_user }}/ssl state=directory owner={{ letsencrypt_user }}  mode=0770 recurse=yes
 
 
 - name: copy scripts to create csr and renew the cert

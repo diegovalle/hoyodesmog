@@ -38,7 +38,7 @@
     state: directory
     owner: root
     group: '{{ letsencrypt_user }}'
-    mode: 0660
+    mode: 0770
 
 - name: create default ssl certs directory
   file:
@@ -46,7 +46,7 @@
     state: directory
     owner: root
     group: '{{ letsencrypt_user }}'
-    mode: 0660
+    mode: 0770
 
 - name: create challenges directory
   file:

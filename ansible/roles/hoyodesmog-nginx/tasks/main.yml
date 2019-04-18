@@ -14,6 +14,7 @@
     - hoyodesmog.diegovalle.net
   notify: Restart nginx
 
+#/usr/bin/rclone copy /etc/nginx/ssl/hoyodecrimen.com/chained.pem :b2:bucket --b2-account=string --b2-key=string
 - name: add cron entry to renew cert
   cron:
     name="renew hoyodesmog.diegovalle.net certificate"

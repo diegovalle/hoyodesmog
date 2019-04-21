@@ -9,6 +9,9 @@
   template: src=config/virtual-regexp.j2 dest=/etc/postfix/virtual-regexp
   notify:
     - postmap virtual-regexp
+    
+- name: Create virtualdb
+  shell: touch /etc/postfix/virtual && postmap /etc/postfix/virtual
 
 - name: Sendgrid authentication info
   lineinfile:

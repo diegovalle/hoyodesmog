@@ -6,7 +6,7 @@
     - start postfix
 
 - name: Copy virtual-regexp for postfix (send all mail to myself)
-  copy: src=config/virtual-regexp dest=/etc/postfix/virtual-regexp
+  template: src=config/virtual-regexp.j2 dest=/etc/postfix/virtual-regexp
   notify:
     - postmap virtual-regexp
 

@@ -23,8 +23,8 @@
 - name: Ensure Node.js and npm are installed.
   apt: "name=nodejs=10* state=present"
   
-- name: "Trust insecure npm"
-  shell: "npm config set strict-ssl false"
+#- name: "Trust insecure npm"
+#  shell: "npm config set strict-ssl false"
   
 - name: Install netlify-cli
   npm:  name=netlify-cli global=yes

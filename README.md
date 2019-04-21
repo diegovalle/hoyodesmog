@@ -6,7 +6,7 @@ Web site for [hoyodesmog.diegovalle.net](hoyodesmog.diegovalle.net)
 
 It is recommended to use the ansible playbook in the ansible directory
 to install. You'll need to create a secrets.yml (it's encrypted in
-this repo) file with the following structure:
+this repo) file with the following structure (or just copy secrets-test.yml):
 
 ```yml
       # Structure of secrets.yml

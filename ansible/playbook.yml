@@ -35,6 +35,7 @@
 
   roles:
     - setup
+    - rclone
     - netlify
     - R
     - nginx

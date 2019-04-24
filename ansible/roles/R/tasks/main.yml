@@ -32,7 +32,6 @@
       - r-base-dev
       - r-cran-rjava
       - libxml2-dev
-      - r-cran-xml
       - libgdal1-dev
       - libproj-dev
       - libssl-dev

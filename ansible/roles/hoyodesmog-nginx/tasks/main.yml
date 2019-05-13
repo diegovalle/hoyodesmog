@@ -9,6 +9,7 @@
   notify: Restart nginx
   
 - name: Correct certificate permissions
+  when: testing == 'false'
   file: path=/etc/nginx/ssl/hoyodesmog.diegovalle.net/{{ item }} owner={{ letsencrypt_user }} group=root mode=0660
   with_items:
     - account.key

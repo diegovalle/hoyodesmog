@@ -7,6 +7,14 @@
     - {src: "{{domain_key}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/domain.key}
     - {src: "{{chained_pem}}", dest: /etc/nginx/ssl/hoyodesmog.diegovalle.net/chained.pem}
   notify: Restart nginx
+  
+- name: Correct certificate permissions
+  file: path=/etc/nginx/ssl/hoyodesmog.diegovalle.net/{{ item }} owner={{ letsencrypt_user }} group=root mode=0660
+  with_items:
+    - account.key
+    - domain.key
+    - domain.csr
+    - chained.pem
 
 - name: Copy over website configuration
   copy: src={{ item }} dest=/etc/nginx/sites-enabled/{{ item }}

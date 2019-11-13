@@ -3,7 +3,7 @@
   group:
     name: radmin
     state: present
-    
+
 - name: adding existing user "{{ deploy_user_name }}" to group radmin
   user:
     name: "{{ deploy_user_name }}"
@@ -23,6 +23,16 @@
     update_cache: true
   with_items: "{{ r_repository }}"
 
+- name: add rrutter ppa
+  apt_repository:
+    repo: ppa:marutter/rrutter
+    update_cache: yes
+
+- name: add c2d4u repository
+  apt_repository:
+    repo: ppa:marutter/c2d4u
+    update_cache: yes
+
 - name: Install Packages
   apt: name="{{ packages }}" state=latest
   vars:
@@ -32,7 +42,7 @@
       - r-cran-rjava
       - r-base-dev
       - libxml2-dev
-      - libgdal1-dev
+      - libgdal-dev
       - libproj-dev
       - libssl-dev
       - software-properties-common
@@ -52,7 +62,7 @@
 
 - name: Creates .Rprofile with default repo
   lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2018-10-03";options(repos = r)})' create=True
-  
+
 - name: Ensure /usr/local/lib/R/site-library/ is writable by radmin
   file: dest=/usr/local/lib/R/site-library/ owner=root group=radmin mode=u=rwX,g=rwX,o=rX recurse=yes
 

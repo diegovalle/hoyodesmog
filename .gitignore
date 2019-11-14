@@ -27,3 +27,8 @@ hoyodesmog-2017-10-27-18
 hoyodesmog-2017-10-27-18.ots
 web/data
 password.txt
+web/aire.zmvm/*
+web/rsinaica/*
+
+# Local Netlify folder
+.netlify

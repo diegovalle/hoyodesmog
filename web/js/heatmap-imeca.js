@@ -84,8 +84,8 @@ pip = function(point, vs) {
     return inside;
 };
 
-d3.json('/data/heatmap_data.json', function(error, data) {
-    d3.json('/data/heatmap_stations.json', function(error, stations) {
+d3.json('https://jsonhoyodesmog.diegovalle.net/data/heatmap_data.json', function(error, data) {
+    d3.json('https://jsonhoyodesmog.diegovalle.net/data/heatmap_stations.json', function(error, stations) {
 
         var legend = L.control({position: 'bottomright'});
         legend.onAdd = function(map) {

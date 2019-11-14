@@ -1,8 +1,6 @@
 / 
             Strict-Transport-Security: max-age=31536000;
             Link: </images/mx.png>; rel=preload; as=image
-            Link: </data/heatmap_data.json>; rel=preload; as=script
-            Link: </data/heatmap_stations.json>; rel=preload; as=script
             Link: </assets/js/d3.min.js>; rel=preload; as=script
             Link: </assets/js/mapbox.js>; rel=preload; as=script
             Link: </assets/js/jquery.min.js>; rel=preload; as=script

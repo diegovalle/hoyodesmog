@@ -9,6 +9,7 @@ OLDFILE=timestamps/heatmap_aire_old.html
 NEWFILE=timestamps/heatmap_aire_new.html
 SCRIPT=run-heatmap.R
 ERROR_FILE=number_of_errors.txt
+TEMP_OUTPUT=output$(date +"%Y%m%d%H%M%S")
 #NETLIFY="$(whereis netlify | sed 's/^.*: //g')"
 
 if [ -d $DIR ]
@@ -75,7 +76,6 @@ download_data() {
 atomic_update() {
     TEMP_LINK=output_link
     CURRENT_DIR=$(pwd)
-    TEMP_OUTPUT=output$(date +"%Y%m%d%H%M%S")
     # Atomic operation to change the website data directory
     cp -al output latest/"$TEMP_OUTPUT"
     ln -s "$CURRENT_DIR"/latest/"$TEMP_OUTPUT" $TEMP_LINK && mv -Tf $TEMP_LINK ../web/data
@@ -118,7 +118,7 @@ main() {
         atomic_update
         # Don't update website when running in CI
         #if [ "$CI" != "true" ]; then
-        #    timeout 30s firebase deploy --only hosting --token "$FIREBASE_TOKEN"
+        #    timeout 30s $(cp latest/fire* latest/"$TEMP_OUTPUT" && cd latest/"$TEMP_OUTPUT" && firebase deploy --only hosting --token "$FIREBASE_TOKEN")
         #fi
 
         mv -f $NEWFILE $OLDFILE

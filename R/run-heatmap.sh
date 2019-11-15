@@ -118,7 +118,7 @@ main() {
         atomic_update
         # Don't update website when running in CI
         #if [ "$CI" != "true" ]; then
-        #    timeout 30s $(cp latest/fire* latest/"$TEMP_OUTPUT" && cd latest/"$TEMP_OUTPUT" && firebase deploy --only hosting --token "$FIREBASE_TOKEN")
+        #    timeout 30s $(cp output && firebase deploy --only hosting --token "$FIREBASE_TOKEN")
         #fi
 
         mv -f $NEWFILE $OLDFILE

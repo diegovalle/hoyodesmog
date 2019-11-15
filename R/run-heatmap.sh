@@ -50,7 +50,7 @@ clean_html_table() {
         sed -e '/^$/d' | \
         sed -e 's/\s\{1,\}/,/g' | \
         sed -e 's/nr/NA/g' | \
-        awk 'NR==1 || /^[0-9][0-9]\-[0-9][0-9]/' 
+        awk 'NR==1 || /^[0-9][0-9]\-[0-9][0-9]/'
 
 }
 
@@ -117,9 +117,9 @@ main() {
 
         atomic_update
         # Don't update website when running in CI
-        #if [ "$CI" != "true" ]; then
-        #    timeout 30s $(cp output && firebase deploy --only hosting --token "$FIREBASE_TOKEN")
-        #fi
+        if [ "$CI" != "true" ]; then
+            timeout 2m firebase deploy --only hosting --token "$FIREBASE_TOKEN"
+        fi
 
         mv -f $NEWFILE $OLDFILE
         # Reset the error count after successful run

@@ -28,6 +28,9 @@
   
 - name: Install netlify-cli
   npm:  name=netlify-cli global=yes
+  
+- name: Install firebase
+  npm:  name=firebase-tools global=yes
 
 #- name: Create soft link
 #  shell: ln -s $(which nodejs) /usr/bin/node

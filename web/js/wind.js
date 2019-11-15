@@ -311,9 +311,9 @@ create_rtree = function(data, wsp, canvasOverlay) {
     return (rtree);
 };
 
-d3.json('https://jsonhoyodesmog.diegovalle.net/data/wdr_data.json', function(error, data) {
-    d3.json('https://jsonhoyodesmog.diegovalle.net/data/wsp_data.json', function(error, wsp) {
-        d3.json('https://jsonhoyodesmog.diegovalle.net/data/wsp_stations.json', function(error, stations) {
+d3.json('https://jsonhoyodesmog.diegovalle.net/wdr_data.json', function(error, data) {
+    d3.json('https://jsonhoyodesmog.diegovalle.net/wsp_data.json', function(error, wsp) {
+        d3.json('https://jsonhoyodesmog.diegovalle.net/wsp_stations.json', function(error, stations) {
 
 
             // map legend

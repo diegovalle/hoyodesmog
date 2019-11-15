@@ -118,7 +118,7 @@ main() {
         atomic_update
         # Don't update website when running in CI
         #if [ "$CI" != "true" ]; then
-        #    timeout 30s "$NETLIFY" -t "$NETLIFYAPIKEY" deploy
+        #    timeout 30s firebase deploy --only hosting --token "$FIREBASE_TOKEN"
         #fi
 
         mv -f $NEWFILE $OLDFILE

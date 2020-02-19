@@ -147,8 +147,7 @@ d3.json('https://jsonhoyodesmog.diegovalle.net/heatmap_data.json', function(erro
                 lineCap: "square",
                 lineJoin: "miter"
             });
-            rectangle.bindPopup(String(stations[i].station_name + ': <b>' +
-                                       stations[i].value + '</b> (' +
+            rectangle.bindPopup(String(stations[i].station_name + ' (' +
                                        stations[i].pollutant +')'), {
                                            offset: L.point(0, -2),
                                            autoPan: false

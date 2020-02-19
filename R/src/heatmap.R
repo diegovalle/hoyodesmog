@@ -9,7 +9,7 @@ write_json <- function(file_name, stuff, dataframe = NULL) {
 
 get_grid <- function(df) {
   df <- left_join(df, stations, by = "station_code")
-  df <- df[!is.na(df$value) & !is.na(df$lat) & !is.na(df$lon),]
+  #df <- df[!is.na(df$value) & !is.na(df$lat) & !is.na(df$lon),]
   geog <- df[,c("lat", "lon", "value")]
   coordinates(geog) <- ~lon+lat
   
@@ -60,7 +60,7 @@ get_data_roll <- function(pollutant, mxc, ave) {
     group_by(station_code) %>%
     mutate(rollave = rollapply(value, ave,
                                function(x) {
-                                 if(sum(is.na(x)) > ave / 4)
+                                 if (sum(is.na(x)) > ave / 4)
                                    return(NA)
                                  mean(x, na.rm = TRUE)},
                                fill = NA, align = "right")) %>%
@@ -109,7 +109,7 @@ get_data <- function(pollutant, mxc) {
 mxc <- get_latest_imeca()
 print(mxc$datetime[[1]])
 mxc2 <- left_join(mxc, stations, by = "station_code")
-mxc2 <- mxc2[!is.na(mxc2$value) & !is.na(mxc2$lat) & !is.na(mxc2$lon),]
+mxc2 <- mxc2[!is.na(mxc2$lat) & !is.na(mxc2$lon),]
 
 try({
   if (max(mxc$value, na.rm = TRUE) >= 145) {

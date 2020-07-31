@@ -99,7 +99,7 @@
     - name: "SENDGRID_PASS"
       value: "{{SENDGRID_PASS}}"
     - name: "HEATMAP_HEALTHCHECK"
-      value: "{{HEATMAP_HEALTHCHECK_URL}}"}}"
+      value: "{{HEATMAP_HEALTHCHECK_URL}}"
     - name: "FIREBASE_TOKEN"
       value: "{{FIREBASE_TOKEN}}"
     - name: "EMAIL_ADDRESS"

@@ -30,6 +30,7 @@ password.txt
 web/aire.zmvm/*
 web/rsinaica/*
 R/output/.firebase
+*.cache
 
 # Local Netlify folder
 .netlify

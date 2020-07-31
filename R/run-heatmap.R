@@ -1,5 +1,5 @@
 if (!require(devtools, quietly = TRUE)) {
-  install.packages("devtools", repos="https://mran.revolutionanalytics.com/snapshot/2017-10-03")
+  install.packages("devtools")
 }
 if (!require("aire.zmvm", quietly = TRUE)) {
   devtools::install_github('diegovalle/aire.zmvm')
@@ -23,8 +23,7 @@ packages.to.load <- c("phylin",
                       "zoo",
                       "tidyr")
 packages.not.installed <- setdiff(packages.to.load, installed.packages()[,"Package"])
-if(length(packages.not.installed)) install.packages(packages.not.installed,
-                                                    repos="https://mran.revolutionanalytics.com/snapshot/2017-10-03")
+if(length(packages.not.installed)) install.packages(packages.not.installed)
 for(p in packages.to.load)
   suppressPackageStartupMessages( stopifnot(
     require(p, quietly=TRUE,

@@ -1,5 +1,8 @@
-FROM rocker/r-ubuntu:20.04
+# stage 0
+FROM pierrezemb/gostatic as builder
 
+# stage 1
+FROM rocker/r-ubuntu:20.04
 MAINTAINER "Diego Valle-Jones"
 
 RUN apt-get update && apt-get install -y gnupg2 software-properties-common
@@ -94,5 +97,7 @@ COPY web /var/www/hoyodesmog.diegovalle.net/web
 COPY webserver.sh /hoyodesmog
 WORKDIR /var/www/hoyodesmog.diegovalle.net/R
 
-CMD export > /hoyodesmog/.env && cron -f
+COPY --from=builder /goStatic .
+
+CMD export > /hoyodesmog/.env && service cron start && ./goStatic -path /var/www/hoyodesmog.diegovalle.net/web
 #watch -n60 ./run-heatmap.sh

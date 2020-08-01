@@ -21,9 +21,8 @@
             Link: </assets/css/smog.css>; rel=preload; as=style
             Link: </assets/css/leaflet.locate/L.Control.Locate.min.css>; rel=preload; as=style
             Link: </assets/css/main.css?v=1>; rel=preload; as=style
-            Link: </assets/fonts/fontawesome-webfont.woff2?v=4.3.0>; rel=preload; as=font
             Link: </assets/css/css/font.css>; rel=preload; as=style
-            Link: <https://a.tiles.mapbox.com>; rel=preconnect
+            Link: <https://server.arcgisonline.com>; rel=preconnect
             
     
         
@@ -50,9 +49,8 @@
             Link: </assets/css/smog.css>; rel=preload; as=style
             Link: </assets/css/leaflet.locate/L.Control.Locate.min.css>; rel=preload; as=style
             Link: </assets/css/main.css?v=1>; rel=preload; as=style
-            Link: </assets/fonts/fontawesome-webfont.woff2?v=4.3.0>; rel=preload; as=font
             Link: </assets/css/css/font.css>; rel=preload; as=style
-            Link: <https://a.tiles.mapbox.com>; rel=preconnect
+            Link: <https://server.arcgisonline.com>; rel=preconnect
  
         
 /*.html
@@ -98,7 +96,7 @@
             Link: </assets/css/main.css?v=1>; rel=preload; as=style
             Link: </assets/fonts/fontawesome-webfont.woff2?v=4.3.0>; rel=preload; as=font
             Link: </assets/css/css/font.css>; rel=preload; as=style
-            Link: <https://a.tiles.mapbox.com>; rel=preconnect
+            Link: <https://server.arcgisonline.com>; rel=preconnect
         
 /wind.html
             Strict-Transport-Security: max-age=31536000;

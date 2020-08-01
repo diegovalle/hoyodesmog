@@ -50,7 +50,7 @@
     
 - name: add c2d4u repository
   apt_repository:
-    repo: ppa:marutter/c2d4u4.0
+    repo: ppa:marutter/c2d4u4.0+
     update_cache: yes
   when: ansible_memory_mb.real.total < 2048
 

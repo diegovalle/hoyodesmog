@@ -40,6 +40,8 @@
       - r-base
       - r-recommended
       - r-cran-rjava
+      - r-cran-xml
+      - r-cran-catools
       - r-base-dev
       - libxml2-dev
       - libgdal-dev
@@ -48,7 +50,7 @@
       - software-properties-common
 
 - name: Creates .Rprofile with default repo
-  lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2018-10-03";options(repos = r)})' create=True
+  lineinfile: dest=/home/{{deploy_user_name}}/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2020-07-31";options(repos = r)})' create=True
   vars:
     ansible_ssh_pipelining: true
   become: yes
@@ -61,7 +63,7 @@
   file: path=/home/{{deploy_user_name}}/R/rpackages state=directory  owner={{deploy_user_name}} group={{deploy_user_name}}
 
 - name: Creates .Rprofile with default repo
-  lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2018-10-03";options(repos = r)})' create=True
+  lineinfile: dest=/root/.Rprofile line='local({r <- getOption("repos");r["CRAN"] <- "https://mran.revolutionanalytics.com/snapshot/2020-07-31";options(repos = r)})' create=True
 
 - name: Ensure /usr/local/lib/R/site-library/ is writable by radmin
   file: dest=/usr/local/lib/R/site-library/ owner=root group=radmin mode=u=rwX,g=rwX,o=rX recurse=yes

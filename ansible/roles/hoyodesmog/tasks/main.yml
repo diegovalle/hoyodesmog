@@ -4,6 +4,12 @@
 - name: Change persmissions of /var/www/hoyodesmog.diegovalle.net
   file: dest=/var/www/hoyodesmog.diegovalle.net owner=deploy group=www-data mode=0775 recurse=yes
 
+- name: Install rJava
+  apt: name="{{ packages }}" state=latest
+  vars:
+    packages:
+      - r-cran-rjava
+
 
 # Some package require lots of memory to compile
 # Only install from source if we've got lots of memory

@@ -29,7 +29,7 @@ before_script:
   - sleep 30
 
 script:
-  - export HEATMAP_HEALTHCHECK=example.com;export CI=false;sudo -u deploy /var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh
+  - export HEATMAP_HEALTHCHECK=example.com;export CI=true;sudo -u deploy /var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh
   - casperjs test /var/www/hoyodesmog.diegovalle.net/web/tests/test.js
   # http to follow 301 redirect
   - curl -kLv http://hoyodesmog.diegovalle.net | grep 'Real-Time Mexico'

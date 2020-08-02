@@ -404,7 +404,7 @@ d3.json('https://jsonhoyodesmog.diegovalle.net/wdr_data.json', function(error, d
 
             function loop() {
                 var prev = ctx.globalCompositeOperation;
-                ctx.fillStyle = 'rgba(0,0,0, 0.80)';
+                ctx.fillStyle = 'rgba(0,0,0, 0.95)';
                 ctx.globalCompositeOperation = 'destination-in';
                 ctx.fillRect(0, 0, canvas_width, canvas_height);
                 ctx.globalCompositeOperation = prev;

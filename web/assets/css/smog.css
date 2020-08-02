@@ -148,10 +148,10 @@ path.mg-confidence-band {
     opacity: .6;
 }
 #header {
-  background:#B0E2E3;
+  background: #0e4748;
 }
 #header .icon:before {
-    color: #ff71ce;
+    color: #111;
 }
 .mg-header .mg-chart-description {
     fill: #808080;

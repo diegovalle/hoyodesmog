@@ -2856,7 +2856,7 @@
 	}
 
 	#header {
-		background: #7f7e93;
+		background: #0e4748;
 		box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.125);
 		color: #dfdee4;
 		height: 4.5em;
@@ -2873,7 +2873,7 @@
 		}
 
 		#header .icon:before {
-			color: #f06862;
+			color: #111;
 		}
 
 		#header h1, #header h2, #header h3, #header h4, #header h5, #header h6, #header strong, #header b {

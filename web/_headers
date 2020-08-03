@@ -14,7 +14,6 @@
             Link: </assets/js/rbush.js>; rel=preload; as=script
             Link: </assets/js/moment/moment.min.js>; rel=preload; as=script
             Link: </assets/js/moment/locales.js>; rel=preload; as=script
-            Link: </js/heatmap-imeca.js?v=1.1>; rel=preload; as=script
             Link: </assets/css/font-awesome.min.css>; rel=preload; as=style
             Link: </assets/css/leaflet.css>; rel=preload; as=style
             Link: </assets/css/smog.css>; rel=preload; as=style
@@ -43,7 +42,6 @@
             Link: </assets/js/moment/moment.min.js>; rel=preload; as=script
             Link: </assets/js/moment/locales.js>; rel=preload; as=script
             Link: </images/us.png>; rel=preload; as=image
-            Link: </js/heatmap-imeca.js?v=1.1>; rel=preload; as=script
             Link: </assets/css/font-awesome.min.css>; rel=preload; as=style
             Link: </assets/css/leaflet.css>; rel=preload; as=style
             Link: </assets/css/smog.css>; rel=preload; as=style
@@ -91,7 +89,6 @@
             Link: </assets/js/rbush.js>; rel=preload; as=script
             Link: </assets/js/moment/moment.min.js>; rel=preload; as=script
             Link: </assets/js/moment/locales.js>; rel=preload; as=script
-            Link: </js/heatmap-imeca.js?v=1.1>; rel=preload; as=script
             Link: </assets/css/font-awesome.min.css>; rel=preload; as=style
             Link: </assets/css/leaflet.css>; rel=preload; as=style
             Link: </assets/css/smog.css>; rel=preload; as=style

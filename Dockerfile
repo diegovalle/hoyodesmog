@@ -99,5 +99,5 @@ WORKDIR /var/www/hoyodesmog.diegovalle.net/R
 
 COPY --from=builder /goStatic .
 
-CMD export > /hoyodesmog/.env && service cron start && ./goStatic -path /var/www/hoyodesmog.diegovalle.net/web
+CMD export > /hoyodesmog/.env && cron -f
 #watch -n60 ./run-heatmap.sh

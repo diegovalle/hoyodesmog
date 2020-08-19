@@ -45,12 +45,12 @@ heatmap <- function(df, grid){
 
 
 merge_latest <- function(df, mxc, pollut) {
-  mxc <- subset(mxc, pollutant == pollut)
-  for(station_code in mxc$station_code) {
-    idx <- which(station_code == mxc$station_code)
-    if(idx)
-      df$value[which(station_code == df$station_code)] <- mxc$value[idx]
-  }
+  #mxc <- subset(mxc, pollutant == pollut)
+  #for(station_code in mxc$station_code) {
+  #  idx <- which(station_code == mxc$station_code)
+  #  if(idx)
+  #    df$value[which(station_code == df$station_code)] <- mxc$value[idx]
+  #}
   df[!is.na(df$value),]
 }
 

@@ -19,6 +19,6 @@ app = "hoyodesmog"
     handlers = ["tls", "http"]
     port = "443"
     
-  [[services.tcp_checks]]
-    interval = 100000
-    timeout = 2000
+#  [[services.tcp_checks]]
+#    interval = 100000
+#    timeout = 2000

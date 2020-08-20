@@ -2,7 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-*.json
+web/data/*.json
+R/output/*.json
 netlifyctl
 R/airedata/*.csv
 r-package/r-package/aire.zmvm_cache/*

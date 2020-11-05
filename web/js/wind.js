@@ -179,7 +179,10 @@ function Particle(canvasOverlay, canvas_coords,
 }
 
 Particle.prototype.move = function() {
-    this.start= this.end;
+	var start, end;
+	if (this.start === -9999)
+	  return -1;
+    this.start = this.end;
     var coords_end = get_end_coords(this.canvasOverlay,
                                     this.start,
                                     this.particle_len);
@@ -193,7 +196,7 @@ Particle.prototype.move = function() {
                         this.canvas_coords_px.top_y]];
     //if(end[0] === -1 | this.count > 30 |
     //   !pip([this.start_y_lng, this.start_x_lat], canvas_rect)) {
-    if (coords_end[0] === -9999 | (Math.random() < .1 & this.count > MaxAge) | (Math.random() < .025) |
+     if (coords_end[0] === -9999 | (Math.random() < .1 & this.count > MaxAge) | (Math.random() < .025) |
         !pip([this.start.x, this.start.y], canvas_rect)) {
         var coords_start = get_random_coords(this.canvasOverlay,
                                              this.canvas_coords_px,
@@ -224,14 +227,16 @@ function canvas_line(context, fromx, fromy, tox, toy, color) {
 }
 
 function get_random_coords(canvasOverlay, canvas_coords_px, particle_len) {
-    var d = {'value': 0,
+	var wind_vec = [];
+	var d;
+	while(wind_vec.length == 0) {
+      d = {'value': 0,
              'x': random_range(canvas_coords_px.left_x, canvas_coords_px.right_x),
              'y': random_range(canvas_coords_px.top_y, canvas_coords_px.bottom_y)
             };
-    var wind_vec = tree.search([d.x, -d.y, d.x, -d.y]);
-    if (wind_vec.length == 0)
-        return ({'start': -9999, 'end': -9999, 'wsp': -9999});
-
+      wind_vec = tree.search([d.x, -d.y, d.x, -d.y]);
+    }
+    
     var start = {'x': d.x,
                  'y': d.y};
     // Start as a point to avoid drawing a big ugly line with no blend-in
@@ -240,8 +245,12 @@ function get_random_coords(canvasOverlay, canvas_coords_px, particle_len) {
 
 function get_end_coords(canvasOverlay, start, particle_len) {
     var particle_len = .2;
-    var wind_vec = tree.search([start.x, -start.y,
-                                start.x, -start.y]);
+    var wind_vec = [];
+    
+    var wind_vec = tree.search([Math.round(start.x * 1, 1) / 1, 
+    -Math.round(start.y * 1, 1) / 1,
+                                Math.round(start.x * 1, 1) / 1, 
+                                -Math.round(start.y * 1, 1) / 1]);
     if (wind_vec.length == 0)
         return ({'end': -9999,
                  'wsp': -9999});

@@ -247,10 +247,10 @@ function get_end_coords(canvasOverlay, start, particle_len) {
     var particle_len = .2;
     var wind_vec = [];
     
-    var wind_vec = tree.search([Math.round(start.x, 1), 
-                                -Math.round(start.y, 1),
-                                Math.round(start.x, 1), 
-                                -Math.round(start.y, 1)]);
+    var wind_vec = tree.search([Math.round(start.x), 
+                                -Math.round(start.y),
+                                Math.round(start.x), 
+                                -Math.round(start.y)]);
     if (wind_vec.length == 0)
         return ({'end': -9999,
                  'wsp': -9999});

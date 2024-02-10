@@ -35,3 +35,6 @@ R/output/.firebase
 
 # Local Netlify folder
 .netlify
+
+.env
+.env

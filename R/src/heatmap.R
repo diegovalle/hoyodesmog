@@ -111,23 +111,22 @@ print(mxc$datetime[[1]])
 mxc2 <- left_join(mxc, stations, by = "station_code")
 mxc2 <- mxc2[!is.na(mxc2$lat) & !is.na(mxc2$lon),]
 
+cat("\n\nchecking if send mail\n\n")
 try({
-  if (max(mxc$value, na.rm = TRUE) >= 145) {
-    max_idx <- which(mxc$value == max(mxc$value, na.rm = TRUE))
+  if (max(get_data_roll("O3", mxc, 1)$value, na.rm = TRUE) >= 150) {
+    cat("\n\nsending email...\n\n")
+    max_idx <- max(get_data_roll("O3", mxc, 1)$value, na.rm = TRUE) 
     SENDGRID_PASS <- Sys.getenv("SENDGRID_PASS")
     SENDGRID_USER <- Sys.getenv("SENDGRID_USER")
     EMAIL_ADDRESS <- Sys.getenv("EMAIL_ADDRESS")
-    send.mail(from = "imeca@elcri.men",
-              to = str_c("<", EMAIL_ADDRESS, ">"),
-              subject = str_c("IMECA of ", mxc$value[max_idx]),
-              body = str_c(mxc$station_code[max_idx], " - ",
-                           mxc$municipio[max_idx]),
-              smtp = list(host.name = "smtp.sendgrid.net", port = 465,
-                          user.name = SENDGRID_USER,
-                          passwd = SENDGRID_PASS,
-                          ssl = TRUE),
-              authenticate = TRUE,
-              send = TRUE)
+    sendmail(from = "imeca@diegovalle.net", 
+             to = c(EMAIL_ADDRESS), 
+             subject = str_c("O3 ppb of ", max_idx), 
+             msg = mime_part("https://hoyodesmog.diegovalle.net/es/#10/19.4385/-99.1383"), 
+             engine = "curl", 
+             engineopts = list(username = SENDGRID_USER, password = SENDGRID_PASS), 
+             control = list(smtpServer="smtp://smtp.sendgrid.net:587", verbose = TRUE) 
+    )
   }
 })
 

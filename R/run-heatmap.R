@@ -18,7 +18,7 @@ packages.to.load <- c("phylin",
                       "ggmap",
                       "caTools",
                       "lubridate",
-                      "mailR",
+                      "sendmailR",
                       "XML",
                       "zoo",
                       "tidyr")

@@ -44,14 +44,14 @@ on_exit() {
 }
 
 clean_html_table() {
+    set -euo pipefail
     lynx -dump -width 2000 "$1" | \
         sed -e '/^.*Promedios horarios/ d' | \
         sed -e 's/^[ ]*//g' | \
         sed -e '/^$/d' | \
         sed -e 's/\s\{1,\}/,/g' | \
         sed -e 's/nr/NA/g' | \
-        awk 'NR==1 || /^[0-9][0-9]\-[0-9][0-9]/'
-
+        awk 'NR==1 || /^[0-9][0-9]\-[0-9][0-9]/' || return 1
 }
 
 download_data() {
@@ -71,6 +71,7 @@ download_data() {
     else
         clean_html_table "$URL$tipo&parametro=$parametro&anio=$year&qmes=$month" > "$FILENAME"
     fi
+    return $?
 }
 
 atomic_update() {
@@ -104,21 +105,25 @@ main() {
         export -f download_data
         export -f clean_html_table
         # timeout because parallel --timeout sometimes doesn't work
-        timeout 4m parallel -j5 --timeout 240 --delay 1 download_data {} ::: "${ARRAY[@]}"
-
+        if parallel --joblog a.txt -j5 --timeout 240  --retries 40 --delay 1 download_data {} ::: "${ARRAY[@]}"; then
+            echo Downloaded all data
+        else
+            echo Failed download && exit 1
+        fi
         echo "Finished aire.cdmx download:  $(TZ="America/Mexico_City" date +'%Y-%m-%d %H:%M:%S %Z')"
 
-        trap "on_exit" INT TERM EXIT
+        #trap "on_exit" INT TERM EXIT
 
         echo "output from program:"
-        timeout 4m Rscript $SCRIPT
+        # shellcheck disable=SC2015,SC2034
+        for i in {1..10}; do Rscript $SCRIPT && break || sleep 10; done
 
         printf "\n\n"
 
         atomic_update
         # Don't update website when running in CI
         if [ "$CI" != "true" ]; then
-            timeout 2m firebase deploy --only hosting --token "$FIREBASE_TOKEN"
+            firebase deploy --only hosting --token "$FIREBASE_TOKEN"
         fi
 
         mv -f $NEWFILE $OLDFILE
@@ -135,6 +140,6 @@ main() {
     main
     #since this script is called from cron, and cron has a minimum
     #interval of 1 min run it again after 30s
-    sleep 30
-    main
+    #sleep 30
+    #main
 ) 200>$LOCKFILE

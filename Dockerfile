@@ -64,7 +64,7 @@ RUN installGithub.r diegovalle/aire.zmvm@master
 RUN apt-get update && apt-get -y install cron
 
 # Create backup-cron-cron file in the cron.d directory
-RUN echo "*/1 * * * * . /dev/shm/.env && timeout -k 20 7m bash /var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh  > /proc/1/fd/1 2>/proc/1/fd/2"  > /etc/cron.d/hoyo-cron
+RUN echo "*/1 * * * * . /dev/shm/.env && timeout -k 20 5m bash /var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh  > /proc/1/fd/1 2>/proc/1/fd/2"  > /etc/cron.d/hoyo-cron
 # Give execution rights on the cron job
 RUN chmod 0644 /etc/cron.d/hoyo-cron
 
@@ -95,6 +95,5 @@ COPY --from=builder /goStatic /
 RUN mkdir -p /srv/http/
 RUN echo "<!doctype html><meta charset=utf-8><title>hello</title><body><h1>smog</h1></body>" > /srv/http/index.html
 
-CMD export > /dev/shm/.env && cron && /goStatic
-#watch -n60 ./run-heatmap.sh
-
+#CMD export > /dev/shm/.env && cron && /goStatic
+CMD timeout -k 20 15m bash /var/www/hoyodesmog.diegovalle.net/R/run-heatmap.sh

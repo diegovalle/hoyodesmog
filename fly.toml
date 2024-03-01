@@ -1,18 +1,31 @@
-# fly.toml
+# fly.toml app configuration file generated for hoyodesmog on 2024-02-11T17:43:43-06:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+# fly machines list 
+# fly machines destroy #interactive
+# flyctl deploy --local-only --build-only --push
 
-app = "hoyodesmog"
-primary_region = "lax"
 
-[[vm]]
-  cpu_kind = "shared"
-  cpus = 2
-  memory_mb = 512
-  
+# create a machine with the img
+# echo "fly machines run --vm-cpus=1 --vm-memory=1024 registry.fly.io/ --schedule=hourly --autostop --region qro" | at 7:15 AM
+
+
+
+app = 'hoyodesmog'
+primary_region = 'qro'
+
+[build]
+
 [http_service]
-  internal_port = 8043
+#  internal_port = 8080
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
+  processes = ['app']
 
+[[vm]]
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 1024

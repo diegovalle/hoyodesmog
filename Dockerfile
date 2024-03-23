@@ -58,7 +58,7 @@ RUN install2.r -r http://cran.rstudio.com -e --skipinstalled \
         zoo \
         XML
 
-RUN installGithub.r diegovalle/aire.zmvm@master
+RUN installGithub.r diegovalle/aire.zmvm@develop
 
 # Install cron
 RUN apt-get update && apt-get -y install cron

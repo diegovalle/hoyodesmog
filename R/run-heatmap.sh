@@ -61,7 +61,7 @@ download_data() {
     tipo="HORARIOS"
     FILENAME=airedata/$parametro.csv
     rm -f "$FILENAME"
-    URL="http://www.aire.cdmx.gob.mx/aire/estadisticas-consultas/concentraciones/respuesta.php?qtipo="
+    URL="http://www.aire.cdmx.gob.mx/estadisticas-consultas/concentraciones/respuesta.php?qtipo="
     if [ "$(date +"%d")" -lt 9 ]; then
         month_before="$(date -d 'last month' +'%m')"
         year_before="$(date -d 'last month' +'%Y')"
@@ -90,7 +90,7 @@ main() {
         echo "no data" > $OLDFILE
     fi
 
-    curl -m 30 -L -s http://www.aire.cdmx.gob.mx/aire/ultima-hora-reporte.php 2>&1 | grep -A1 textohora  > $NEWFILE
+    curl -m 30 -L -s http://www.aire.cdmx.gob.mx/ultima-hora-reporte.php 2>&1 | grep -A1 textohora  > $NEWFILE
     oldfile_md5=$(md5sum $OLDFILE | awk '{ print $1 }')
     newfile_md5=$(md5sum $NEWFILE | awk '{ print $1 }')
 

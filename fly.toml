@@ -8,12 +8,12 @@
 
 
 # create a machine with the img
-# echo "fly machines run --vm-cpus=1 --vm-memory=1024 registry.fly.io/ --schedule=hourly --autostop --region qro" | at 7:15 AM
+# echo "fly machines run --vm-cpus=1 --vm-memory=1024 registry.fly.io/hoyodesmog:deployment-<ID> --schedule=hourly --autostop --region iad" | at 7:15 AM
 
 
 
 app = 'hoyodesmog'
-primary_region = 'qro'
+primary_region = 'iad'
 
 [build]
 

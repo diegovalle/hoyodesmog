@@ -8,7 +8,7 @@
 
 
 # create a machine with the img
-# echo "fly machines run --vm-cpus=1 --vm-memory=1024 registry.fly.io/hoyodesmog:deployment-<ID> --schedule=hourly --autostop --region iad" | at 7:15 AM
+# echo "fly machine run --vm-cpus=1 --vm-memory=1024 registry.fly.io/hoyodesmog:deployment-<ID> --schedule=hourly --autostop --region iad -a hoyodesmog" | at 5:15 PM
 
 
 

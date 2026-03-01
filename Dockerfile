@@ -2,7 +2,7 @@
 FROM pierrezemb/gostatic as builder
 
 # stage 1
-FROM rocker/r-ubuntu:22.04
+FROM rocker/r-ubuntu:22.04@sha256:5a196b97bbc7d9c6949e0b9e4a4c4e9470ea779cdcfa92b5c6030323dd95d874
 MAINTAINER "Diego Valle-Jones"
 
 RUN apt-get update && apt-get install -y gnupg2 software-properties-common

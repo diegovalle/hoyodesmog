@@ -37,4 +37,5 @@ R/output/.firebase
 .netlify
 
 .env
-.env
+.envrc
+node_modules/

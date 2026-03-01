@@ -39,3 +39,4 @@ R/output/.firebase
 .env
 .envrc
 node_modules/
+deploy.sh
